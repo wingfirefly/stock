@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +116,8 @@ public class TaskServiceImpl implements TaskService {
         ArrayList<StockInfo> needUpdatedList = new ArrayList<>();
         ArrayList<StockLog> stockLogList = new ArrayList<>();
 
+        final Date date = new Date();
+
         List<StockInfo> crawlerList = stockCrawlerService.getStockList();
         for (StockInfo stockInfo : crawlerList) {
             StockConsts.StockLogType stocLogType = null;
@@ -137,14 +140,14 @@ public class TaskServiceImpl implements TaskService {
             }
 
             if (stocLogType != null) {
-                StockLog stockLog = new StockLog(stockInfo.getId(), new Date(), stocLogType.value(), oldValue,
-                        newValue);
+                StockLog stockLog = new StockLog(stockInfo.getId(), date, stocLogType.value(),
+                        oldValue, newValue);
                 if (stocLogType == StockConsts.StockLogType.New) {
                     needAddedList.add(stockInfo);
                 } else {
                     needUpdatedList.add(stockInfo);
-                    stockLogList.add(stockLog);
                 }
+                stockLogList.add(stockLog);
             }
         }
 
@@ -189,9 +192,12 @@ public class TaskServiceImpl implements TaskService {
                 .filter(stockInfo -> stockInfo.getState() != StockConsts.StockState.Delisted.value()
                         && stockInfo.getState() != StockConsts.StockState.Terminated.value())
                 .collect(Collectors.toList());
+        final String currentDateStr = DateUtils.formatDate(new Date(), "yyyy-MM-dd");
         for (StockInfo stockInfo : list) {
             DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(stockInfo.getExchange() + stockInfo.getCode());
-            if (dailyIndex != null && DecimalUtil.bg(dailyIndex.getOpeningPrice(), BigDecimal.ZERO)) {
+            if (dailyIndex != null &&
+                    DecimalUtil.bg(dailyIndex.getOpeningPrice(), BigDecimal.ZERO)
+                    && currentDateStr.equals(DateUtils.formatDate(dailyIndex.getDate(), "yyyy-MM-dd")) ) {
                 dailyIndex.setStockInfoId(stockInfo.getId());
                 stockService.saveDailyIndex(dailyIndex);
             }
@@ -239,20 +245,22 @@ public class TaskServiceImpl implements TaskService {
                 if (tickerMap.containsKey(code)) {
                     BigDecimal lastPrice = tickerMap.get(code);
                     double rate = Math
-                            .abs(StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(), lastPrice).doubleValue());
-                    if (Double.compare(rate, 0.02) >= 0) {
+                            .abs(StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(), lastPrice)
+                                    .movePointRight(2).doubleValue());
+                    if (Double.compare(rate, 2) >= 0) {
                         tickerMap.put(code, dailyIndex.getClosingPrice());
-                        String content = String.format("%s:当前价格:%.02f, 涨幅%.02f", code,
+                        String content = String.format("%s:当前价格:%.02f, 涨幅%.02f%", code,
                                 dailyIndex.getClosingPrice().doubleValue(), rate);
-                        Message message = new Message(StockConsts.MessageType.DingDing.value(), target, content,
-                                new Date());
+                        Message message = new Message(StockConsts.MessageType.DingDing.value(),
+                                target, content, new Date());
                         messageServicve.sendDingding(message);
                     }
                 } else {
                     tickerMap.put(code, dailyIndex.getPreClosingPrice());
-                    String content = String.format("%s:当前价格:%.02f", code, dailyIndex.getClosingPrice().doubleValue());
-                    Message message = new Message(StockConsts.MessageType.DingDing.value(), target, content,
-                            new Date());
+                    String content = String.format("%s:当前价格:%.02f", code,
+                            dailyIndex.getClosingPrice().doubleValue());
+                    Message message = new Message(StockConsts.MessageType.DingDing.value(), target,
+                            content, new Date());
                     messageServicve.sendDingding(message);
                 }
             });
