@@ -1,0 +1,493 @@
+@charset "utf-8";
+
+/* reset */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+p,
+blockquote,
+pre,
+hr,
+figure,
+table,
+caption,
+th,
+td,
+form,
+fieldset,
+legend,
+input,
+button,
+textarea,
+menu {
+  margin: 0;
+  padding: 0;
+}
+
+header,
+footer,
+section,
+article,
+aside,
+nav,
+hgroup,
+address,
+figure,
+figcaption,
+menu,
+details {
+  display: block;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+caption,
+th,
+td {
+  text-align: left;
+  font-weight: normal;
+}
+
+html,
+body,
+fieldset,
+img,
+iframe,
+abbr {
+  border: 0;
+}
+
+i,
+cite,
+em,
+var,
+address,
+dfn {
+  font-style: normal;
+}
+
+[hidefocus],
+summary {
+  outline: 0;
+}
+
+li {
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+small {
+  font-size: 100%;
+}
+
+sup,
+sub {
+  font-size: 83%;
+}
+
+pre,
+code,
+kbd,
+samp {
+  font-family: inherit;
+}
+
+q:before,
+q:after {
+  content: none;
+}
+
+textarea {
+  overflow: auto;
+  resize: none;
+}
+
+label,
+summary {
+  cursor: default;
+}
+
+a,
+button {
+  cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+strong,
+b {
+  font-weight: bold;
+}
+
+del,
+ins,
+u,
+s,
+a,
+a:hover {
+  text-decoration: none;
+}
+
+body {
+  position: relative;
+  height: 100%;
+}
+
+body,
+textarea,
+input,
+button,
+select,
+keygen,
+legend {
+  font: 14px/1.5 "微软雅黑";
+  color: #444;
+  outline: 0;
+}
+
+a {
+  color: black;
+  outline: none;
+}
+
+
+/* common */
+
+body {
+  background: #F4F4F4;
+}
+
+.content {
+  min-height: 650px;
+  padding: 0 0 50px 0;
+  margin-top: 94px;
+}
+
+.innerBox {
+  width: 1200px;
+  margin: 0 auto;
+  height: 100%;
+  position: relative;
+}
+
+.footer-sink {
+  padding-bottom: 56px;
+}
+
+.clearfix {
+  zoom: 1;
+}
+
+.clearfix:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.hide {
+  display: none;
+}
+
+.disabled {
+  background-color: #C0C0C0 !important;
+}
+
+.sub-button {
+  width: 122px;
+  height: 32px;
+  background: url('../img/site_bg.png') no-repeat 100% 100%;
+  border: none;
+  color: #FFF;
+  padding-bottom: 2px;
+  font-size: 14px;
+  font-weight: bold;
+  opacity: 0.7;
+}
+
+.error-message {
+  font-size: 14px;
+  color: red;
+}
+
+
+/*header*/
+
+.header {
+  width: 100%;
+  height: 85px;
+  background-color: #000000;
+  color: #FFFDFE;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+
+}
+
+.header .headerBox {
+  width: 100%;
+  margin: 0 auto;
+  height: 35px;
+  line-height: 35px;
+  background: #262626;
+}
+
+.header .top-header {
+  width: 1200px;
+  height: 100%;
+  margin: 0 auto;
+  padding-left: 60px;
+    padding-right: 66px;
+
+}
+
+.header .top-header>li {
+  float: left;
+  position: relative;
+}
+
+.header .top-header a {
+  color: lightgrey;
+  display: block;
+  float: left;
+  height: 35px;
+  line-height: 35px;
+
+  padding-right: 10px;
+}
+
+.header .top-header>li .weixin {
+  display: inline-block;
+  width: 25px;
+  background: url(/static/img/icon/top_icon.png) -5px -35px no-repeat;
+
+  margin-left: 12px;
+}
+
+.header .top-header>li .weibo {
+  display: inline-block;
+  width: 25px;
+  background: url(/static/img/icon/top_icon.png) -3px -70px no-repeat;
+
+  margin-left: 5px;
+}
+.header .top-header>li.chinese{
+  float: right;
+  color: lightgrey;
+  background: url(/static/img/icon/chinese.png);
+  background-position: left center;
+  background-repeat: no-repeat;
+  font-size: 12px;
+  padding-left: 35px;
+}
+.header .top-header>li.chinese.on{
+
+  background: url(/static/img/icon/english.png);
+  background-size: 28px 15px;
+  background-position: left center;
+  background-repeat: no-repeat;
+
+}
+.headerBox .popmain {
+  position: absolute;
+  top: 35px;
+  left: 10px;
+  z-index: 99999;
+  color: #666;
+   display: none;
+  box-shadow: 0 0 2px #b6b3ac;
+  border: 1px solid #e6e6e6;
+  border-top: none;
+}
+.headerBox .popmain .arrow {
+    display: block;
+    position: absolute;
+    z-index: 974;
+    top: -6px;
+    left: 10px;
+    width: 0;
+    height: 0;
+    font-size: 0;
+    line-height: 0;
+    border-color: transparent transparent #adadad;
+    border-width: 0 6px 6px;
+    border-style: dashed dashed solid;
+
+}
+.headerBox .popmain .arrow-over{
+     display: block;
+    position: absolute;
+    z-index: 974;
+    top: -5px;
+    left: 10px;
+    width: 0;
+    height: 0;
+    font-size: 0;
+    line-height: 0;
+    border-color: transparent transparent #fff;
+    border-width: 0 6px 6px;
+    border-style: dashed dashed solid;
+}
+.headerBox .popmain .WeiXinBox,
+.headerBox .popmain .WoBox{
+    height: 139px;
+    width: 138px;
+    padding: 0px;
+}
+
+
+
+.header .navLogo {
+  float: left;
+  font-size: 30px;
+}
+
+.header .navLogo .logo-img img {
+  width: 88px;
+  float: left;
+  margin-top: 8px;
+  margin-left: 65px;
+}
+
+.header .navRight {
+  float: right;
+  font-size: 15px;
+  line-height: 52px;
+  margin-right: 58px;
+}
+
+.header .navRight li {
+  float: left;
+  margin: 0 10px;
+}
+
+.header .navRight li a {
+  color: #FFFDFE;
+}
+
+
+/*footer*/
+
+.footer {
+  background-color: #231F20;
+  color: #FFFDFE;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 234px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.footer .top-wrapper {
+  width: 100%;
+  height: 198px;
+  padding: 52px 70px 0 70px;
+  overflow: hidden;
+}
+
+.footer .top-wrapper li {
+  float: left;
+  width: 260px;
+  height: 180px;
+  text-align: center;
+}
+
+.footer .top-wrapper .logo {}
+
+.footer .top-wrapper .logo img {
+  width: 151px;
+  height: 47px;
+}
+
+.footer .top-wrapper .logo p {
+  font-size: 14px;
+  text-align: center;
+}
+
+.footer .top-wrapper .pl {}
+
+.footer .top-wrapper .pl .title {
+  font-size: 14px;
+}
+
+.footer .top-wrapper .pl .url a {
+  font-size: 14px;
+  color: #FFFDFE;
+  display: block;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.footer .top-wrapper .code {
+  float: left;
+  padding-left: 25px;
+}
+
+.footer .top-wrapper .code div {
+  float: left;
+}
+
+.footer .top-wrapper .code div img {
+  width: 89px;
+  height: 89px;
+}
+
+.footer .top-wrapper .code .weibo {
+  margin-left: 20px;
+}
+
+.footer .copyright-text {
+  height: 35px;
+  text-align: center;
+  font-size: 12px;
+}
+
+
+/*page*/
+
+.page_display {
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.page_display .data-table-page-number {
+  width: 45px;
+}
+
+@media only screen and (max-width:1000px) {
+  .header,
+  .content,
+  .footer {
+    width: 1200px;
+  }
+}

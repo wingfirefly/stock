@@ -249,7 +249,7 @@ public class TaskServiceImpl implements TaskService {
                                     .movePointRight(2).doubleValue());
                     if (Double.compare(rate, 2) >= 0) {
                         tickerMap.put(code, dailyIndex.getClosingPrice());
-                        String content = String.format("%s:当前价格:%.02f, 涨幅%.02f%", code,
+                        String content = String.format("%s:当前价格:%.02f, 涨幅%.02f%%", code,
                                 dailyIndex.getClosingPrice().doubleValue(), rate);
                         Message message = new Message(StockConsts.MessageType.DingDing.value(),
                                 target, content, new Date());
