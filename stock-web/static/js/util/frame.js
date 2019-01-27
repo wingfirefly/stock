@@ -18,7 +18,7 @@ $(function() {
   }
 
   function renderHead() {
-    var content = '<div class="headBox"><ul class="top-head">';
+    var content = '<div class="innerBox"><ul class="top-head">';
     if (!isLocalAuth()) {
       content += '<li><a href="/user/login.html">登录</a></li>';
     } else {
@@ -36,8 +36,9 @@ $(function() {
   }
 
   function isLocalAuth() {
-    var token = StorageUtil.get(GlobalConsts.authTokenKey);
-    return token && token != null && token.length > 10;
+    /*var token = StorageUtil.get(GlobalConsts.authTokenKey);
+    return token && token != null && token.length > 10;*/
+    return true;
   }
 
 });

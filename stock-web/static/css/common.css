@@ -179,7 +179,6 @@ a {
   outline: none;
 }
 
-
 /* common */
 
 body {
@@ -199,10 +198,6 @@ body {
   position: relative;
 }
 
-.footer-sink {
-  padding-bottom: 56px;
-}
-
 .clearfix {
   zoom: 1;
 }
@@ -219,4 +214,37 @@ body {
 
 .disabled {
   background-color: #C0C0C0 !important;
+}
+
+.btn {
+  border: none;
+  background: none;
+  padding: 8px 15px;
+  background: #229966;
+  border-radius: 5px;
+  color: white;
+}
+
+
+/* frame */
+
+.head .top-head {
+  width: 1200px;
+  height: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.head .top-head > li {
+  float: left;
+  position: relative;
+}
+
+.head .top-head a {
+  color: lightgrey;
+  display: block;
+  float: left;
+  height: 35px;
+  line-height: 35px;
+  padding-right: 10px;
 }
