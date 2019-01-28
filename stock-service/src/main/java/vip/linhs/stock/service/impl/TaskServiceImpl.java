@@ -128,7 +128,7 @@ public class TaskServiceImpl implements TaskService {
             if (stockGroupList == null) {
                 stocLogType = StockConsts.StockLogType.New;
                 oldValue = "";
-                newValue = stockInfo.getCode();
+                newValue = stockInfo.getName();
             } else {
                 StockInfo stockInfoInDb = stockGroupList.get(0);
                 if (!stockInfo.getName().equals(stockInfoInDb.getName())) {
@@ -250,7 +250,9 @@ public class TaskServiceImpl implements TaskService {
                     if (Double.compare(rate, 2) >= 0) {
                         tickerMap.put(code, dailyIndex.getClosingPrice());
                         String content = String.format("%s:当前价格:%.02f, 涨幅%.02f%%", code,
-                                dailyIndex.getClosingPrice().doubleValue(), rate);
+                            dailyIndex.getClosingPrice().doubleValue(),
+                            StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
+                                    dailyIndex.getPreClosingPrice()).movePointRight(2).doubleValue());
                         Message message = new Message(StockConsts.MessageType.DingDing.value(),
                                 target, content, new Date());
                         messageServicve.sendDingding(message);
