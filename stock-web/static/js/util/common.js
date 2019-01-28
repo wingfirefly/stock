@@ -64,4 +64,5 @@ var ExceptionHandler = {
     if (location) {
       LocationUtil.goto(location);
     }
+  }
 };

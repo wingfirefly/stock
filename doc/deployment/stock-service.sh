@@ -1,4 +1,3 @@
-```
 #!/bin/bash
 
 App='stock-service'
@@ -18,4 +17,3 @@ cp -f $ProjectHome/build/libs/$App-$Version.jar $RunHome/$App.jar
 
 cd $RunHome
 nohup java -jar -Xms16m -Xmx32m -Xss1024K -XX:MetaspaceSize=16m -jar $App.jar > /dev/null 2>&1 &
-```
