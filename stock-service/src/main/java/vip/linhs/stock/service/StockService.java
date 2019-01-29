@@ -5,6 +5,8 @@ import java.util.List;
 import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.po.StockLog;
+import vip.linhs.stock.model.vo.PageParam;
+import vip.linhs.stock.model.vo.PageVo;
 
 public interface StockService {
 
@@ -25,5 +27,7 @@ public interface StockService {
     void saveDailyIndexFromFile(String rootPath);
 
     void saveDailyIndex(DailyIndex dailyIndex);
+
+    PageVo<StockInfo> getStockList(PageParam pageParam);
 
 }

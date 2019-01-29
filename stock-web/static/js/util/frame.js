@@ -36,9 +36,28 @@ $(function() {
   }
 
   function isLocalAuth() {
-    /*var token = StorageUtil.get(GlobalConsts.authTokenKey);
+    /*var token = getHeaders()['auth-token'];
     return token && token != null && token.length > 10;*/
     return true;
   }
 
 });
+
+function renderMenu(arr, selector, current) {
+  var content = '';
+  $.each(arr, function(index, item) {
+    if (current === item.id) {
+      content += '<li class="current"><a href="javascript:void(0);">' + item.title +'</a></li>';
+    } else {
+      content += '<li ><a href="' + item.url + '">' + item.title +'</a></li>';
+    }
+  });
+
+  $(selector).html(content);
+}
+
+function getRequestHeaders() {
+  return {
+    'auth-token': StorageUtil.get(GlobalConsts.authTokenKey)
+  }
+}

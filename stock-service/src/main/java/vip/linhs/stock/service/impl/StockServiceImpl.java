@@ -20,6 +20,8 @@ import vip.linhs.stock.dao.StockLogDao;
 import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.po.StockLog;
+import vip.linhs.stock.model.vo.PageParam;
+import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.parser.DailyIndexParser;
 import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.service.StockService;
@@ -50,7 +52,11 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public List<StockInfo> getAll() {
-        return stockDao.getAll();
+        PageParam pageParam = new PageParam();
+        pageParam.setStart(0);
+        pageParam.setLength(Integer.MAX_VALUE);
+        PageVo<StockInfo> pageVo = stockDao.get(pageParam);
+        return pageVo.getData();
     }
 
     @Override
@@ -156,6 +162,11 @@ public class StockServiceImpl implements StockService {
     @Override
     public void saveDailyIndex(DailyIndex dailyIndex) {
         dailyIndexDao.save(dailyIndex);
+    }
+
+    @Override
+    public PageVo<StockInfo> getStockList(PageParam pageParam) {
+        return stockDao.get(pageParam);
     }
 
 }

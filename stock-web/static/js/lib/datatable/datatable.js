@@ -145,15 +145,8 @@ var DataTable = function() {
 
   function renderPageBar(currentPage, iTotalRecords, pageSize) {
     var totalPage = getTotalPage(iTotalRecords, pageSize);
-    var front =  GlobalConfig.getTextByKey('front');
-    var next =  GlobalConfig.getTextByKey('next');
-    var total =  GlobalConfig.getTextByKey('total');
-    var per_page =  GlobalConfig.getTextByKey('per_page');
-    var page_size =  GlobalConfig.getTextByKey('page_size');
-    var records =  GlobalConfig.getTextByKey('records');
-    return '<span class="pre">'+front+'</span><input class="data-table-page-number" type="number" min="1" step="1" value="' +
-      currentPage + '" /><span class="next">'+next+'</span>,'+total+'' +
-      totalPage + per_page + pageSize + page_size + iTotalRecords + records;
+    return '<span class="pre">上一页</span><input class="data-table-page-number" type="number" min="1" step="1" value="' +
+      currentPage + '" /><span class="next">下一页</span>,共' + totalPage + '页|每页显示' + pageSize  + '条记录|共' + iTotalRecords + '条记录';
   }
 
   function getTotalPage(iTotalRecords, pageSize) {

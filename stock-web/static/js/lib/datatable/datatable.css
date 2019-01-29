@@ -12,24 +12,19 @@
 
 .data-table-list td>a {
   display: inline-block;
-	padding: 0 10px;
-	height: 25px;
+  padding: 0 10px;
+  height: 25px;
   color: black;
   border-radius: 5px;
   background:#3D8E97 ;
 }
-.data-table-list .opb{
-	border: none;
-	background: none;
-	color: black;
+
+.data-table-list .opb {
+  border: none;
+  background: none;
+  color: black;
   padding: 2px 0px;
   border-radius: 5px;
-}
-.data-table-list .btn-invalid{
-   background:lightgrey ;
-}
-.data-table-list .btn-publish{
-  background:lightskyblue ;
 }
 
 .data-table-list tr.alter {
@@ -39,6 +34,14 @@
 .pagination-panel {
     margin-top: 33px;
     float: right;
+}
+
+.pagination-panel .pre, .next {
+  cursor: pointer;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
 }
 
 .pagination-panel .data-table-page-number {

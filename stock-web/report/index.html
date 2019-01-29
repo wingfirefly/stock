@@ -8,7 +8,7 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-  <title>admin</title>
+  <title>report</title>
   <link rel="stylesheet" type="text/css" href="/static/css/common.css">
   <link rel="stylesheet" type="text/css" href="/static/css/admin.css">
 
@@ -16,7 +16,13 @@
   <script type="text/javascript" src="/static/js/util/common.js"></script>
   <script type="text/javascript" src="/static/js/util/consts.js"></script>
   <script type="text/javascript" src="/static/js/util/frame.js"></script>
-  <script type="text/javascript" src="/static/js/modules/admin.js"></script>
+  <script type="text/javascript" src="/static/js/modules/report.js"></script>
+
+  <script type="text/javascript">
+    function onload() {
+      renderReportMenu(0);
+    }
+  </script>
 
 </head>
 
@@ -25,10 +31,10 @@
 
   <div class="container">
     <div class="innerBox">
-      <div class="backStage">
-        <ul class="menu-nav">
-        </ul>
-      </div>
+      <ul class="menu-nav">
+      </ul>
+      <table id="data-table-list" class="data-table-list">
+      </table>
     </div>
   </div>
 
