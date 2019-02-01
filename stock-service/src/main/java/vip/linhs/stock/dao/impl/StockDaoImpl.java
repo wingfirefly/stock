@@ -72,7 +72,6 @@ public class StockDaoImpl extends BaseDao implements vip.linhs.stock.dao.StockDa
         int totalRecords = jdbcTemplate.queryForObject(dataSqlCondition.getCountSql(),
                 dataSqlCondition.toArgs(), Integer.class);
 
-        dataSqlCondition.addSql(" order by code");
         dataSqlCondition.addSql(" limit ?, ?");
         dataSqlCondition.addPage(pageParam.getStart(), pageParam.getLength());
 

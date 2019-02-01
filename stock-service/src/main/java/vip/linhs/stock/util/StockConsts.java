@@ -73,6 +73,19 @@ public class StockConsts {
         }
     }
 
+    public enum RobotType {
+        DingDing(0);
+        private int value;
+
+        private RobotType(int value) {
+            this.value = value;
+        }
+
+        public int value() {
+            return value;
+        }
+    }
+
     public enum TickerConfigKey {
         StockList("stock_list");
         private String value;

@@ -10,7 +10,7 @@ INSERT INTO `task` (`id`, `name`, `state`, `description`) VALUES ('7', 'update_o
 
 INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('1', '1', '2');
 INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('2', '2', '0');
-INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('3', '3', '0');
+INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('3', '3', '2');
 INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('4', '4', '0');
 INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('5', '5', '2');
 INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('6', '6', '0');
