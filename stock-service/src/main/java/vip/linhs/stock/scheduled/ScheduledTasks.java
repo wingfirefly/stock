@@ -40,7 +40,7 @@ public class ScheduledTasks {
     }
 
     /**
-     * end of day
+     * end of year
      */
     @Scheduled(cron = "0 0 23 31 12 ?")
     public void runEndOfYear() {
