@@ -16,4 +16,4 @@ cp -f $RunHome/$App.jar $RunHome/$App-$Time.jar
 cp -f $ProjectHome/build/libs/$App-$Version.jar $RunHome/$App.jar
 
 cd $RunHome
-nohup java -jar -Xms16m -Xmx32m -Xss1024K -XX:MetaspaceSize=16m -jar $App.jar > /dev/null 2>&1 &
+nohup java -jar -Xms32m -Xmx64m -XX:MetaspaceSize=16m $App.jar > /dev/null 2>&1 &

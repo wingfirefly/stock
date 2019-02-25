@@ -4,7 +4,7 @@
   padding: 10px 10px;
 }
 
-.data-table-list td,th {
+.data-table-list td, th {
   padding: 10px 10px;
   border: 1px solid lightgrey;
   text-align: center;
@@ -16,7 +16,7 @@
   height: 25px;
   color: black;
   border-radius: 5px;
-  background:#3D8E97 ;
+  background: #3D8E97;
 }
 
 .data-table-list .opb {
@@ -28,20 +28,20 @@
 }
 
 .data-table-list tr.alter {
-    background-color: #f5fafe;
+  background-color: #f5fafe;
 }
 
 .pagination-panel {
-    margin-top: 33px;
-    float: right;
+  margin-top: 33px;
+  float: right;
 }
 
 .pagination-panel .pre, .next {
   cursor: pointer;
-  -webkit-user-select:none;
-  -moz-user-select:none;
-  -ms-user-select:none;
-  user-select:none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .pagination-panel .data-table-page-number {
