@@ -7,6 +7,7 @@ INSERT INTO `task` (`id`, `name`, `state`, `description`) VALUES ('4', 'end_of_d
 INSERT INTO `task` (`id`, `name`, `state`, `description`) VALUES ('5', 'update_of_stock', '1', 'update of stock');
 INSERT INTO `task` (`id`, `name`, `state`, `description`) VALUES ('6', 'update_of_stock_state', '1', 'update of stock state');
 INSERT INTO `task` (`id`, `name`, `state`, `description`) VALUES ('7', 'update_of_daily_index', '1', 'update of daily index');
+INSERT INTO `task` (`id`, `name`, `state`, `description`) VALUES ('8', 'ticker', '1', 'ticker');
 
 INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('1', '1', '2');
 INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('2', '2', '0');
@@ -15,6 +16,7 @@ INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('4', '4', '0');
 INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('5', '5', '2');
 INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('6', '6', '0');
 INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('7', '7', '2');
+INSERT INTO `execute_info` (`id`, `task_id`, `state`) VALUES ('8', '8', '2');
 
 INSERT INTO `stock_info` (`id`, `name`, `code`, `exchange`, `abbreviation`, `state`, `description`) VALUES ('1', '上证指数', '000001', 'sh', 'szzs', '0', '上证指数');
 INSERT INTO `stock_info` (`id`, `name`, `code`, `exchange`, `abbreviation`, `state`, `description`) VALUES ('2', '浦发银行', '600000', 'sh', 'pfyh', '0', '');

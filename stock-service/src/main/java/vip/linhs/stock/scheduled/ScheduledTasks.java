@@ -136,7 +136,12 @@ public class ScheduledTasks {
         if (hour == 9 && minute < 30 || hour == 11 && minute > 30) {
             return;
         }
-        taskService.runTicker();
+        try {
+            List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.Ticker.getId());
+            executeTask(list);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 
     private void executeTask(List<ExecuteInfo> list) {

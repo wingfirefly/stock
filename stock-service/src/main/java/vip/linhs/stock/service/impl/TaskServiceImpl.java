@@ -100,6 +100,9 @@ public class TaskServiceImpl implements TaskService {
             case UpdateOfDailyIndex:
                 runUpdateOfDailyIndex();
                 break;
+            case Ticker:
+                runTicker();
+                break;
             default:
                 break;
             }
@@ -216,36 +219,7 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-    private static String getPinyin(String name) {
-        HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
-        defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
-        defaultFormat.setVCharType(HanyuPinyinVCharType.WITH_V);
-        StringBuilder sb = new StringBuilder();
-        for (char ch : name.toLowerCase().toCharArray()) {
-            if (ch == '*') {
-                continue;
-            }
-            if (ch >= 'a' && ch <= 'z') {
-                sb.append(ch);
-            } else if (ch == '行') {
-                sb.append('h');
-            } else {
-                try {
-                    String[] arr = PinyinHelper.toHanyuPinyinStringArray(ch, defaultFormat);
-                    if (arr == null) {
-                        throw new ServiceException("not support character " + name);
-                    }
-                    sb.append(arr[0].charAt(0));
-                } catch (BadHanyuPinyinOutputFormatCombination e) {
-                    throw new ServiceException(e);
-                }
-            }
-        }
-        return sb.toString();
-    }
-
-    @Override
-    public void runTicker() {
+    private void runTicker() {
         List<Map<String, Object>> tickerConfigList = tickerConfigDao
                 .getValuesByKey(StockConsts.TickerConfigKey.StockList.value());
         if (!tickerConfigList.isEmpty()) {
@@ -279,6 +253,34 @@ public class TaskServiceImpl implements TaskService {
                 }
             });
         }
+    }
+
+    private static String getPinyin(String name) {
+        HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
+        defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+        defaultFormat.setVCharType(HanyuPinyinVCharType.WITH_V);
+        StringBuilder sb = new StringBuilder();
+        for (char ch : name.toLowerCase().toCharArray()) {
+            if (ch == '*') {
+                continue;
+            }
+            if (ch >= 'a' && ch <= 'z') {
+                sb.append(ch);
+            } else if (ch == '行') {
+                sb.append('h');
+            } else {
+                try {
+                    String[] arr = PinyinHelper.toHanyuPinyinStringArray(ch, defaultFormat);
+                    if (arr == null) {
+                        throw new ServiceException("not support character " + name);
+                    }
+                    sb.append(arr[0].charAt(0));
+                } catch (BadHanyuPinyinOutputFormatCombination e) {
+                    throw new ServiceException(e);
+                }
+            }
+        }
+        return sb.toString();
     }
 
 }
