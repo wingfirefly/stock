@@ -42,7 +42,7 @@ killTask(port, function() {
   app.use('/api', proxy('http://127.0.0.1:8086'));
   app.use(serveStatic('.'));
   app.listen(port, function() {
-    console.log("http://127.0.0.1:" + port);
+    console.log("http://127.0.0.1:%s", port);
   });
 
 });

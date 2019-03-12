@@ -65,7 +65,7 @@ public class ApiExceptionHandler {
     public CommonResponse handleUnknowException(Exception e, HttpServletRequest request) {
         logger.error("{} internal server error", request.getRequestURI());
         logger.error(e.getMessage(), e);
-        return CommonResponse.buildResponse("server error");
+        return CommonResponse.buildResponse("Internal Server Error");
     }
 
 }

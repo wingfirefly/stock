@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.SqlTypeValue;
 import org.springframework.jdbc.core.StatementCreatorUtils;
@@ -51,6 +52,15 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
         ps.setBigDecimal(7, dailyIndex.getLowestPrice());
         ps.setLong(8, dailyIndex.getTradingVolume());
         ps.setBigDecimal(9, dailyIndex.getTradingValue());
+    }
+
+    @Override
+    public void setStockIdByCode(List<String> list) {
+        String whereCause = String.join(",",
+                list.stream().map(str -> "?").collect(Collectors.toList()));
+        String sql = "update stock_log l, stock_info s set l.stock_info_id = s.id where l.new_value = s.code and s.id > 1 and s.code in ("
+                + whereCause + ")";
+        jdbcTemplate.update(sql, list.toArray());
     }
 
 }

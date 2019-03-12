@@ -7,7 +7,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bosspen1/stock.git"
+    "url": "git@gitee.com:bosspen1/stock.git"
   },
   "keywords": [
     "web",

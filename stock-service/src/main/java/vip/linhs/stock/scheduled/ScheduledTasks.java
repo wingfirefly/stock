@@ -40,7 +40,7 @@ public class ScheduledTasks {
     }
 
     /**
-     * end of day
+     * end of year
      */
     @Scheduled(cron = "0 0 23 31 12 ?")
     public void runEndOfYear() {
@@ -89,7 +89,7 @@ public class ScheduledTasks {
     /**
      * update of stock
      */
-    @Scheduled(cron = "0 30 7,8 ? * MON-FRI")
+    @Scheduled(cron = "0 30 8 ? * MON-FRI")
     public void runUpdateOfStock() {
         boolean isHoliday = holidayCalendarService.isHoliday(new Date());
         if (isHoliday) {
@@ -107,7 +107,7 @@ public class ScheduledTasks {
     /**
      * update of daily index
      */
-    @Scheduled(cron = "0 0 17,18 ? * MON-FRI")
+    @Scheduled(cron = "0 0 17 ? * MON-FRI")
     public void runUpdateOfDailyIndex() {
         boolean isHoliday = holidayCalendarService.isHoliday(new Date());
         if (isHoliday) {
@@ -136,7 +136,12 @@ public class ScheduledTasks {
         if (hour == 9 && minute < 30 || hour == 11 && minute > 30) {
             return;
         }
-        taskService.runTicker();
+        try {
+            List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.Ticker.getId());
+            executeTask(list);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 
     private void executeTask(List<ExecuteInfo> list) {

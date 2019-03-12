@@ -10,6 +10,4 @@ public interface TaskService {
 
     void executeTask(ExecuteInfo executeInfo);
 
-    void runTicker();
-
 }

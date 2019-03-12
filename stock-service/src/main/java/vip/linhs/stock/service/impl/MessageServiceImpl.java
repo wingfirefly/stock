@@ -29,12 +29,13 @@ public class MessageServiceImpl implements MessageService {
     }
 
     private Map<String, Object> buildMessageParams(String content) {
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("msgtype", "text");
-
         HashMap<String, Object> text = new HashMap<>();
         text.put("content", content);
+
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("msgtype", "text");
         params.put("text", text);
+
         return params;
     }
 
