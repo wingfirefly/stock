@@ -3,11 +3,13 @@ package vip.linhs.stock.util;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.http.Consts;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -37,44 +39,51 @@ public class HttpUtil {
     }
 
     public static String sendGet(CloseableHttpClient httpClient, String url, Map<String, String> header, String charset) {
-        HttpGet httpGet = HttpUtil.getHttpGet(url);
-        if (header != null) {
-            header.entrySet().stream().forEach(entry -> httpGet.addHeader(entry.getKey(), entry.getValue()));
-        }
+        HttpGet httpGet = HttpUtil.getHttpGet(url, header);
         if (charset == null) {
             charset = Consts.UTF_8.name();
         }
         return HttpUtil.sendRequest(httpClient, httpGet, charset);
     }
 
-    public static String sendPost(CloseableHttpClient httpClient, String url, List<BasicNameValuePair> parameters) {
-        return HttpUtil.sendPost(httpClient, url, parameters, null);
+    public static String sendPost(CloseableHttpClient httpClient, String url, Map<String, Object> params) {
+        return HttpUtil.sendPost(httpClient, url, params, null);
     }
 
-    public static String sendPost(CloseableHttpClient httpClient, String url, List<BasicNameValuePair> parameters, Map<String, String> header) {
-        HttpPost httpPost = HttpUtil.getHttpPost(url);
-
-        if (header != null) {
-            header.entrySet().stream().forEach(entry -> httpPost.addHeader(entry.getKey(), entry.getValue()));
-        }
-
-        if (parameters != null) {
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(parameters, Consts.UTF_8);
-            httpPost.setEntity(entity);
-        }
-
-        return HttpUtil.sendRequest(httpClient, httpPost, Consts.UTF_8.name());
+    public static String sendPost(CloseableHttpClient httpClient, String url, Map<String, Object> params, Map<String, String> header) {
+        HttpPost httpPost = HttpUtil.getHttpPost(url, header);
+        return HttpUtil.sendEntityRequest(httpClient, httpPost, params);
     }
 
     public static String sendPostJson(CloseableHttpClient httpClient, String url, Map<String, Object> params) {
-        HttpPost httpPost = HttpUtil.getHttpPost(url);
+        return HttpUtil.sendPostJson(httpClient, url, params, null);
+    }
+
+    public static String sendPostJson(CloseableHttpClient httpClient, String url, Map<String, Object> params, Map<String, String> header) {
+        HttpPost httpPost = HttpUtil.getHttpPost(url, header);
         httpPost.addHeader("Content-type", "application/json; charset=utf-8");
+        return HttpUtil.sendStringEntityRequest(httpClient, httpPost, params);
+    }
 
-        String json = JSON.toJSONString(params);
-        StringEntity entity = new StringEntity(json, Consts.UTF_8);
-        httpPost.setEntity(entity);
+    private static String sendEntityRequest(CloseableHttpClient httpClient, HttpEntityEnclosingRequestBase request, Map<String, Object> params) {
+        if (params != null) {
+            List<BasicNameValuePair> parameters = params.entrySet().stream().map(entry ->
+                new BasicNameValuePair(entry.getKey(), String.valueOf(entry.getValue()))
+            ).collect(Collectors.toList());
 
-        return HttpUtil.sendRequest(httpClient, httpPost, Consts.UTF_8.name());
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(parameters, Consts.UTF_8);
+            request.setEntity(entity);
+        }
+        return HttpUtil.sendRequest(httpClient, request, Consts.UTF_8.name());
+    }
+
+    private static String sendStringEntityRequest(CloseableHttpClient httpClient, HttpEntityEnclosingRequestBase request, Map<String, Object> params) {
+        if (params != null) {
+            String json = JSON.toJSONString(params);
+            StringEntity entity = new StringEntity(json, Consts.UTF_8);
+            request.setEntity(entity);
+        }
+        return HttpUtil.sendRequest(httpClient, request, Consts.UTF_8.name());
     }
 
     private static String sendRequest(CloseableHttpClient httpClient, HttpUriRequest request, String charset) {
@@ -87,15 +96,21 @@ public class HttpUtil {
         }
     }
 
-    private static HttpGet getHttpGet(String url) {
+    private static HttpGet getHttpGet(String url, Map<String, String> header) {
         HttpGet httpGet = new HttpGet(url);
+        if (header != null) {
+            header.entrySet().stream().forEach(entry -> httpGet.addHeader(entry.getKey(), entry.getValue()));
+        }
         RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(3500).setConnectTimeout(3500).build();
         httpGet.setConfig(requestConfig);
         return httpGet;
     }
 
-    private static HttpPost getHttpPost(String url) {
+    private static HttpPost getHttpPost(String url, Map<String, String> header) {
         HttpPost httpPost = new HttpPost(url);
+        if (header != null) {
+            header.entrySet().stream().forEach(entry -> httpPost.addHeader(entry.getKey(), entry.getValue()));
+        }
         RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(3500).setConnectTimeout(3500).build();
         httpPost.setConfig(requestConfig);
         return httpPost;
