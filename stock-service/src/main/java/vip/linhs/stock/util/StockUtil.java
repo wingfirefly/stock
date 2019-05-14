@@ -41,8 +41,8 @@ public class StockUtil {
         if (code.startsWith("600") || code.startsWith("601") || code.startsWith("603")) {
             return Exchange.SH.getName();
         }
-        if (code.startsWith("000") || code.startsWith("002") || code.startsWith("003") || code.startsWith("004")
-                || code.startsWith("300")) {
+        if (code.startsWith("000") || code.startsWith("002") || code.startsWith("300")
+                || code.startsWith("688")) {
             return Exchange.SZ.getName();
         }
         return null;
