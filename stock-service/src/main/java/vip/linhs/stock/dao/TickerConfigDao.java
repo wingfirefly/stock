@@ -1,10 +1,11 @@
 package vip.linhs.stock.dao;
 
 import java.util.List;
-import java.util.Map;
+
+import vip.linhs.stock.model.po.TickerConfig;
 
 public interface TickerConfigDao {
 
-    List<Map<String, Object>> getValuesByKey(String key);
+    List<TickerConfig> getListByKey(String key);
 
 }

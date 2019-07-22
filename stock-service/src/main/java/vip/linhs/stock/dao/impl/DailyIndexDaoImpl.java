@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.SqlTypeValue;
@@ -57,19 +56,9 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
     }
 
     @Override
-    public void setStockIdByCodeType(List<String> list, int type) {
-        String whereCause = String.join(",",
-                list.stream().map(str -> "?").collect(Collectors.toList()));
-        String sql = "update stock_log l, stock_info s set l.stock_info_id = s.id where l.new_value = s.name and s.id > 1 and s.code in ("
-                + whereCause + ") and l.type = ?";
-        list.add(String.valueOf(type));
-        jdbcTemplate.update(sql, list.toArray());
-    }
-
-    @Override
     public DailyIndex getDailyIndexByFullCodeAndDate(String fullCode, Date date) {
         List<DailyIndex> list = jdbcTemplate.query(
-                "select d.id, d.stock_info_id, d.date from daily_index d where stock_info_id = (select id from stock_info s where concat(s.exchange, s.code) = ? and d.date = ? limit 0, 1)",
+                "select d.id, d.stock_info_id, d.date from daily_index d where stock_info_id = (select id from stock_info s where concat(s.exchange, s.code) = ?) and d.date = ? limit 0, 1",
                 new Object[] { fullCode, new java.sql.Date(date.getTime()) }, new BeanPropertyRowMapper<>(DailyIndex.class));
         return list.isEmpty() ? null : list.get(0);
     }

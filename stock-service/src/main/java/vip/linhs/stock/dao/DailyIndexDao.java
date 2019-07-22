@@ -11,8 +11,6 @@ public interface DailyIndexDao {
 
     void save(List<DailyIndex> list);
 
-    void setStockIdByCodeType(List<String> list, int type);
-
     DailyIndex getDailyIndexByFullCodeAndDate(String fullCode, Date date);
 
 }

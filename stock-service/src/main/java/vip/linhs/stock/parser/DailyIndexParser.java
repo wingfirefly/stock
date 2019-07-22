@@ -63,7 +63,7 @@ public class DailyIndexParser {
 
         trStartIndex = content.indexOf("<tr>", trEndIndex);
 
-        ArrayList<DailyIndex> list = new ArrayList<>();
+        ArrayList<DailyIndex> list = new ArrayList<>(3000);
         while (trStartIndex > 0) {
             trEndIndex = content.indexOf("<tr>", trStartIndex + 2);
             String trContent = content.substring(trStartIndex, trEndIndex);

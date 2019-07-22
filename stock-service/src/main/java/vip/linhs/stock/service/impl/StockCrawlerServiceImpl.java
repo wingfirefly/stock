@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import vip.linhs.stock.model.po.DailyIndex;
@@ -24,6 +25,7 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
     private CloseableHttpClient httpClient;
 
     @Autowired
+    @Qualifier("eastmoneyStockInfoParser")
     private StockInfoParser stockInfoParser;
 
     @Autowired
@@ -32,16 +34,17 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
     @Override
     public List<StockInfo> getStockList() {
         ArrayList<StockInfo> list = new ArrayList<>();
-        list.addAll(getStockList("ha"));
-        list.addAll(getStockList("sa"));
-        list.addAll(getStockList("gem"));
+        list.addAll(getStockList("m:0+t:6,m:0+t:13,m:0+t:80,m:1+t:2"));
+        list.addAll(getStockList("m:1+t:23"));
         return list;
     }
 
-    private List<StockInfo> getStockList(String type) {
-        String content = HttpUtil.sendGet(httpClient, "http://app.finance.ifeng.com/hq/list.php?type=stock_a&class=" + type);
+    private List<StockInfo> getStockList(String fs) {
+        String content = HttpUtil.sendGet(httpClient, "http://20.push2.eastmoney.com/api/qt/clist/get?pn=1&pz=10000000&np=1&fields=f12,f14&fs=" + fs);
         if (content != null) {
-            return stockInfoParser.parseStockInfoList(content);
+            List<StockInfo> list = stockInfoParser.parseStockInfoList(content);
+            list.forEach(stockInfo -> stockInfo.setAbbreviation(StockUtil.getPinyin(stockInfo.getName())));
+            return list;
         }
         return Collections.emptyList();
     }

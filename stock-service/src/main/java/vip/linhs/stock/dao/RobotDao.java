@@ -1,10 +1,13 @@
 package vip.linhs.stock.dao;
 
 import java.util.List;
-import java.util.Map;
+
+import vip.linhs.stock.model.po.Robot;
 
 public interface RobotDao {
 
-    List<Map<String, Object>> getByType(int type);
+    Robot getById(int id);
+
+    List<Robot> getListByType(int type);
 
 }

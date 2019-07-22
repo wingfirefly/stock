@@ -1,9 +1,13 @@
 package vip.linhs.stock.config;
 
+import java.time.Duration;
+
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
@@ -13,6 +17,8 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 
 import vip.linhs.stock.web.interceptor.AuthInterceptor;
 
@@ -67,6 +73,18 @@ public class AppConfig implements WebMvcConfigurer {
         executor.setKeepAliveSeconds(60);
         executor.initialize();
         return executor;
+    }
+
+    @Bean
+    public RedisCacheConfiguration redisCacheConfiguration() {
+        GenericFastJsonRedisSerializer genericFastJsonRedisSerializer = new GenericFastJsonRedisSerializer();
+
+        RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig();
+
+        return defaultCacheConfig
+                .serializeValuesWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(genericFastJsonRedisSerializer))
+                .entryTtl(Duration.ofHours(6));
     }
 
 }

@@ -16,7 +16,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
 
 import vip.linhs.stock.dao.DailyIndexDao;
-import vip.linhs.stock.dao.StockDao;
+import vip.linhs.stock.dao.StockInfoDao;
 import vip.linhs.stock.dao.StockLogDao;
 import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.StockInfo;
@@ -37,7 +37,7 @@ public class StockServiceImpl implements StockService {
     private static final String LIST_MESSAGE = "'list' must not be null";
 
     @Autowired
-    private StockDao stockDao;
+    private StockInfoDao stockInfoDao;
 
     @Autowired
     private StockLogDao stockLogDao;
@@ -56,7 +56,7 @@ public class StockServiceImpl implements StockService {
         PageParam pageParam = new PageParam();
         pageParam.setStart(0);
         pageParam.setLength(Integer.MAX_VALUE);
-        PageVo<StockInfo> pageVo = stockDao.get(pageParam);
+        PageVo<StockInfo> pageVo = stockInfoDao.get(pageParam);
         return pageVo.getData();
     }
 
@@ -73,7 +73,7 @@ public class StockServiceImpl implements StockService {
     public void add(List<StockInfo> list) {
         Assert.notNull(list, StockServiceImpl.LIST_MESSAGE);
         if (!list.isEmpty()) {
-            stockDao.add(list);
+            stockInfoDao.add(list);
         }
     }
 
@@ -81,7 +81,7 @@ public class StockServiceImpl implements StockService {
     public void update(List<StockInfo> list) {
         Assert.notNull(list, StockServiceImpl.LIST_MESSAGE);
         if (!list.isEmpty()) {
-            stockDao.update(list);
+            stockInfoDao.update(list);
         }
     }
 
@@ -108,7 +108,7 @@ public class StockServiceImpl implements StockService {
         if (needAddedList != null && !needAddedList.isEmpty()) {
             List<String> newCodeList = needAddedList.stream().map(StockInfo::getCode)
                     .collect(Collectors.toList());
-            dailyIndexDao.setStockIdByCodeType(newCodeList, StockConsts.StockLogType.New.value());
+            stockInfoDao.setStockIdByCodeType(newCodeList, StockConsts.StockLogType.New.value());
         }
     }
 
@@ -173,12 +173,17 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public PageVo<StockInfo> getStockList(PageParam pageParam) {
-        return stockDao.get(pageParam);
+        return stockInfoDao.get(pageParam);
     }
 
     @Override
     public boolean existsTodayDailyIndex() {
         return dailyIndexDao.getDailyIndexByFullCodeAndDate("sz000001", new Date()) != null;
+    }
+
+    @Override
+    public StockInfo getStockByFullCode(String code) {
+        return stockInfoDao.getStockByFullCode(code);
     }
 
 }

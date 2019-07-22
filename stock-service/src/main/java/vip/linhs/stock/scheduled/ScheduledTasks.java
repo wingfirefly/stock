@@ -10,10 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import vip.linhs.stock.api.TradeResultVo;
+import vip.linhs.stock.api.request.GetAssetsRequest;
+import vip.linhs.stock.api.response.GetAssetsResponse;
 import vip.linhs.stock.model.po.ExecuteInfo;
 import vip.linhs.stock.model.po.Task;
 import vip.linhs.stock.service.HolidayCalendarService;
 import vip.linhs.stock.service.TaskService;
+import vip.linhs.stock.service.TradeApiService;
 
 @Component
 public class ScheduledTasks {
@@ -25,6 +29,9 @@ public class ScheduledTasks {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private TradeApiService tradeApiService;
 
     /**
      * begin of year
@@ -124,7 +131,7 @@ public class ScheduledTasks {
     /**
      * ticker
      */
-    @Scheduled(cron = "0 * 9,10,11,13,14 ? * MON-FRI")
+    @Scheduled(cron = "0,15,30,45 * 9,10,11,13,14 ? * MON-FRI")
     public void runTicker() {
         boolean isHoliday = holidayCalendarService.isHoliday(new Date());
         if (isHoliday) {
@@ -137,7 +144,7 @@ public class ScheduledTasks {
             return;
         }
         try {
-            List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.Ticker.getId());
+            List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.Ticker.getId(), Task.TradeTicker.getId());
             executeTask(list);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -147,6 +154,14 @@ public class ScheduledTasks {
     private void executeTask(List<ExecuteInfo> list) {
         for (ExecuteInfo executeInfo : list) {
             taskService.executeTask(executeInfo);
+        }
+    }
+
+    @Scheduled(cron = "0 0,20,40 * * * ?")
+    public void heartbeat() {
+        TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(new GetAssetsRequest(1));
+        if (!tradeResultVo.isSuccess()) {
+            logger.error("heartbeat: " + tradeResultVo.getMessage());
         }
     }
 

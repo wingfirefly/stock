@@ -6,12 +6,16 @@ import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 
-public interface StockDao {
+public interface StockInfoDao {
 
     void add(List<StockInfo> list);
 
     void update(List<StockInfo> list);
 
+    void setStockIdByCodeType(List<String> list, int type);
+
     PageVo<StockInfo> get(PageParam pageParam);
+
+    StockInfo getStockByFullCode(String code);
 
 }

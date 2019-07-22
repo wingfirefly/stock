@@ -3,6 +3,7 @@ package vip.linhs.stock.dao.impl;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -15,7 +16,9 @@ import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.util.SqlCondition;
 
 @Repository
-public class StockDaoImpl extends BaseDao implements vip.linhs.stock.dao.StockDao {
+public class StockInfoDaoImpl extends BaseDao implements vip.linhs.stock.dao.StockInfoDao {
+
+    private static final String SELECT_SQL = "select id, code, name, exchange, abbreviation, state, create_time as createTime, update_time as updateTime from stock_info where mark_for_delete = false";
 
     @Override
     public void add(List<StockInfo> list) {
@@ -64,9 +67,19 @@ public class StockDaoImpl extends BaseDao implements vip.linhs.stock.dao.StockDa
     }
 
     @Override
+    public void setStockIdByCodeType(List<String> list, int type) {
+        String whereCause = String.join(",",
+                list.stream().map(str -> "?").collect(Collectors.toList()));
+        String sql = "update stock_log l, stock_info s set l.stock_info_id = s.id where l.new_value = s.name and s.id > 1 and s.code in ("
+                + whereCause + ") and l.type = ?";
+        list.add(String.valueOf(type));
+        jdbcTemplate.update(sql, list.toArray());
+    }
+
+    @Override
     public PageVo<StockInfo> get(PageParam pageParam) {
         SqlCondition dataSqlCondition = new SqlCondition(
-                "select id, code, name, exchange, abbreviation, state, create_time as createTime, update_time as updateTime from stock_info where mark_for_delete = false",
+                StockInfoDaoImpl.SELECT_SQL,
                 pageParam.getCondition());
 
         int totalRecords = jdbcTemplate.queryForObject(dataSqlCondition.getCountSql(),
@@ -78,6 +91,12 @@ public class StockDaoImpl extends BaseDao implements vip.linhs.stock.dao.StockDa
         List<StockInfo> list = jdbcTemplate.query(dataSqlCondition.toSql(),
                 dataSqlCondition.toArgs(), new BeanPropertyRowMapper<>(StockInfo.class));
         return new PageVo<>(list, totalRecords);
+    }
+
+    @Override
+    public StockInfo getStockByFullCode(String code) {
+        return jdbcTemplate.queryForObject(StockInfoDaoImpl.SELECT_SQL + " and concat(exchange, code) = ?",
+                new String[] { code }, new BeanPropertyRowMapper<>(StockInfo.class));
     }
 
 }

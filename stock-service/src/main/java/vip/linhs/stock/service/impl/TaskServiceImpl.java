@@ -15,26 +15,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import net.sourceforge.pinyin4j.PinyinHelper;
-import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
-import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
-import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
-import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 import vip.linhs.stock.dao.ExecuteInfoDao;
-import vip.linhs.stock.dao.RobotDao;
-import vip.linhs.stock.dao.TickerConfigDao;
 import vip.linhs.stock.exception.ServiceException;
 import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.ExecuteInfo;
-import vip.linhs.stock.model.po.Message;
+import vip.linhs.stock.model.po.Robot;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.po.StockLog;
 import vip.linhs.stock.model.po.Task;
+import vip.linhs.stock.model.po.TickerConfig;
 import vip.linhs.stock.service.HolidayCalendarService;
 import vip.linhs.stock.service.MessageService;
+import vip.linhs.stock.service.RobotService;
 import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.service.StockService;
+import vip.linhs.stock.service.StrategyService;
 import vip.linhs.stock.service.TaskService;
+import vip.linhs.stock.service.TickerConfigService;
 import vip.linhs.stock.util.DecimalUtil;
 import vip.linhs.stock.util.StockConsts;
 import vip.linhs.stock.util.StockConsts.TaskState;
@@ -60,13 +57,16 @@ public class TaskServiceImpl implements TaskService {
     private StockService stockService;
 
     @Autowired
-    private TickerConfigDao tickerConfigDao;
-
-    @Autowired
-    private RobotDao robotDao;
+    private RobotService robotService;
 
     @Autowired
     private MessageService messageServicve;
+
+    @Autowired
+    private StrategyService strategyService;
+
+    @Autowired
+    private TickerConfigService tickerConfigService;
 
     @Override
     public List<ExecuteInfo> getPendingTaskListById(int... id) {
@@ -103,6 +103,8 @@ public class TaskServiceImpl implements TaskService {
             case Ticker:
                 runTicker();
                 break;
+            case TradeTicker:
+                runTradeTicker();
             default:
                 break;
             }
@@ -110,15 +112,12 @@ public class TaskServiceImpl implements TaskService {
             executeInfo.setMessage(e.getMessage());
             logger.error(e.getMessage(), e);
 
-            List<Map<String, Object>> robotList = robotDao
-                    .getByType(StockConsts.RobotType.DingDing.value());
+            List<Robot> robotList = robotService.getListByType(StockConsts.RobotType.DingDing.value());
             if (!robotList.isEmpty()) {
-                Map<String, Object> robot = robotList.get(0);
-                String target = (String) robot.get("webhook");
-                Message message = new Message(StockConsts.MessageType.DingDing.value(), target,
-                        String.format("task: %s, error: %s", task.getName(), e.getMessage()),
-                        new Date());
-                messageServicve.sendDingding(message);
+                Robot robot = robotList.get(0);
+                String target = robot.getWebhook();
+                String body = String.format("task: %s, error: %s", task.getName(), e.getMessage());
+                messageServicve.sendDingding(body, target);
             }
         }
 
@@ -130,7 +129,7 @@ public class TaskServiceImpl implements TaskService {
         List<StockInfo> list = stockService.getAll().stream().filter(stockInfo ->
                !StockUtil.isCompositeIndex(stockInfo.getExchange(), stockInfo.getCode())
         ).collect(Collectors.toList());
-        Map<String, List<StockInfo>> stockMap = list.stream().collect(Collectors.groupingBy(StockInfo::getCode));
+        Map<String, List<StockInfo>> dbStockMap = list.stream().collect(Collectors.groupingBy(StockInfo::getCode));
 
         ArrayList<StockInfo> needAddedList = new ArrayList<>();
         ArrayList<StockInfo> needUpdatedList = new ArrayList<>();
@@ -141,8 +140,7 @@ public class TaskServiceImpl implements TaskService {
         List<StockInfo> crawlerList = stockCrawlerService.getStockList();
         for (StockInfo stockInfo : crawlerList) {
             StockConsts.StockLogType stocLogType = null;
-            List<StockInfo> stockGroupList = stockMap.get(stockInfo.getCode());
-            stockInfo.setAbbreviation(TaskServiceImpl.getPinyin(stockInfo.getName()));
+            List<StockInfo> stockGroupList = dbStockMap.get(stockInfo.getCode());
             String oldValue = null;
             String newValue = null;
             if (stockGroupList == null) {
@@ -160,8 +158,7 @@ public class TaskServiceImpl implements TaskService {
             }
 
             if (stocLogType != null) {
-                StockLog stockLog = new StockLog(stockInfo.getId(), date, stocLogType.value(),
-                        oldValue, newValue);
+                StockLog stockLog = new StockLog(stockInfo.getId(), date, stocLogType.value(), oldValue, newValue);
                 if (stocLogType == StockConsts.StockLogType.New) {
                     needAddedList.add(stockInfo);
                 } else {
@@ -212,7 +209,7 @@ public class TaskServiceImpl implements TaskService {
                         && stockInfo.getState() != StockConsts.StockState.Terminated.value())
                 .collect(Collectors.toList());
         final String currentDateStr = DateUtils.formatDate(new Date(), "yyyy-MM-dd");
-        ArrayList<DailyIndex> needSaveList = new ArrayList<>();
+        ArrayList<DailyIndex> needSaveList = new ArrayList<>(list.size());
         for (StockInfo stockInfo : list) {
             DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(stockInfo.getExchange() + stockInfo.getCode());
             if (dailyIndex != null
@@ -230,12 +227,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void runTicker() {
-        List<Map<String, Object>> tickerConfigList = tickerConfigDao
-                .getValuesByKey(StockConsts.TickerConfigKey.StockList.value());
-        if (!tickerConfigList.isEmpty()) {
-            Map<String, Object> tickerConfig = tickerConfigList.get(0);
-            List<String> stockCodeList = Arrays.asList(((String) tickerConfig.get("value")).split(","));
-            String target = (String) tickerConfig.get("webhook");
+        List<TickerConfig> configList = tickerConfigService.getListByKey(StockConsts.TickerConfigKey.StockList.value());
+        if (!configList.isEmpty()) {
+            TickerConfig tickerConfig = configList.get(0);
+            List<String> stockCodeList = Arrays.asList(tickerConfig.getValue().split(","));
+            Robot robot = robotService.getById(tickerConfig.getRobotId());
+            String target = robot.getWebhook();
             stockCodeList.forEach(code -> {
                 DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(code);
                 if (tickerMap.containsKey(code)) {
@@ -245,52 +242,24 @@ public class TaskServiceImpl implements TaskService {
                                     .movePointRight(2).doubleValue());
                     if (Double.compare(rate, 2) >= 0) {
                         tickerMap.put(code, dailyIndex.getClosingPrice());
-                        String content = String.format("%s:当前价格:%.02f, 涨幅%.02f%%", code,
+                        String body = String.format("%s:当前价格:%.02f, 涨幅%.02f%%", code,
                             dailyIndex.getClosingPrice().doubleValue(),
                             StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
                                     dailyIndex.getPreClosingPrice()).movePointRight(2).doubleValue());
-                        Message message = new Message(StockConsts.MessageType.DingDing.value(),
-                                target, content, new Date());
-                        messageServicve.sendDingding(message);
+                        messageServicve.sendDingding(body, target);
                     }
                 } else {
                     tickerMap.put(code, dailyIndex.getPreClosingPrice());
-                    String content = String.format("%s:当前价格:%.02f", code,
+                    String body = String.format("%s:当前价格:%.02f", code,
                             dailyIndex.getClosingPrice().doubleValue());
-                    Message message = new Message(StockConsts.MessageType.DingDing.value(), target,
-                            content, new Date());
-                    messageServicve.sendDingding(message);
+                    messageServicve.sendDingding(body, target);
                 }
             });
         }
     }
 
-    private static String getPinyin(String name) {
-        HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
-        defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
-        defaultFormat.setVCharType(HanyuPinyinVCharType.WITH_V);
-        StringBuilder sb = new StringBuilder();
-        for (char ch : name.toLowerCase().toCharArray()) {
-            if (ch == '*') {
-                continue;
-            }
-            if (ch >= 'a' && ch <= 'z') {
-                sb.append(ch);
-            } else if (ch == '行') {
-                sb.append('h');
-            } else {
-                try {
-                    String[] arr = PinyinHelper.toHanyuPinyinStringArray(ch, defaultFormat);
-                    if (arr == null) {
-                        throw new ServiceException("not support character " + name);
-                    }
-                    sb.append(arr[0].charAt(0));
-                } catch (BadHanyuPinyinOutputFormatCombination e) {
-                    throw new ServiceException("get pinyin error", e);
-                }
-            }
-        }
-        return sb.toString();
+    private void runTradeTicker() {
+        strategyService.execute();
     }
 
 }

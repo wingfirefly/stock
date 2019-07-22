@@ -34,4 +34,6 @@ public interface StockService {
 
     boolean existsTodayDailyIndex();
 
+    StockInfo getStockByFullCode(String code);
+
 }

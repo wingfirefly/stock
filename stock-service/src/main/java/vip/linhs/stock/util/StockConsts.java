@@ -6,6 +6,15 @@ public class StockConsts {
 
     public static final String KEY_AUTH_TOKEN = "auth_token";
 
+    public static final String CACHE_KEY_CONFIG_PREFIX = "stock:config:";
+    public static final String CACHE_KEY_CONFIG_TICKER = StockConsts.CACHE_KEY_CONFIG_PREFIX + "tickerConfig";
+    public static final String CACHE_KEY_CONFIG_ROBOT = StockConsts.CACHE_KEY_CONFIG_PREFIX + "robot";
+
+    public static final String CACHE_KEY_TRADE_PREFIX = "stock:trade:";
+    public static final String CACHE_KEY_TRADE_USER = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeUser";
+    public static final String CACHE_KEY_TRADE_RULE = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeRule";
+    public static final String CACHE_KEY_TRADE_METHOD = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeMethod";
+
     enum Exchange {
         SH("sh"), SZ("sz");
         private String name;
@@ -78,6 +87,19 @@ public class StockConsts {
         private int value;
 
         private RobotType(int value) {
+            this.value = value;
+        }
+
+        public int value() {
+            return value;
+        }
+    }
+
+    public enum TradeState {
+        Invalid(0), Valid(1);
+        private int value;
+
+        private TradeState(int value) {
             this.value = value;
         }
 

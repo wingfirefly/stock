@@ -16,7 +16,7 @@ public class ExecuteInfoDaoImpl extends BaseDao implements ExecuteInfoDao {
 
     @Override
     public List<ExecuteInfo> getByTaskIdAndState(int[] id, int state) {
-        ArrayList<Integer> paramsList = new ArrayList<>();
+        ArrayList<Integer> paramsList = new ArrayList<>(id.length);
         for (int i : id) {
             paramsList.add(i);
         }
