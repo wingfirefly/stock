@@ -14,10 +14,6 @@ public interface StockService {
 
     List<StockInfo> getAllListed();
 
-    void add(List<StockInfo> list);
-
-    void update(List<StockInfo> list);
-
     void addStockLog(List<StockLog> list);
 
     void update(List<StockInfo> needAddedList, List<StockInfo> needUpdatedList, List<StockLog> stockLogList);

@@ -159,9 +159,12 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 0,20,40 * * * ?")
     public void heartbeat() {
-        TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(new GetAssetsRequest(1));
-        if (!tradeResultVo.isSuccess()) {
-            logger.error("heartbeat: " + tradeResultVo.getMessage());
+        List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.TradeTicker.getId());
+        if (!list.isEmpty()) {
+            TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(new GetAssetsRequest(1));
+            if (!tradeResultVo.isSuccess()) {
+                logger.error("heartbeat: " + tradeResultVo.getMessage());
+            }
         }
     }
 

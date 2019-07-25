@@ -235,24 +235,28 @@ public class TaskServiceImpl implements TaskService {
             String target = robot.getWebhook();
             stockCodeList.forEach(code -> {
                 DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(code);
-                if (tickerMap.containsKey(code)) {
-                    BigDecimal lastPrice = tickerMap.get(code);
-                    double rate = Math
-                            .abs(StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(), lastPrice)
-                                    .movePointRight(2).doubleValue());
-                    if (Double.compare(rate, 2) >= 0) {
-                        tickerMap.put(code, dailyIndex.getClosingPrice());
-                        String body = String.format("%s:当前价格:%.02f, 涨幅%.02f%%", code,
-                            dailyIndex.getClosingPrice().doubleValue(),
-                            StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
-                                    dailyIndex.getPreClosingPrice()).movePointRight(2).doubleValue());
+                if (dailyIndex != null) {
+                    if (tickerMap.containsKey(code)) {
+                        BigDecimal lastPrice = tickerMap.get(code);
+                        double rate = Math
+                                .abs(StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(), lastPrice)
+                                        .movePointRight(2).doubleValue());
+                        if (Double.compare(rate, 2) >= 0) {
+                            tickerMap.put(code, dailyIndex.getClosingPrice());
+                            String name = stockService.getStockByFullCode(StockUtil.getFullCode(code)).getName();
+                            String body = String.format("%s:当前价格:%.02f, 涨幅%.02f%%", name,
+                                dailyIndex.getClosingPrice().doubleValue(),
+                                StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
+                                        dailyIndex.getPreClosingPrice()).movePointRight(2).doubleValue());
+                            messageServicve.sendDingding(body, target);
+                        }
+                    } else {
+                        tickerMap.put(code, dailyIndex.getPreClosingPrice());
+                        String name = stockService.getStockByFullCode(StockUtil.getFullCode(code)).getName();
+                        String body = String.format("%s:当前价格:%.02f", name,
+                                dailyIndex.getClosingPrice().doubleValue());
                         messageServicve.sendDingding(body, target);
                     }
-                } else {
-                    tickerMap.put(code, dailyIndex.getPreClosingPrice());
-                    String body = String.format("%s:当前价格:%.02f", code,
-                            dailyIndex.getClosingPrice().doubleValue());
-                    messageServicve.sendDingding(body, target);
                 }
             });
         }

@@ -24,10 +24,12 @@ import vip.linhs.stock.model.po.TradeOrder;
 import vip.linhs.stock.model.po.TradeRule;
 import vip.linhs.stock.service.MessageService;
 import vip.linhs.stock.service.RobotService;
+import vip.linhs.stock.service.StockService;
 import vip.linhs.stock.service.StrategyService;
 import vip.linhs.stock.service.TradeApiService;
 import vip.linhs.stock.service.TradeService;
 import vip.linhs.stock.util.StockConsts;
+import vip.linhs.stock.util.StockUtil;
 
 @Service("volumeStrategyServiceImpl")
 public class VolumeStrategyServiceImpl implements StrategyService {
@@ -48,6 +50,9 @@ public class VolumeStrategyServiceImpl implements StrategyService {
 
     @Autowired
     private TradeService tradeService;
+
+    @Autowired
+    private StockService stockService;
 
     @Override
     public void execute() {
@@ -143,7 +148,8 @@ public class VolumeStrategyServiceImpl implements StrategyService {
             if (!robotList.isEmpty()) {
                 Robot robot = robotList.get(0);
                 String target = robot.getWebhook();
-                String body = String.format("%s %s %d %.02f %s", tradeType, code, amount, price, tradeResultVo.getMessage() == null ? "" : tradeResultVo.getMessage());
+                String name = stockService.getStockByFullCode(StockUtil.getFullCode(code)).getName();
+                String body = String.format("%s %s %d %.02f %s", tradeType, name, amount, price, tradeResultVo.getMessage() == null ? "" : tradeResultVo.getMessage());
                 messageServicve.sendDingding(body, target);
             }
         } catch (Exception e) {

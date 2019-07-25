@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -70,22 +72,6 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public void add(List<StockInfo> list) {
-        Assert.notNull(list, StockServiceImpl.LIST_MESSAGE);
-        if (!list.isEmpty()) {
-            stockInfoDao.add(list);
-        }
-    }
-
-    @Override
-    public void update(List<StockInfo> list) {
-        Assert.notNull(list, StockServiceImpl.LIST_MESSAGE);
-        if (!list.isEmpty()) {
-            stockInfoDao.update(list);
-        }
-    }
-
-    @Override
     public void addStockLog(List<StockLog> list) {
         Assert.notNull(list, StockServiceImpl.LIST_MESSAGE);
         if (!list.isEmpty()) {
@@ -93,6 +79,7 @@ public class StockServiceImpl implements StockService {
         }
     }
 
+    @CacheEvict(value = StockConsts.CACHE_KEY_DATA_CODE, allEntries = true)
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     @Override
     public void update(List<StockInfo> needAddedList, List<StockInfo> needUpdatedList, List<StockLog> stockLogList) {
@@ -109,6 +96,20 @@ public class StockServiceImpl implements StockService {
             List<String> newCodeList = needAddedList.stream().map(StockInfo::getCode)
                     .collect(Collectors.toList());
             stockInfoDao.setStockIdByCodeType(newCodeList, StockConsts.StockLogType.New.value());
+        }
+    }
+
+    private void add(List<StockInfo> list) {
+        Assert.notNull(list, StockServiceImpl.LIST_MESSAGE);
+        if (!list.isEmpty()) {
+            stockInfoDao.add(list);
+        }
+    }
+
+    private void update(List<StockInfo> list) {
+        Assert.notNull(list, StockServiceImpl.LIST_MESSAGE);
+        if (!list.isEmpty()) {
+            stockInfoDao.update(list);
         }
     }
 
@@ -181,6 +182,7 @@ public class StockServiceImpl implements StockService {
         return dailyIndexDao.getDailyIndexByFullCodeAndDate("sz000001", new Date()) != null;
     }
 
+    @Cacheable(value = StockConsts.CACHE_KEY_DATA_CODE, key = "#code")
     @Override
     public StockInfo getStockByFullCode(String code) {
         return stockInfoDao.getStockByFullCode(code);
