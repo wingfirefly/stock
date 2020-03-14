@@ -1,45 +1,63 @@
 package vip.linhs.stock.web.controller;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import vip.linhs.stock.api.TradeResultVo;
-import vip.linhs.stock.api.request.AuthenticationRequest;
-import vip.linhs.stock.api.response.AuthenticationResponse;
-import vip.linhs.stock.model.po.TradeUser;
+import vip.linhs.stock.exception.FieldInputException;
+import vip.linhs.stock.model.po.User;
 import vip.linhs.stock.model.vo.CommonResponse;
-import vip.linhs.stock.service.TradeApiService;
-import vip.linhs.stock.service.TradeService;
+import vip.linhs.stock.model.vo.UserVo;
+import vip.linhs.stock.service.UserService;
 
 @RestController
 @RequestMapping("user")
 public class UserController extends BaseController {
 
     @Autowired
-    private TradeApiService tradeApiService;
+    private UserService userService;
 
-    @Autowired
-    private TradeService tradeService;
-
-    @PostMapping("trade/login")
-    public CommonResponse login(int userId, String password, String identifyCode) {
-        AuthenticationRequest request = new AuthenticationRequest(userId);
-        request.setPassword(password);
-        request.setIdentifyCode(identifyCode);
-
-        TradeResultVo<AuthenticationResponse> resultVo = tradeApiService.authentication(request);
-        if (resultVo.isSuccess()) {
-            AuthenticationResponse response = resultVo.getData().get(0);
-            TradeUser tradeUser = new TradeUser();
-            tradeUser.setId(request.getUserId());
-            tradeUser.setCookie(response.getCookie());
-            tradeUser.setValidateKey(response.getValidateKey());
-            tradeService.update(tradeUser);
-            resultVo.setMessage("success");
+    @PostMapping("login")
+    public UserVo login(String username, String password) {
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+            FieldInputException e = new FieldInputException();
+            e.addError("user", "username and password could not be null");
+            throw e;
         }
-        CommonResponse response = CommonResponse.buildResponse(resultVo.getMessage());
-        return response;
+        User user = userService.login(username, password);
+        if (user == null) {
+            FieldInputException e = new FieldInputException();
+            e.addError("user", "username or password is error");
+            throw e;
+        }
+
+        return userService.putToSession(user);
+    }
+
+    @PostMapping("updatePassword")
+    public CommonResponse updatePassword(String oldPassword, String password, String password2) {
+        if (StringUtils.isEmpty(oldPassword) || StringUtils.isEmpty(password) || StringUtils.isEmpty(password2)) {
+            FieldInputException e = new FieldInputException();
+            e.addError("user", "old password and password could not be null");
+            throw e;
+        }
+        if (!password.equals(password2)) {
+            FieldInputException e = new FieldInputException();
+            e.addError("user", "confirmed password and new password do not match");
+            throw e;
+        }
+        int userId = getUserId();
+        User user = userService.getById(userId);
+        if (!user.getPassword().equals(DigestUtils.md5Hex(oldPassword))) {
+            FieldInputException e = new FieldInputException();
+            e.addError("user", "old password is error");
+            throw e;
+        }
+        user.setPassword(DigestUtils.md5Hex(password));
+        userService.update(user);
+        return CommonResponse.buildResponse("success");
     }
 }

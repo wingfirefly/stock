@@ -1,13 +1,11 @@
 package vip.linhs.stock.service;
 
-import java.util.List;
-
 import vip.linhs.stock.model.po.Robot;
 
 public interface RobotService {
 
-    Robot getById(int id);
+    Robot getSystem();
 
-    List<Robot> getListByType(int type);
+    Robot getById(int id);
 
 }

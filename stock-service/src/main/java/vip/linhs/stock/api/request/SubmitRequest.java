@@ -63,4 +63,10 @@ public class SubmitRequest extends BaseTradeRequest {
         return BaseTradeRequest.TradeRequestMethod.SubmitRequest.value();
     }
 
+    @Override
+    public String toString() {
+        return "SubmitRequest [stockCode=" + stockCode + ", price=" + price + ", amount=" + amount + ", tradeType="
+                + tradeType + ", " + super.toString() + "]";
+    }
+
 }

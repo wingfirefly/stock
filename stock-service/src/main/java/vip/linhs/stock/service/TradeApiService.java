@@ -4,6 +4,7 @@ import vip.linhs.stock.api.TradeResultVo;
 import vip.linhs.stock.api.request.AuthenticationRequest;
 import vip.linhs.stock.api.request.GetAssetsRequest;
 import vip.linhs.stock.api.request.GetDealDataRequest;
+import vip.linhs.stock.api.request.GetHisDealDataRequest;
 import vip.linhs.stock.api.request.GetOrderDataRequest;
 import vip.linhs.stock.api.request.GetStockListRequest;
 import vip.linhs.stock.api.request.RevokeRequest;
@@ -11,6 +12,7 @@ import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.AuthenticationResponse;
 import vip.linhs.stock.api.response.GetAssetsResponse;
 import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrderDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.api.response.RevokeResponse;
@@ -52,5 +54,10 @@ public interface TradeApiService {
      * 登录
      */
     TradeResultVo<AuthenticationResponse> authentication(AuthenticationRequest request);
+
+    /**
+     * 历史成交
+     */
+    TradeResultVo<GetHisDealDataResponse> getHisDealData(GetHisDealDataRequest request);
 
 }

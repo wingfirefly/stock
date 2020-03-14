@@ -5,7 +5,7 @@ var pageConfiguration = {
 $(function() {
   if (pageConfiguration.needAuth) {
     if (!isLocalAuth()) {
-      LocationUtil.goto('/login.html');
+      LocationUtil.goto('/user/login.html');
       return;
     }
   }
@@ -19,6 +19,7 @@ $(function() {
 
   function renderHead() {
     var content = '<div class="innerBox"><ul class="top-head">';
+    content += '<li><a href="/">首页</a></li>';
     if (!isLocalAuth()) {
       content += '<li><a href="/user/login.html">登录</a></li>';
     } else {
@@ -36,9 +37,8 @@ $(function() {
   }
 
   function isLocalAuth() {
-    /*var token = getHeaders()['auth-token'];
-    return token && token != null && token.length > 10;*/
-    return true;
+    var token = getRequestHeaders()['auth-token'];
+    return token && token != null && token.length > 10;
   }
 
 });

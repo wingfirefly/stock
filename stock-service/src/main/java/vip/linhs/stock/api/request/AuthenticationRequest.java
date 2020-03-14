@@ -57,4 +57,10 @@ public class AuthenticationRequest extends BaseTradeRequest {
         return BaseTradeRequest.TradeRequestMethod.AuthenticationRequest.value();
     }
 
+    @Override
+    public String toString() {
+        return "AuthenticationRequest [password=" + password + ", randNumber=" + randNumber + ", identifyCode="
+                + identifyCode + ", duration=" + duration + ", type=" + type + ", " + super.toString() + "]";
+    }
+
 }

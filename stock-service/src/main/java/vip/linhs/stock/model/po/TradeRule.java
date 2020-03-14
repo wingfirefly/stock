@@ -8,6 +8,7 @@ public class TradeRule extends BaseModel {
 
     private BigDecimal rate;
     private int state;
+    private String description;
 
     public BigDecimal getRate() {
         return rate;
@@ -25,9 +26,17 @@ public class TradeRule extends BaseModel {
         this.state = state;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
-        return "TradeRule [rate=" + rate + ", state=" + state + ", toString()=" + super.toString() + "]";
+        return "TradeRule [rate=" + rate + ", state=" + state + ", description=" + description + ", BaseModel=" + super.toString() + "]";
     }
 
 }

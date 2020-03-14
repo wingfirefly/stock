@@ -44,16 +44,20 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         @Override
         public <T> TradeResultVo<T> parse(String content, TypeReference<T> responseType) {
             TradeResultVo<T> resultVo = JSON.parseObject(content, new TypeReference<TradeResultVo<T>>() {});
-            List<T> list = resultVo.getData();
-            ArrayList<T> newList = new ArrayList<>(list.size());
-            if (list != null) {
-                list.forEach(d -> {
-                    String text = JSON.toJSONString(d);
-                    T t = JSON.parseObject(text, responseType);
-                    newList.add(t);
-                });
+            if (resultVo.isSuccess()) {
+                List<T> list = resultVo.getData();
+                ArrayList<T> newList = new ArrayList<>(list.size());
+                if (list != null) {
+                    list.forEach(d -> {
+                        String text = JSON.toJSONString(d);
+                        T t = JSON.parseObject(text, responseType);
+                        newList.add(t);
+                    });
+                }
+                resultVo.setData(newList);
+            } else {
+                resultVo.setData(Collections.emptyList());
             }
-            resultVo.setData(newList);
             return resultVo;
         }
     };
@@ -82,18 +86,32 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
 
         Map<String, Object> params = getParams(request);
         params.put("userId", tradeUser.getAccountId());
+        try {
+            tradeClient.openSession();
+            String content = tradeClient.sendNewInstance(tradeMethod.getUrl(), params);
+            ResponseParser responseParse = defaultReponseParser;
+            TradeResultVo<AuthenticationResponse> resultVo = responseParse.parse(content, new TypeReference<AuthenticationResponse>() {});
+            if (resultVo.isSuccess()) {
+                String content2 = tradeClient.sendNewInstance("https://jy.xzsec.com/Trade/Buy", new HashMap<>());
+                String validateKey = getValidateKey(content2);
 
-        String content = tradeClient.sendNewInstance(tradeMethod.getUrl(), params);
-        ResponseParser responseParse = defaultReponseParser;
-        TradeResultVo<AuthenticationResponse> resultVo = responseParse.parse(content, new TypeReference<AuthenticationResponse>() {});
-        if (resultVo.isSuccess()) {
-            AuthenticationResponse response = new AuthenticationResponse();
-            Map<String, String> auth = tradeClient.getAuth();
-            response.setCookie(auth.get("cookie"));
-            response.setValidateKey(auth.get("validateKey"));
-            resultVo.setData(Arrays.asList(response));
+                AuthenticationResponse response = new AuthenticationResponse();
+                response.setCookie(tradeClient.getCurrentCookie());
+                response.setValidateKey(validateKey);
+                resultVo.setData(Arrays.asList(response));
+            }
+            return resultVo;
+        } finally {
+            tradeClient.destoryCurrentSession();
         }
-        return resultVo;
+    }
+
+    private String getValidateKey(String content) {
+        String key = "input id=\"em_validatekey\" type=\"hidden\" value=\"";
+        int inputBegin = content.indexOf(key) + key.length();
+        int inputEnd = content.indexOf("\" />", inputBegin);
+        String validateKey = content.substring(inputBegin, inputEnd);
+        return validateKey;
     }
 
     private ResponseParser getResponseParser(BaseTradeRequest request) {

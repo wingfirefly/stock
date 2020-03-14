@@ -21,4 +21,9 @@ public class RevokeRequest extends BaseTradeRequest {
         return BaseTradeRequest.TradeRequestMethod.RevokeRequest.value();
     }
 
+    @Override
+    public String toString() {
+        return "RevokeRequest [revokes=" + revokes + ", " + super.toString() + "]";
+    }
+
 }

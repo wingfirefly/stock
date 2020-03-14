@@ -11,4 +11,9 @@ public class GetDealDataRequest extends BaseTradeRequest {
         return BaseTradeRequest.TradeRequestMethod.GetDealDataRequest.value();
     }
 
+    @Override
+    public String toString() {
+        return "GetDealDataRequest [" + super.toString() + "]";
+    }
+
 }

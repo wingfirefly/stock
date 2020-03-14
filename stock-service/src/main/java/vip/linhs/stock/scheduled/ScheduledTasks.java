@@ -141,7 +141,7 @@ public class ScheduledTasks {
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
         if (hour == 9 && minute < 30 || hour == 11 && minute > 30) {
-            return;
+             return;
         }
         try {
             List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.Ticker.getId(), Task.TradeTicker.getId());
@@ -157,8 +157,12 @@ public class ScheduledTasks {
         }
     }
 
-    @Scheduled(cron = "0 0,20,40 * * * ?")
+    @Scheduled(cron = "0 0,20,40 * ? * MON-FRI")
     public void heartbeat() {
+        boolean isHoliday = holidayCalendarService.isHoliday(new Date());
+        if (isHoliday) {
+            return;
+        }
         List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.TradeTicker.getId());
         if (!list.isEmpty()) {
             TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(new GetAssetsRequest(1));

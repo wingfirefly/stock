@@ -4,7 +4,7 @@ public class StockConsts {
 
     public static final String KEY_AUTH_USER_ID = "user_id";
 
-    public static final String KEY_AUTH_TOKEN = "auth_token";
+    public static final String KEY_AUTH_TOKEN = "auth-token";
 
     private static final String CACHE_KEY_DATA_PREFIX = "stock:data:";
     public static final String CACHE_KEY_DATA_CODE = StockConsts.CACHE_KEY_DATA_PREFIX + "stock";
@@ -17,6 +17,11 @@ public class StockConsts {
     public static final String CACHE_KEY_TRADE_USER = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeUser";
     public static final String CACHE_KEY_TRADE_RULE = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeRule";
     public static final String CACHE_KEY_TRADE_METHOD = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeMethod";
+
+    public static final String CACHE_KEY_TOKEN = "stock:token";
+
+    public static final long DURATION_REDIS_TOKEN = 60 * 24 * 30;
+    public static final long DURATION_REDIS_DEFAULT = 360;
 
     enum Exchange {
         SH("sh"), SZ("sz");

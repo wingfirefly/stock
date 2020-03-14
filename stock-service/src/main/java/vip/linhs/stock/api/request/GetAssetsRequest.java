@@ -11,4 +11,9 @@ public class GetAssetsRequest extends BaseTradeRequest {
         return BaseTradeRequest.TradeRequestMethod.GetAssertsRequest.value();
     }
 
+    @Override
+    public String toString() {
+        return "GetAssetsRequest [" + super.toString() + "]";
+    }
+
 }

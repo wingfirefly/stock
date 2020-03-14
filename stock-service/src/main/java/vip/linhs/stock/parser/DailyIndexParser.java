@@ -19,7 +19,7 @@ public class DailyIndexParser {
     /*
      * 0：新晨科技, 股票名字; 1：27.55″, 今日开盘价; 2：27.25″, 昨日收盘价; 3：26.91″, 当前价格; 4：27.55″,
      * 今日最高价; 5：26.20″, 今日最低价; 6：26.91″, 竞买价, 即“买一报价; 7：26.92″, 竞卖价, 即“卖一报价;
-     * 8：22114263″ 成交金
+     * 8：22114263″ 成交金额
      */
     public DailyIndex parseDailyIndex(String content) {
         String[] strs = content.split(",");

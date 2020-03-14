@@ -1,3 +1,5 @@
+const { proxyUrl, port } = require('./config.js');
+
 var killTask = function(port, callback) {
   var cmd = process.platform == 'win32' ? 'netstat -ano' : 'ps aux';
   var linesplitor = process.platform == 'win32' ? '\r\n' : '\n';
@@ -30,8 +32,6 @@ var killTask = function(port, callback) {
 
 }
 
-var port = 3000;
-
 killTask(port, function() {
   var connect = require('connect');
   var serveStatic = require('serve-static');
@@ -39,7 +39,7 @@ killTask(port, function() {
 
   var app = connect();
 
-  app.use('/api', proxy('http://127.0.0.1:8086'));
+  app.use('/api', proxy(proxyUrl));
   app.use(serveStatic('.'));
   app.listen(port, function() {
     console.log("http://127.0.0.1:%s", port);

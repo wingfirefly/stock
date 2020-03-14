@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="Keywords" content="wild">
+  <meta name="description" content="" />
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>deal list</title>
+  <link rel="stylesheet" type="text/css" href="/static/css/common.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/trade.css">
+  <link rel="stylesheet" type="text/css" href="/static/js/lib/datatable/datatable.css" />
+
+  <script type="text/javascript" src="/static/js/lib/jquery/3.2.1/jquery.js"></script>
+  <script type="text/javascript" src="/static/js/lib/datatable/datatable.js"></script>
+  <script type="text/javascript" src="/static/js/util/consts.js"></script>
+  <script type="text/javascript" src="/static/js/util/config.js"></script>
+  <script type="text/javascript" src="/static/js/util/common.js"></script>
+  <script type="text/javascript" src="/static/js/util/consts.js"></script>
+  <script type="text/javascript" src="/static/js/util/frame.js"></script>
+  <script type="text/javascript" src="/static/js/modules/trade.js"></script>
+
+  <script type="text/javascript">
+    pageConfiguration.needAuth = true;
+    var dataTable = new DataTable();
+
+    function onload() {
+      renderTradeMenu(4);
+
+      var table = $('#data-table-list');
+      var index = 0;
+      dataTable.init({
+        src: table,
+        dataTable: {
+          ajax: {
+            url: GlobalConfig.serverUrl + '/api/trade/dealList',
+            type: 'GET',
+            data: {},
+            headers: getRequestHeaders(),
+            error: function(xhr) {
+              ExceptionHandler.handleCommonError(xhr);
+            }
+          },
+          dataSrc: 'data',
+          columns: [
+            {
+              title: '序号',
+              render: function(row) {
+                return ++index;
+              }
+            },
+            {
+              title: '股票名称',
+              render: function(row) {
+                return '<a target="_blank" href="https://www.baidu.com/s?wd=' + row.stockName + '%20股票">' + row.stockName + '</a>';;
+              }
+            },
+            {
+              title: '交易类型',
+              render: function(row) {
+                return row.tradeType;
+              }
+            },
+            {
+              title: '成交编号',
+              render: function(row) {
+                return row.tradeCode;
+              }
+            },
+            {
+              title: '成交价格',
+              render: function(row) {
+                return row.price;
+              }
+            },
+            {
+              title: '成交数量',
+              render: function(row) {
+                return row.volume;
+              }
+            },
+            {
+              title: '关联委托编号(卖)',
+              render: function(row) {
+                if (!row.relatedSaleEntrustCode) {
+                  row.relatedSaleEntrustCode = '';
+                }
+                return row.relatedSaleEntrustCode;
+              }
+            },
+            {
+              title: '关联委托编号(买)',
+              render: function(row) {
+                if (!row.relatedBuyEntrustCode) {
+                  row.relatedBuyEntrustCode = '';
+                }
+                return row.relatedBuyEntrustCode;
+              }
+            },
+            {
+              title: '成交时间',
+              render: function(row) {
+                return row.tradeTime;
+              }
+            },
+            {
+              title: '操作',
+              render: function(row) {
+                var html = '';
+                var options = { stockCode: row.stockCode, tradeCode: row.tradeCode, tradeType: 'S' };
+                if (row.relatedSaleEntrustCode) {
+                  html += ' <button class="btn btn-delete" data-options=' + JSON.stringify(options) + '>删除卖</button>';
+                } else {
+                  html += ' <button class="btn btn-add" data-options=' + JSON.stringify(options) + '>添加卖</button>';
+                }
+                options.tradeType = 'B';
+                if (row.relatedBuyEntrustCode) {
+                  html += ' <button class="btn btn-delete" data-options=' + JSON.stringify(options) + '>删除买</button>';
+                } else {
+                  html += ' <button class="btn btn-add" data-options=' + JSON.stringify(options) + '>添加买</button>';
+                }
+                return html;
+              }
+            }
+          ],
+          fnDrawCallback: function(result) {
+            index = 0;
+          }
+        },
+      });
+
+      table.on('click', '.btn-add', function() {
+        var data = $(this).data('options');
+        var url = GlobalConfig.serverUrl + '/api/trade/addTradeCode';
+        handelTradeCode(url, data);
+      });
+
+      table.on('click', '.btn-delete', function() {
+        var data = $(this).data('options');
+        var url = GlobalConfig.serverUrl + '/api/trade/deleteTradeCode';
+        handelTradeCode(url, data);
+      });
+
+    }
+
+    function handelTradeCode(url, data) {
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        headers: getRequestHeaders(),
+        error: function(xhr, status, errorThrown) {
+          ExceptionHandler.handleCommonError(xhr);
+        },
+        success: function(res) {
+          dataTable.fnDraw(1);
+        }
+      });
+    }
+
+  </script>
+
+</head>
+
+<body>
+  <div id="head" class="head"></div>
+
+  <div class="container">
+    <div class="innerBox">
+      <ul class="menu-nav">
+      </ul>
+      <table id="data-table-list" class="data-table-list">
+      </table>
+    </div>
+  </div>
+
+  <div id="foot" class="foot"></div>
+
+</body>
+
+</html>

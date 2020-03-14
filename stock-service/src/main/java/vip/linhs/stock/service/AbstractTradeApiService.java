@@ -6,12 +6,14 @@ import vip.linhs.stock.api.TradeResultVo;
 import vip.linhs.stock.api.request.BaseTradeRequest;
 import vip.linhs.stock.api.request.GetAssetsRequest;
 import vip.linhs.stock.api.request.GetDealDataRequest;
+import vip.linhs.stock.api.request.GetHisDealDataRequest;
 import vip.linhs.stock.api.request.GetOrderDataRequest;
 import vip.linhs.stock.api.request.GetStockListRequest;
 import vip.linhs.stock.api.request.RevokeRequest;
 import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.GetAssetsResponse;
 import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrderDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.api.response.RevokeResponse;
@@ -47,6 +49,11 @@ public abstract class AbstractTradeApiService implements TradeApiService {
     @Override
     public TradeResultVo<GetDealDataResponse> getDealData(GetDealDataRequest request) {
         return send(request, new TypeReference<GetDealDataResponse>() {});
+    }
+
+    @Override
+    public TradeResultVo<GetHisDealDataResponse> getHisDealData(GetHisDealDataRequest request) {
+        return send(request, new TypeReference<GetHisDealDataResponse>() {});
     }
 
     public abstract <T> TradeResultVo<T> send(BaseTradeRequest request, TypeReference<T> responseType);

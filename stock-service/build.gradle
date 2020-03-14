@@ -28,18 +28,22 @@ repositories {
 }
 
 configurations {
+  compile.exclude module: 'spring-boot-starter-tomcat'
   providedRuntime
 }
 
 dependencies {
   compile('org.springframework.boot:spring-boot-starter-data-rest')
   compile('org.springframework.boot:spring-boot-starter-jdbc')
+  compile('org.springframework.boot:spring-boot-starter-data-redis')
+  compile('org.springframework.boot:spring-boot-starter-undertow')
   runtime('org.springframework.boot:spring-boot-devtools')
 
   compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.11'
-  compile group: 'com.alibaba', name: 'fastjson', version: '1.2.47'
+  compile group: 'com.alibaba', name: 'fastjson', version: '1.2.48'
   compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.5'
   compile group: 'com.belerweb', name: 'pinyin4j', version: '2.5.0'
+  compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
 
   testCompile('org.springframework.boot:spring-boot-starter-test')
 }

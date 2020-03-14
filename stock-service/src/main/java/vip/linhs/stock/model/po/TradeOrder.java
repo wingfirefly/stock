@@ -6,27 +6,19 @@ public class TradeOrder extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 
-    private String orderCode;
-    private String dealCode;
+    private String tradeCode;
     private String stockCode;
-    private String tradeType;
     private BigDecimal price;
     private int volume;
+    private String tradeType;
+    private String entrustCode;
 
-    public String getOrderCode() {
-        return orderCode;
+    public String getTradeCode() {
+        return tradeCode;
     }
 
-    public void setOrderCode(String orderCode) {
-        this.orderCode = orderCode;
-    }
-
-    public String getDealCode() {
-        return dealCode;
-    }
-
-    public void setDealCode(String dealCode) {
-        this.dealCode = dealCode;
+    public void setTradeCode(String tradeCode) {
+        this.tradeCode = tradeCode;
     }
 
     public String getStockCode() {
@@ -35,14 +27,6 @@ public class TradeOrder extends BaseModel {
 
     public void setStockCode(String stockCode) {
         this.stockCode = stockCode;
-    }
-
-    public String getTradeType() {
-        return tradeType;
-    }
-
-    public void setTradeType(String tradeType) {
-        this.tradeType = tradeType;
     }
 
     public BigDecimal getPrice() {
@@ -61,10 +45,27 @@ public class TradeOrder extends BaseModel {
         this.volume = volume;
     }
 
+    public String getTradeType() {
+        return tradeType;
+    }
+
+    public void setTradeType(String tradeType) {
+        this.tradeType = tradeType;
+    }
+
+    public String getEntrustCode() {
+        return entrustCode;
+    }
+
+    public void setEntrustCode(String entrustCode) {
+        this.entrustCode = entrustCode;
+    }
+
     @Override
     public String toString() {
-        return "TradeOrder [orderCode=" + orderCode + ", stockCode=" + stockCode + ", dealCode=" + dealCode
-                + ", tradeType=" + tradeType + ", price=" + price + ", volume=" + volume + "]";
+        return "TradeOrder [tradeCode=" + tradeCode + ", stockCode=" + stockCode + ", price="
+                + price + ", volume=" + volume + ", tradeType=" + tradeType + ", entrustCode="
+                + entrustCode + ", BaseModel=" + super.toString() + "]";
     }
 
 }

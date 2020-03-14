@@ -19,14 +19,15 @@ import vip.linhs.stock.dao.ExecuteInfoDao;
 import vip.linhs.stock.exception.ServiceException;
 import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.ExecuteInfo;
-import vip.linhs.stock.model.po.Robot;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.po.StockLog;
 import vip.linhs.stock.model.po.Task;
 import vip.linhs.stock.model.po.TickerConfig;
+import vip.linhs.stock.model.vo.PageParam;
+import vip.linhs.stock.model.vo.PageVo;
+import vip.linhs.stock.model.vo.TaskVo;
 import vip.linhs.stock.service.HolidayCalendarService;
 import vip.linhs.stock.service.MessageService;
-import vip.linhs.stock.service.RobotService;
 import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.service.StockService;
 import vip.linhs.stock.service.StrategyService;
@@ -55,9 +56,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private StockService stockService;
-
-    @Autowired
-    private RobotService robotService;
 
     @Autowired
     private MessageService messageServicve;
@@ -112,13 +110,8 @@ public class TaskServiceImpl implements TaskService {
             executeInfo.setMessage(e.getMessage());
             logger.error(e.getMessage(), e);
 
-            List<Robot> robotList = robotService.getListByType(StockConsts.RobotType.DingDing.value());
-            if (!robotList.isEmpty()) {
-                Robot robot = robotList.get(0);
-                String target = robot.getWebhook();
-                String body = String.format("task: %s, error: %s", task.getName(), e.getMessage());
-                messageServicve.sendDingding(body, target);
-            }
+            String body = String.format("task: %s, error: %s", task.getName(), e.getMessage());
+            messageServicve.sendDingding(body);
         }
 
         executeInfo.setCompleteTime(new Date());
@@ -231,8 +224,6 @@ public class TaskServiceImpl implements TaskService {
         if (!configList.isEmpty()) {
             TickerConfig tickerConfig = configList.get(0);
             List<String> stockCodeList = Arrays.asList(tickerConfig.getValue().split(","));
-            Robot robot = robotService.getById(tickerConfig.getRobotId());
-            String target = robot.getWebhook();
             stockCodeList.forEach(code -> {
                 DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(code);
                 if (dailyIndex != null) {
@@ -248,14 +239,14 @@ public class TaskServiceImpl implements TaskService {
                                 dailyIndex.getClosingPrice().doubleValue(),
                                 StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
                                         dailyIndex.getPreClosingPrice()).movePointRight(2).doubleValue());
-                            messageServicve.sendDingding(body, target);
+                            messageServicve.sendDingding(body);
                         }
                     } else {
                         tickerMap.put(code, dailyIndex.getPreClosingPrice());
                         String name = stockService.getStockByFullCode(StockUtil.getFullCode(code)).getName();
                         String body = String.format("%s:当前价格:%.02f", name,
                                 dailyIndex.getClosingPrice().doubleValue());
-                        messageServicve.sendDingding(body, target);
+                        messageServicve.sendDingding(body);
                     }
                 }
             });
@@ -264,6 +255,16 @@ public class TaskServiceImpl implements TaskService {
 
     private void runTradeTicker() {
         strategyService.execute();
+    }
+
+    @Override
+    public PageVo<TaskVo> getAllTask(PageParam pageParam) {
+        return executeInfoDao.get(pageParam);
+    }
+
+    @Override
+    public void changeTaskState(int state, int id) {
+        executeInfoDao.updateState(state, id);
     }
 
 }

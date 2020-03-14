@@ -1,5 +1,8 @@
 package vip.linhs.stock.service;
 
+import java.util.Date;
+
+import org.apache.http.client.utils.DateUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,12 +15,14 @@ import com.alibaba.fastjson.JSON;
 import vip.linhs.stock.api.TradeResultVo;
 import vip.linhs.stock.api.request.GetAssetsRequest;
 import vip.linhs.stock.api.request.GetDealDataRequest;
+import vip.linhs.stock.api.request.GetHisDealDataRequest;
 import vip.linhs.stock.api.request.GetOrderDataRequest;
 import vip.linhs.stock.api.request.GetStockListRequest;
 import vip.linhs.stock.api.request.RevokeRequest;
 import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.GetAssetsResponse;
 import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrderDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.api.response.RevokeResponse;
@@ -81,6 +86,18 @@ public class TradeApiServiceTest {
     public void testGetOrderData() {
         GetOrderDataRequest request = new GetOrderDataRequest(TradeApiServiceTest.UserId);
         TradeResultVo<GetOrderDataResponse> tradeResultVo = tradeApiService.getOrderData(request);
+        System.out.println(JSON.toJSONString(tradeResultVo));
+        Assert.assertTrue(tradeResultVo.isSuccess());
+    }
+
+    @Test
+    public void testGetHisDealData() {
+        GetHisDealDataRequest request = new GetHisDealDataRequest(TradeApiServiceTest.UserId);
+        request.setEt(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
+        Date et = new Date();
+        et.setTime(et.getTime() - 2 * 24 * 3600 * 1000);
+        request.setSt(DateUtils.formatDate(et, "yyyy-MM-dd"));
+        TradeResultVo<GetHisDealDataResponse> tradeResultVo = tradeApiService.getHisDealData(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
         Assert.assertTrue(tradeResultVo.isSuccess());
     }

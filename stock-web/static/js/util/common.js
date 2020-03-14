@@ -47,10 +47,26 @@ var LocationUtil = {
 
 var StorageUtil = {
   get: function(key) {
-    return localStorage[key];
+    var data = localStorage[key];
+    if (typeof data == 'string') {
+      try {
+        var obj = JSON.parse(data);
+        if (typeof obj === 'object' && obj) {
+          var expire = obj.expire;
+          if (expire && expire > new Date().getTime()) {
+            return obj.value;
+          }
+        }
+      } catch(e) {
+      }
+    }
+    return '';
   },
   set: function(key, value) {
-    localStorage[key] = value;
+    var date = new Date();
+    date.setTime(date.getTime() + 8 * 3600 * 1000);
+    var expire = date.getTime();
+    localStorage[key] = JSON.stringify({ expire, value });
   },
   remove: function(key) {
     localStorage.removeItem(key);
@@ -59,7 +75,7 @@ var StorageUtil = {
 
 var ExceptionHandler = {
   handleCommonError: function(xhr, location) {
-    var message = xhr.responseJSON ? xhr.responseJSON.message : '服务器异常';
+    var message = xhr.responseJSON ? xhr.responseJSON.message : 'Internal Server Error';
     alert(message);
     if (location) {
       LocationUtil.goto(location);

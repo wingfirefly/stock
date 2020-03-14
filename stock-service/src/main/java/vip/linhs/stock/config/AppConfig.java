@@ -4,6 +4,8 @@ import java.time.Duration;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -20,14 +22,18 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 
+import vip.linhs.stock.util.StockConsts;
 import vip.linhs.stock.web.interceptor.AuthInterceptor;
 
 @Configuration
 public class AppConfig implements WebMvcConfigurer {
 
+    @Autowired
+    private AuthInterceptor authInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new AuthInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(authInterceptor).addPathPatterns("/**");
     }
 
     @Override
@@ -52,14 +58,17 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public CloseableHttpClient closeableHttpClient() {
-        return HttpClients.createDefault();
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+        cm.setDefaultMaxPerRoute(30);
+        cm.setMaxTotal(100);
+        return HttpClients.custom().setConnectionManager(cm).build();
     }
 
     @Bean
     public RestTemplate restTemplate() {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(2000);
-        requestFactory.setReadTimeout(3000);
+        requestFactory.setConnectTimeout(3000);
+        requestFactory.setReadTimeout(5000);
         return new RestTemplate(requestFactory);
     }
 
@@ -77,14 +86,12 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public RedisCacheConfiguration redisCacheConfiguration() {
-        GenericFastJsonRedisSerializer genericFastJsonRedisSerializer = new GenericFastJsonRedisSerializer();
-
+        GenericFastJsonRedisSerializer serializer = new GenericFastJsonRedisSerializer();
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig();
-
         return defaultCacheConfig
                 .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(genericFastJsonRedisSerializer))
-                .entryTtl(Duration.ofHours(6));
+                        RedisSerializationContext.SerializationPair.fromSerializer(serializer))
+                .entryTtl(Duration.ofMinutes(StockConsts.DURATION_REDIS_DEFAULT));
     }
 
 }

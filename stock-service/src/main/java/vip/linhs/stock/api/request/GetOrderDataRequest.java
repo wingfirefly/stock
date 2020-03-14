@@ -11,4 +11,9 @@ public class GetOrderDataRequest extends BaseTradeRequest {
         return BaseTradeRequest.TradeRequestMethod.GetOrderDataRequest.value();
     }
 
+    @Override
+    public String toString() {
+        return "GetOrderDataRequest [" + super.toString() + "]";
+    }
+
 }
