@@ -1,7 +1,6 @@
 package vip.linhs.stock.service;
 
 import vip.linhs.stock.model.po.User;
-import vip.linhs.stock.model.vo.UserVo;
 
 public interface UserService {
 
@@ -9,7 +8,7 @@ public interface UserService {
 
     User getByToken(String token);
 
-    UserVo putToSession(User user);
+    User putToSession(User user, String token);
 
     User getById(int id);
 

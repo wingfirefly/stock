@@ -1,4 +1,4 @@
-function Confirm (message, action1, action2) {
+function Confirm(message, action1, action2) {
 
 
   Alert.call(this,message,action1);

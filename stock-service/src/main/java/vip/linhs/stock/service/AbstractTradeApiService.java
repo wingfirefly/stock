@@ -7,14 +7,16 @@ import vip.linhs.stock.api.request.BaseTradeRequest;
 import vip.linhs.stock.api.request.GetAssetsRequest;
 import vip.linhs.stock.api.request.GetDealDataRequest;
 import vip.linhs.stock.api.request.GetHisDealDataRequest;
-import vip.linhs.stock.api.request.GetOrderDataRequest;
+import vip.linhs.stock.api.request.GetHisOrdersDataRequest;
+import vip.linhs.stock.api.request.GetOrdersDataRequest;
 import vip.linhs.stock.api.request.GetStockListRequest;
 import vip.linhs.stock.api.request.RevokeRequest;
 import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.GetAssetsResponse;
 import vip.linhs.stock.api.response.GetDealDataResponse;
 import vip.linhs.stock.api.response.GetHisDealDataResponse;
-import vip.linhs.stock.api.response.GetOrderDataResponse;
+import vip.linhs.stock.api.response.GetHisOrdersDataResponse;
+import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.api.response.RevokeResponse;
 import vip.linhs.stock.api.response.SubmitResponse;
@@ -42,8 +44,8 @@ public abstract class AbstractTradeApiService implements TradeApiService {
     }
 
     @Override
-    public TradeResultVo<GetOrderDataResponse> getOrderData(GetOrderDataRequest request) {
-        return send(request, new TypeReference<GetOrderDataResponse>() {});
+    public TradeResultVo<GetOrdersDataResponse> getOrdersData(GetOrdersDataRequest request) {
+        return send(request, new TypeReference<GetOrdersDataResponse>() {});
     }
 
     @Override
@@ -54,6 +56,11 @@ public abstract class AbstractTradeApiService implements TradeApiService {
     @Override
     public TradeResultVo<GetHisDealDataResponse> getHisDealData(GetHisDealDataRequest request) {
         return send(request, new TypeReference<GetHisDealDataResponse>() {});
+    }
+
+    @Override
+    public TradeResultVo<GetHisOrdersDataResponse> getHisOrdersData(GetHisOrdersDataRequest request) {
+        return send(request, new TypeReference<GetHisOrdersDataResponse>() {});
     }
 
     public abstract <T> TradeResultVo<T> send(BaseTradeRequest request, TypeReference<T> responseType);

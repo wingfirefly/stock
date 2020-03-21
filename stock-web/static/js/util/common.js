@@ -64,7 +64,7 @@ var StorageUtil = {
   },
   set: function(key, value) {
     var date = new Date();
-    date.setTime(date.getTime() + 8 * 3600 * 1000);
+    date.setTime(date.getTime() + 24 * 3600 * 1000);
     var expire = date.getTime();
     localStorage[key] = JSON.stringify({ expire, value });
   },

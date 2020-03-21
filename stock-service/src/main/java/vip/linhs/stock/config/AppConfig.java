@@ -5,7 +5,6 @@ import java.time.Duration;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -28,11 +27,9 @@ import vip.linhs.stock.web.interceptor.AuthInterceptor;
 @Configuration
 public class AppConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private AuthInterceptor authInterceptor;
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        AuthInterceptor authInterceptor = SpringUtil.getBean(AuthInterceptor.class);
         registry.addInterceptor(authInterceptor).addPathPatterns("/**");
     }
 
@@ -91,7 +88,7 @@ public class AppConfig implements WebMvcConfigurer {
         return defaultCacheConfig
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair.fromSerializer(serializer))
-                .entryTtl(Duration.ofMinutes(StockConsts.DURATION_REDIS_DEFAULT));
+                .entryTtl(Duration.ofSeconds(StockConsts.DURATION_REDIS_DEFAULT));
     }
 
 }

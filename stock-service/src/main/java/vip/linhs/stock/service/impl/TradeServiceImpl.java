@@ -1,5 +1,6 @@
 package vip.linhs.stock.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -12,11 +13,14 @@ import org.springframework.stereotype.Service;
 
 import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetOrdersDataResponse;
+import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.dao.TradeMethodDao;
 import vip.linhs.stock.dao.TradeOrderDao;
 import vip.linhs.stock.dao.TradeRuleDao;
 import vip.linhs.stock.dao.TradeStockInfoRuleDao;
 import vip.linhs.stock.dao.TradeUserDao;
+import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.po.TradeMethod;
 import vip.linhs.stock.model.po.TradeOrder;
 import vip.linhs.stock.model.po.TradeRule;
@@ -25,6 +29,8 @@ import vip.linhs.stock.model.po.TradeUser;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.trade.DealVo;
+import vip.linhs.stock.model.vo.trade.OrderVo;
+import vip.linhs.stock.model.vo.trade.StockVo;
 import vip.linhs.stock.model.vo.trade.TradeConfigVo;
 import vip.linhs.stock.service.StockService;
 import vip.linhs.stock.service.TradeService;
@@ -136,8 +142,9 @@ public class TradeServiceImpl implements TradeService {
             dealVo.setVolume(v.getCjsl());
             dealVo.setEntrustCode(v.getWtbh());
             dealVo.setStockCode(v.getZqdm());
-            String stockName = stockService.getStockByFullCode(StockUtil.getFullCode(v.getZqdm())).getName();
-            dealVo.setStockName(stockName);
+            StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(v.getZqdm()));
+            dealVo.setStockName(stockInfo.getName());
+            dealVo.setAbbreviation(stockInfo.getAbbreviation());
             tradeOrderList.forEach(vv -> {
                 if (v.getCjbh().equals(vv.getTradeCode())) {
                     if (SubmitRequest.S.equals(vv.getTradeType())) {
@@ -154,6 +161,42 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public void deleteTradeCode(String tradeCode, String tradeType) {
         tradeOrderDao.delete(tradeCode, tradeType);
+    }
+
+    @Override
+    public List<StockVo> getTradeStockList(List<GetStockListResponse> stockList) {
+        List<StockVo> list = stockList.stream().filter(v -> StockUtil.isStockCode(v.getZqdm())).map(v -> {
+            StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(v.getZqdm()));
+            StockVo stockVo = new StockVo();
+            stockVo.setAbbreviation(stockInfo.getAbbreviation());
+            stockVo.setStockCode(stockInfo.getCode());
+            stockVo.setExchange(stockInfo.getExchange());
+            stockVo.setName(stockInfo.getName());
+            stockVo.setAvailableVolume(Integer.parseInt(v.getKysl()));
+            stockVo.setTotalVolume(Integer.parseInt(v.getZqsl()));
+            stockVo.setPrice(new BigDecimal(v.getZxjg()));
+            return stockVo;
+        }).collect(Collectors.toList());
+        return list;
+    }
+
+    @Override
+    public List<OrderVo> getTradeOrderList(List<GetOrdersDataResponse> orderList) {
+        List<OrderVo> list = orderList.stream().filter(v -> StockUtil.isStockCode(v.getZqdm())).map(v -> {
+            StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(v.getZqdm()));
+            OrderVo orderVo = new OrderVo();
+            orderVo.setAbbreviation(stockInfo.getAbbreviation());
+            orderVo.setEnsuerTime(v.getWtsj());
+            orderVo.setEntrustCode(v.getWtbh());
+            orderVo.setPrice(new BigDecimal(v.getWtjg()));
+            orderVo.setState(v.getWtzt());
+            orderVo.setStockCode(v.getZqdm());
+            orderVo.setStockName(stockInfo.getName());
+            orderVo.setTradeType(v.getMmlb());
+            orderVo.setVolume(Integer.parseInt(v.getWtsl()));
+            return orderVo;
+        }).collect(Collectors.toList());
+        return list;
     }
 
 }

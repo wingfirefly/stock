@@ -3,6 +3,8 @@ package vip.linhs.stock.service;
 import java.util.List;
 
 import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetOrdersDataResponse;
+import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.model.po.TradeMethod;
 import vip.linhs.stock.model.po.TradeOrder;
 import vip.linhs.stock.model.po.TradeRule;
@@ -10,6 +12,8 @@ import vip.linhs.stock.model.po.TradeUser;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.trade.DealVo;
+import vip.linhs.stock.model.vo.trade.OrderVo;
+import vip.linhs.stock.model.vo.trade.StockVo;
 import vip.linhs.stock.model.vo.trade.TradeConfigVo;
 
 public interface TradeService {
@@ -37,5 +41,9 @@ public interface TradeService {
     List<DealVo> getTradeDealList(List<GetDealDataResponse> data);
 
     void deleteTradeCode(String tradeCode, String tradeType);
+
+    List<StockVo> getTradeStockList(List<GetStockListResponse> stockList);
+
+    List<OrderVo> getTradeOrderList(List<GetOrdersDataResponse> orderList);
 
 }

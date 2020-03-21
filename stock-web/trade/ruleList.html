@@ -63,7 +63,7 @@
             {
               title: '比率(%)',
               render: function(row) {
-                return row.rate * 100;
+                return (row.rate * 100).toFixed(2);
               }
             },
             {

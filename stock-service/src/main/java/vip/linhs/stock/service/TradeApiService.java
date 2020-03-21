@@ -5,7 +5,8 @@ import vip.linhs.stock.api.request.AuthenticationRequest;
 import vip.linhs.stock.api.request.GetAssetsRequest;
 import vip.linhs.stock.api.request.GetDealDataRequest;
 import vip.linhs.stock.api.request.GetHisDealDataRequest;
-import vip.linhs.stock.api.request.GetOrderDataRequest;
+import vip.linhs.stock.api.request.GetHisOrdersDataRequest;
+import vip.linhs.stock.api.request.GetOrdersDataRequest;
 import vip.linhs.stock.api.request.GetStockListRequest;
 import vip.linhs.stock.api.request.RevokeRequest;
 import vip.linhs.stock.api.request.SubmitRequest;
@@ -13,7 +14,8 @@ import vip.linhs.stock.api.response.AuthenticationResponse;
 import vip.linhs.stock.api.response.GetAssetsResponse;
 import vip.linhs.stock.api.response.GetDealDataResponse;
 import vip.linhs.stock.api.response.GetHisDealDataResponse;
-import vip.linhs.stock.api.response.GetOrderDataResponse;
+import vip.linhs.stock.api.response.GetHisOrdersDataResponse;
+import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.api.response.RevokeResponse;
 import vip.linhs.stock.api.response.SubmitResponse;
@@ -43,7 +45,7 @@ public interface TradeApiService {
     /**
      * 当日委托
      */
-    TradeResultVo<GetOrderDataResponse> getOrderData(GetOrderDataRequest request);
+    TradeResultVo<GetOrdersDataResponse> getOrdersData(GetOrdersDataRequest request);
 
     /**
      * 当日成交
@@ -59,5 +61,11 @@ public interface TradeApiService {
      * 历史成交
      */
     TradeResultVo<GetHisDealDataResponse> getHisDealData(GetHisDealDataRequest request);
+
+
+    /**
+     * 历史委托
+     */
+    TradeResultVo<GetHisOrdersDataResponse> getHisOrdersData(GetHisOrdersDataRequest request);
 
 }

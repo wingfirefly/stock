@@ -1,4 +1,4 @@
-function Alert (message, action) {
+function Alert(message, action) {
   this.message = message;
   this.action = action;
 }

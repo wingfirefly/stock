@@ -2,8 +2,11 @@ package vip.linhs.stock.web.controller;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.http.client.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,9 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 import vip.linhs.stock.api.TradeResultVo;
 import vip.linhs.stock.api.request.AuthenticationRequest;
 import vip.linhs.stock.api.request.GetDealDataRequest;
+import vip.linhs.stock.api.request.GetOrdersDataRequest;
+import vip.linhs.stock.api.request.GetStockListRequest;
+import vip.linhs.stock.api.request.RevokeRequest;
 import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.AuthenticationResponse;
 import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetOrdersDataResponse;
+import vip.linhs.stock.api.response.GetStockListResponse;
+import vip.linhs.stock.api.response.RevokeResponse;
+import vip.linhs.stock.api.response.SubmitResponse;
 import vip.linhs.stock.exception.FieldInputException;
 import vip.linhs.stock.model.po.TradeOrder;
 import vip.linhs.stock.model.po.TradeRule;
@@ -23,6 +33,8 @@ import vip.linhs.stock.model.vo.CommonResponse;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.trade.DealVo;
+import vip.linhs.stock.model.vo.trade.OrderVo;
+import vip.linhs.stock.model.vo.trade.StockVo;
 import vip.linhs.stock.model.vo.trade.TradeConfigVo;
 import vip.linhs.stock.service.TradeApiService;
 import vip.linhs.stock.service.TradeService;
@@ -91,7 +103,7 @@ public class TradeController extends BaseController {
 
     @RequestMapping("dealList")
     public PageVo<DealVo> getDealList(PageParam pageParam) {
-        GetDealDataRequest request = new GetDealDataRequest(1);
+        GetDealDataRequest request = new GetDealDataRequest(getUserId());
         TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(request);
         if (dealData.isSuccess()) {
             List<DealVo> list = tradeService.getTradeDealList(dealData.getData());
@@ -127,6 +139,60 @@ public class TradeController extends BaseController {
         }
         tradeService.deleteTradeCode(tradeCode, tradeType);
         return CommonResponse.buildResponse("success");
+    }
+
+    @RequestMapping("buy")
+    public CommonResponse buy(int amount, double price, String stockCode) {
+        SubmitRequest request = new SubmitRequest(getUserId());
+        request.setAmount(amount);
+        request.setPrice(price);
+        request.setStockCode(stockCode);
+        request.setTradeType(SubmitRequest.B);
+        TradeResultVo<SubmitResponse> response = tradeApiService.submit(request);
+        return CommonResponse.buildResponse(response.getMessage());
+    }
+
+    @RequestMapping("sale")
+    public CommonResponse sale(int amount, double price, String stockCode) {
+        SubmitRequest request = new SubmitRequest(getUserId());
+        request.setAmount(amount);
+        request.setPrice(price);
+        request.setStockCode(stockCode);
+        request.setTradeType(SubmitRequest.S);
+        TradeResultVo<SubmitResponse> response = tradeApiService.submit(request);
+        return CommonResponse.buildResponse(response.getMessage());
+    }
+
+    @RequestMapping("stockList")
+    public PageVo<StockVo> getStockList(PageParam pageParam) {
+        GetStockListRequest request = new GetStockListRequest(getUserId());
+        TradeResultVo<GetStockListResponse> response = tradeApiService.getStockList(request);
+        if (response.isSuccess()) {
+            List<StockVo> list = tradeService.getTradeStockList(response.getData());
+            return new PageVo<>(list, list.size());
+        }
+        return new PageVo<>(Collections.emptyList(), 0);
+    }
+
+    @RequestMapping("orderList")
+    public PageVo<OrderVo> getOrderList(PageParam pageParam) {
+        GetOrdersDataRequest request = new GetOrdersDataRequest(getUserId());
+        TradeResultVo<GetOrdersDataResponse> response = tradeApiService.getOrdersData(request);
+        if (response.isSuccess()) {
+            List<OrderVo> list = tradeService.getTradeOrderList(response.getData());
+            list = list.stream().filter(v -> v.getState().equals(GetOrdersDataResponse.YIBAO)).collect(Collectors.toList());
+            return new PageVo<>(list, list.size());
+        }
+        return new PageVo<>(Collections.emptyList(), 0);
+    }
+
+    @RequestMapping("revoke")
+    public CommonResponse revoke(String entrustCode) {
+        RevokeRequest request = new RevokeRequest(getUserId());
+        String revokes = String.format("%s_%s", DateUtils.formatDate(new Date(), "yyyyMMdd"), entrustCode);
+        request.setRevokes(revokes);
+        TradeResultVo<RevokeResponse> response = tradeApiService.revoke(request);
+        return CommonResponse.buildResponse(response.getMessage());
     }
 
 }

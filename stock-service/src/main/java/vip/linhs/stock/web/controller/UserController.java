@@ -1,5 +1,7 @@
 package vip.linhs.stock.web.controller;
 
+import java.util.UUID;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -33,8 +35,17 @@ public class UserController extends BaseController {
             e.addError("user", "username or password is error");
             throw e;
         }
+        String token = UUID.randomUUID().toString().replaceAll("-", "");
+        userService.putToSession(user, token);
 
-        return userService.putToSession(user);
+        UserVo userVo = new UserVo();
+        userVo.setToken(token);
+        userVo.setEmail(user.getEmail());
+        userVo.setMobile(user.getMobile());
+        userVo.setName(user.getName());
+        userVo.setUsername(user.getUsername());
+        userVo.setToken(token);
+        return userVo;
     }
 
     @PostMapping("updatePassword")

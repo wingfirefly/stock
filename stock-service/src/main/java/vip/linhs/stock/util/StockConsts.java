@@ -18,10 +18,9 @@ public class StockConsts {
     public static final String CACHE_KEY_TRADE_RULE = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeRule";
     public static final String CACHE_KEY_TRADE_METHOD = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeMethod";
 
-    public static final String CACHE_KEY_TOKEN = "stock:token";
+    public static final String CACHE_KEY_TOKEN = "stock:auth:token";
 
-    public static final long DURATION_REDIS_TOKEN = 60 * 24 * 30;
-    public static final long DURATION_REDIS_DEFAULT = 360;
+    public static final long DURATION_REDIS_DEFAULT = 3600 * 24;
 
     enum Exchange {
         SH("sh"), SZ("sz");

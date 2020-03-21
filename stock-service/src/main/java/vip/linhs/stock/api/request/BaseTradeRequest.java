@@ -25,8 +25,8 @@ public abstract class BaseTradeRequest {
 
     public static enum TradeRequestMethod {
         GetAssertsRequest("get_asserts"), SubmitRequest("submit"), RevokeRequest("revoke"), GetStockList("get_stock_list"),
-        GetOrderDataRequest("get_order_data"), GetDealDataRequest("get_deal_data"), AuthenticationRequest("authentication"),
-        GetHisDealDataRequest("get_his_deal_data");
+        GetOrdersDataRequest("get_orders_data"), GetDealDataRequest("get_deal_data"), AuthenticationRequest("authentication"),
+        GetHisDealDataRequest("get_his_deal_data"), GetHisOrdersDataRequest("get_his_orders_data");
         private String value;
 
         TradeRequestMethod(String value) {

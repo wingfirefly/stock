@@ -20,6 +20,7 @@ public class DealVo {
     private String volume;
     private String stockCode;
     private String stockName;
+    private String abbreviation;
     /**
      * 成交时间 HH:mm:ss
      */
@@ -84,6 +85,14 @@ public class DealVo {
         this.stockName = stockName;
     }
 
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
+    }
+
     public String getTradeTime() {
         return tradeTime;
     }
@@ -114,15 +123,6 @@ public class DealVo {
 
     public void setRelatedSaleEntrustCode(String relatedSaleEntrustCode) {
         this.relatedSaleEntrustCode = relatedSaleEntrustCode;
-    }
-
-    @Override
-    public String toString() {
-        return "DealVo [entrustCode=" + entrustCode + ", tradeCode=" + tradeCode + ", price="
-                + price + ", volume=" + volume + ", stockCode=" + stockCode + ", stockName="
-                + stockName + ", tradeTime=" + tradeTime + ", tradeType=" + tradeType
-                + ", relatedBuyEntrustCode=" + relatedBuyEntrustCode + ", relatedSaleEntrustCode="
-                + relatedSaleEntrustCode + "]";
     }
 
 }

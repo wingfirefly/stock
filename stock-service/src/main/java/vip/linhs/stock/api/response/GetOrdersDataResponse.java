@@ -1,9 +1,9 @@
 package vip.linhs.stock.api.response;
 
-public class GetOrderDataResponse {
+public class GetOrdersDataResponse {
 
     public static final String YIBAO = "已报";
-    public static final String WEIBAO = "未报";
+    public static final String YICHENG = "已成";
     public static final String YICHE = "已撤";
 
     /**
@@ -40,7 +40,7 @@ public class GetOrderDataResponse {
      * 委托状态
      *
      * @see #YIBAO
-     * @see #WEIBAO
+     * @see #YICHENG
      * @see #YICHE
      */
     private String Wtzt;

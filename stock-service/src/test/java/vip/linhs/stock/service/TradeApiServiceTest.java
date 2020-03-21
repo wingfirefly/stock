@@ -16,14 +16,16 @@ import vip.linhs.stock.api.TradeResultVo;
 import vip.linhs.stock.api.request.GetAssetsRequest;
 import vip.linhs.stock.api.request.GetDealDataRequest;
 import vip.linhs.stock.api.request.GetHisDealDataRequest;
-import vip.linhs.stock.api.request.GetOrderDataRequest;
+import vip.linhs.stock.api.request.GetHisOrdersDataRequest;
+import vip.linhs.stock.api.request.GetOrdersDataRequest;
 import vip.linhs.stock.api.request.GetStockListRequest;
 import vip.linhs.stock.api.request.RevokeRequest;
 import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.GetAssetsResponse;
 import vip.linhs.stock.api.response.GetDealDataResponse;
 import vip.linhs.stock.api.response.GetHisDealDataResponse;
-import vip.linhs.stock.api.response.GetOrderDataResponse;
+import vip.linhs.stock.api.response.GetHisOrdersDataResponse;
+import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.api.response.RevokeResponse;
 import vip.linhs.stock.api.response.SubmitResponse;
@@ -83,9 +85,9 @@ public class TradeApiServiceTest {
     }
 
     @Test
-    public void testGetOrderData() {
-        GetOrderDataRequest request = new GetOrderDataRequest(TradeApiServiceTest.UserId);
-        TradeResultVo<GetOrderDataResponse> tradeResultVo = tradeApiService.getOrderData(request);
+    public void testGetOrdersData() {
+        GetOrdersDataRequest request = new GetOrdersDataRequest(TradeApiServiceTest.UserId);
+        TradeResultVo<GetOrdersDataResponse> tradeResultVo = tradeApiService.getOrdersData(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
         Assert.assertTrue(tradeResultVo.isSuccess());
     }
@@ -98,6 +100,18 @@ public class TradeApiServiceTest {
         et.setTime(et.getTime() - 2 * 24 * 3600 * 1000);
         request.setSt(DateUtils.formatDate(et, "yyyy-MM-dd"));
         TradeResultVo<GetHisDealDataResponse> tradeResultVo = tradeApiService.getHisDealData(request);
+        System.out.println(JSON.toJSONString(tradeResultVo));
+        Assert.assertTrue(tradeResultVo.isSuccess());
+    }
+
+    @Test
+    public void testGetHisOrdersData() {
+        GetHisOrdersDataRequest request = new GetHisOrdersDataRequest(TradeApiServiceTest.UserId);
+        request.setEt(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
+        Date et = new Date();
+        et.setTime(et.getTime() - 2 * 24 * 3600 * 1000);
+        request.setSt(DateUtils.formatDate(et, "yyyy-MM-dd"));
+        TradeResultVo<GetHisOrdersDataResponse> tradeResultVo = tradeApiService.getHisOrdersData(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
         Assert.assertTrue(tradeResultVo.isSuccess());
     }
