@@ -35,6 +35,10 @@ public class GetDealDataResponse {
      * 成交时间 HHmmss
      */
     private String Cjsj;
+    /**
+     * 委托数量
+     */
+    private String Wtsl;
 
     /**
      * 买卖类别
@@ -100,10 +104,18 @@ public class GetDealDataResponse {
         Mmlb = mmlb;
     }
 
+    public String getWtsl() {
+        return Wtsl;
+    }
+
+    public void setWtsl(String wtsl) {
+        Wtsl = wtsl;
+    }
+
     @Override
     public String toString() {
         return "GetDealDataResponse [Wtbh=" + Wtbh + ", Cjbh=" + Cjbh + ", Cjjg=" + Cjjg + ", Cjsl="
-                + Cjsl + ", Zqdm=" + Zqdm + ", Cjsj=" + Cjsj + ", Mmlb=" + Mmlb + "]";
+                + Cjsl + ", Zqdm=" + Zqdm + ", Cjsj=" + Cjsj + ", Mmlb=" + Mmlb + ", Wtsl=" + Wtsl + "]";
     }
 
 }

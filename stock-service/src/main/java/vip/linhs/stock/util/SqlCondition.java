@@ -116,10 +116,8 @@ public class SqlCondition {
     /**
      * 添加排序
      */
-    public void addSort(String key, String column, boolean first) {
-        if (!StringUtils.isEmpty(params.get(key))) {
-            sqlString.append(String.format(first ? " %s %s" : ", %s %s", column, params.get(key)));
-        }
+    public void addSort(String column, boolean isAsc, boolean first) {
+       sqlString.append(String.format(first ? " order by %s %s " : ", %s %s ", column, isAsc ? "asc" : "desc"));
     }
 
     /**

@@ -28,7 +28,7 @@ public class ExecuteInfoDaoImpl extends BaseDao implements ExecuteInfoDao {
         paramsList.add(state);
         String sql = "select e.id, task_id as taskId, params_str as paramsStr from execute_info e, task t"
                 + " where e.task_id = t.id and t.id in (" + whereCause + ") and e.state = ? order by t.id";
-        return jdbcTemplate.query(sql, paramsList.toArray(), new BeanPropertyRowMapper<>(ExecuteInfo.class));
+        return jdbcTemplate.query(sql, paramsList.toArray(), BeanPropertyRowMapper.newInstance(ExecuteInfo.class));
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ExecuteInfoDaoImpl extends BaseDao implements ExecuteInfoDao {
         dataSqlCondition.addPage(pageParam.getStart(), pageParam.getLength());
 
         List<TaskVo> list = jdbcTemplate.query(dataSqlCondition.toSql(),
-                dataSqlCondition.toArgs(), new BeanPropertyRowMapper<>(TaskVo.class));
+                dataSqlCondition.toArgs(), BeanPropertyRowMapper.newInstance(TaskVo.class));
         return new PageVo<>(list, totalRecords);
     }
 

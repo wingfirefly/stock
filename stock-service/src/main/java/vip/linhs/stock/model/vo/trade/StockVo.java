@@ -11,6 +11,8 @@ public class StockVo {
     private int totalVolume;
     private BigDecimal price;
     private int availableVolume;
+    private BigDecimal costPrice;
+    private BigDecimal profit;
 
     public String getStockCode() {
         return stockCode;
@@ -67,5 +69,22 @@ public class StockVo {
     public void setAvailableVolume(int availableVolume) {
         this.availableVolume = availableVolume;
     }
+
+    public BigDecimal getCostPrice() {
+        return costPrice;
+    }
+
+    public void setCostPrice(BigDecimal costPrice) {
+        this.costPrice = costPrice;
+    }
+
+    public BigDecimal getProfit() {
+        return profit;
+    }
+
+    public void setProfit(BigDecimal profit) {
+        this.profit = profit;
+    }
+
 
 }

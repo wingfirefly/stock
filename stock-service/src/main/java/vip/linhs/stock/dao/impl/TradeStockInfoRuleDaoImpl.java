@@ -30,7 +30,7 @@ public class TradeStockInfoRuleDaoImpl extends BaseDao implements TradeStockInfo
         dataSqlCondition.addPage(pageParam.getStart(), pageParam.getLength());
 
         List<TradeStockInfoRule> list = jdbcTemplate.query(dataSqlCondition.toSql(),
-                dataSqlCondition.toArgs(), new BeanPropertyRowMapper<>(TradeStockInfoRule.class));
+                dataSqlCondition.toArgs(), BeanPropertyRowMapper.newInstance(TradeStockInfoRule.class));
         return new PageVo<>(list, totalRecords);
     }
 

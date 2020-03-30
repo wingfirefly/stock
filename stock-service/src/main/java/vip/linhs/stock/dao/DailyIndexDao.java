@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import vip.linhs.stock.model.po.DailyIndex;
+import vip.linhs.stock.model.vo.DailyIndexVo;
+import vip.linhs.stock.model.vo.PageParam;
+import vip.linhs.stock.model.vo.PageVo;
 
 public interface DailyIndexDao {
 
@@ -12,5 +15,7 @@ public interface DailyIndexDao {
     void save(List<DailyIndex> list);
 
     DailyIndex getDailyIndexByFullCodeAndDate(String fullCode, Date date);
+
+    PageVo<DailyIndexVo> getDailyIndexList(PageParam pageParam);
 
 }

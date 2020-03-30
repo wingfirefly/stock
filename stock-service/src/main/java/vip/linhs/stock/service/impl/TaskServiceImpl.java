@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import vip.linhs.stock.config.SpringUtil;
 import vip.linhs.stock.dao.ExecuteInfoDao;
 import vip.linhs.stock.exception.ServiceException;
 import vip.linhs.stock.model.po.DailyIndex;
@@ -23,6 +24,7 @@ import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.po.StockLog;
 import vip.linhs.stock.model.po.Task;
 import vip.linhs.stock.model.po.TickerConfig;
+import vip.linhs.stock.model.po.TradeStrategy;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.TaskVo;
@@ -30,12 +32,12 @@ import vip.linhs.stock.service.HolidayCalendarService;
 import vip.linhs.stock.service.MessageService;
 import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.service.StockService;
-import vip.linhs.stock.service.StrategyService;
 import vip.linhs.stock.service.TaskService;
 import vip.linhs.stock.service.TickerConfigService;
+import vip.linhs.stock.service.TradeStrategyService;
+import vip.linhs.stock.trategy.handle.StrategyHandler;
 import vip.linhs.stock.util.DecimalUtil;
 import vip.linhs.stock.util.StockConsts;
-import vip.linhs.stock.util.StockConsts.TaskState;
 import vip.linhs.stock.util.StockUtil;
 
 @Service
@@ -61,14 +63,14 @@ public class TaskServiceImpl implements TaskService {
     private MessageService messageServicve;
 
     @Autowired
-    private StrategyService strategyService;
+    private TradeStrategyService tradeStrategyService;
 
     @Autowired
     private TickerConfigService tickerConfigService;
 
     @Override
     public List<ExecuteInfo> getPendingTaskListById(int... id) {
-        return executeInfoDao.getByTaskIdAndState(id, TaskState.Pending.value());
+        return executeInfoDao.getByTaskIdAndState(id, StockConsts.TaskState.Pending.value());
     }
 
     @Override
@@ -254,7 +256,18 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void runTradeTicker() {
-        strategyService.execute();
+        List<TradeStrategy> list = tradeStrategyService.getAll();
+        list.forEach(v -> {
+            if (v.getState() == StockConsts.TradeState.Valid.value()) {
+                String beanName = v.getBeanName();
+                StrategyHandler strategyHandler = SpringUtil.getBean(beanName, StrategyHandler.class);
+                try {
+                    strategyHandler.handle();
+                } catch (Exception e) {
+                    logger.error("strategyHandler {} error", v.getName(), e);
+                }
+            }
+        });
     }
 
     @Override

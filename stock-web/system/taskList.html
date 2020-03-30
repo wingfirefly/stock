@@ -19,7 +19,6 @@
   <script type="text/javascript" src="/static/js/util/consts.js"></script>
   <script type="text/javascript" src="/static/js/util/config.js"></script>
   <script type="text/javascript" src="/static/js/util/common.js"></script>
-  <script type="text/javascript" src="/static/js/util/consts.js"></script>
   <script type="text/javascript" src="/static/js/util/frame.js"></script>
   <script type="text/javascript" src="/static/js/modules/system.js"></script>
 
@@ -94,12 +93,12 @@
               title: '操作',
               render: function(row) {
                 var html = '';
-                 if (row.state === 0) {
-                   html += ' <button class="btn btn-validate" data-id="' + row.id + '">生效</button>';
-                 } else if (row.state === 2) {
+                if (row.state === 0) {
+                  html += ' <button class="btn btn-validate" data-id="' + row.id + '">生效</button>';
+                } else if (row.state === 2) {
                    html += ' <button class="btn btn-invalid" data-id="' + row.id + '">失效</button>';
-                 }
-                 return html;
+                }
+                return html;
               }
             }
           ],

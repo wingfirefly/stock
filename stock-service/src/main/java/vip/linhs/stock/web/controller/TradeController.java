@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vip.linhs.stock.api.TradeResultVo;
 import vip.linhs.stock.api.request.AuthenticationRequest;
+import vip.linhs.stock.api.request.GetAssetsRequest;
 import vip.linhs.stock.api.request.GetDealDataRequest;
 import vip.linhs.stock.api.request.GetOrdersDataRequest;
 import vip.linhs.stock.api.request.GetStockListRequest;
 import vip.linhs.stock.api.request.RevokeRequest;
 import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.AuthenticationResponse;
+import vip.linhs.stock.api.response.GetAssetsResponse;
 import vip.linhs.stock.api.response.GetDealDataResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
@@ -29,6 +31,7 @@ import vip.linhs.stock.exception.FieldInputException;
 import vip.linhs.stock.model.po.TradeOrder;
 import vip.linhs.stock.model.po.TradeRule;
 import vip.linhs.stock.model.po.TradeUser;
+import vip.linhs.stock.model.vo.AccountVo;
 import vip.linhs.stock.model.vo.CommonResponse;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
@@ -107,7 +110,7 @@ public class TradeController extends BaseController {
         TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(request);
         if (dealData.isSuccess()) {
             List<DealVo> list = tradeService.getTradeDealList(dealData.getData());
-            return new PageVo<>(list, list.size());
+            return new PageVo<>(subList(list, pageParam), list.size());
         }
         return new PageVo<>(Collections.emptyList(), 0);
     }
@@ -169,7 +172,7 @@ public class TradeController extends BaseController {
         TradeResultVo<GetStockListResponse> response = tradeApiService.getStockList(request);
         if (response.isSuccess()) {
             List<StockVo> list = tradeService.getTradeStockList(response.getData());
-            return new PageVo<>(list, list.size());
+            return new PageVo<>(subList(list, pageParam), list.size());
         }
         return new PageVo<>(Collections.emptyList(), 0);
     }
@@ -181,7 +184,7 @@ public class TradeController extends BaseController {
         if (response.isSuccess()) {
             List<OrderVo> list = tradeService.getTradeOrderList(response.getData());
             list = list.stream().filter(v -> v.getState().equals(GetOrdersDataResponse.YIBAO)).collect(Collectors.toList());
-            return new PageVo<>(list, list.size());
+            return new PageVo<>(subList(list, pageParam), list.size());
         }
         return new PageVo<>(Collections.emptyList(), 0);
     }
@@ -193,6 +196,27 @@ public class TradeController extends BaseController {
         request.setRevokes(revokes);
         TradeResultVo<RevokeResponse> response = tradeApiService.revoke(request);
         return CommonResponse.buildResponse(response.getMessage());
+    }
+
+    @RequestMapping("queryAccount")
+    public AccountVo queryAccount() {
+        GetAssetsRequest request = new GetAssetsRequest(getUserId());
+        TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(request);
+        AccountVo accountVo = new AccountVo();
+        if (tradeResultVo.isSuccess()) {
+            List<GetAssetsResponse> data = tradeResultVo.getData();
+            GetAssetsResponse response = data.get(0);
+            accountVo.setAvailableAmount(new BigDecimal(response.getKyzj()));
+            accountVo.setFrozenAmount(new BigDecimal(response.getDjzj()));
+            accountVo.setTotalAmount(new BigDecimal(response.getZzc()));
+            accountVo.setWithdrawableAmount(new BigDecimal(response.getKqzj()));
+        } else {
+            accountVo.setAvailableAmount(BigDecimal.ZERO);
+            accountVo.setFrozenAmount(BigDecimal.ZERO);
+            accountVo.setTotalAmount(BigDecimal.ZERO);
+            accountVo.setWithdrawableAmount(BigDecimal.ZERO);
+        }
+        return accountVo;
     }
 
 }

@@ -89,14 +89,14 @@ public class StockInfoDaoImpl extends BaseDao implements vip.linhs.stock.dao.Sto
         dataSqlCondition.addPage(pageParam.getStart(), pageParam.getLength());
 
         List<StockInfo> list = jdbcTemplate.query(dataSqlCondition.toSql(),
-                dataSqlCondition.toArgs(), new BeanPropertyRowMapper<>(StockInfo.class));
+                dataSqlCondition.toArgs(), BeanPropertyRowMapper.newInstance(StockInfo.class));
         return new PageVo<>(list, totalRecords);
     }
 
     @Override
     public StockInfo getStockByFullCode(String code) {
         return jdbcTemplate.queryForObject(StockInfoDaoImpl.SELECT_SQL + " and concat(exchange, code) = ?",
-                new String[] { code }, new BeanPropertyRowMapper<>(StockInfo.class));
+                new String[] { code }, BeanPropertyRowMapper.newInstance(StockInfo.class));
     }
 
 }

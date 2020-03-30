@@ -20,7 +20,6 @@
   <script type="text/javascript" src="/static/js/util/consts.js"></script>
   <script type="text/javascript" src="/static/js/util/config.js"></script>
   <script type="text/javascript" src="/static/js/util/common.js"></script>
-  <script type="text/javascript" src="/static/js/util/consts.js"></script>
   <script type="text/javascript" src="/static/js/util/frame.js"></script>
   <script type="text/javascript" src="/static/js/modules/trade.js"></script>
   <script type="text/javascript" src="https://cdn.bootcss.com/jquery-modal/0.9.2/jquery.modal.js"></script>
@@ -74,27 +73,28 @@
               }
             },
             {
-              title: '总',
+              title: '总/A',
               render: function(row) {
-                return row.totalVolume;
+                return row.totalVolume + '/' + row.availableVolume;
               }
             },
             {
-              title: '可用',
+              title: 'current/cost',
               render: function(row) {
-                return row.availableVolume;
-              }
-            },
-            {
-              title: '位',
-              render: function(row) {
-                return row.price;
+                return row.price + '/' + row.costPrice;
               }
             },
             {
               title: '金额',
               render: function(row) {
                 return (row.price * row.totalVolume).toFixed(0);
+              }
+            },
+            {
+              title: 'fit',
+              render: function(row) {
+                var className = row.profit > 0 ? 'red' : 'green';
+                return '<div class="' + className + '">' + row.profit + '</div>';
               }
             },
             {
@@ -111,6 +111,7 @@
           ],
           fnDrawCallback: function(result) {
             index = 0;
+            updateAccount();
           }
         },
       });
@@ -135,6 +136,11 @@
         $('#submit-modal input[name="price"]').val(data.price);
         $('#submit-modal input[name="stockCode"]').val(data.stockCode);
         $('#submit-modal input[name="tradeType"]').val(data.tradeType);
+        if (data.tradeType === 'S') {
+          $('#btn-submit-trade').text('sale');
+        } else {
+          $('#btn-submit-trade').text('buy');
+        }
       }
 
       $('#btn-submit-trade').on('click', function() {
@@ -175,6 +181,24 @@
         clearInterval(taskId);
       }
 
+      function updateAccount() {
+         $.ajax({
+           url: GlobalConfig.serverUrl + '/api/trade/queryAccount',
+           type: 'POST',
+           data: { },
+           headers: getRequestHeaders(),
+           error: function(xhr, status, errorThrown) {
+             ExceptionHandler.handleCommonError(xhr);
+           },
+           success: function(res) {
+             $('#totalAmount').text(res.totalAmount);
+             $('#availableAmount').text(res.availableAmount);
+             $('#withdrawableAmount').text(res.withdrawableAmount);
+             $('#frozenAmount').text(res.frozenAmount);
+          }
+        });
+      }
+
     }
 
   </script>
@@ -188,6 +212,12 @@
     <div class="innerBox">
       <ul class="menu-nav">
       </ul>
+      <div class="meta-content">
+        total: <span id="totalAmount"></span>,
+        available: <span id="availableAmount"></span>,
+        withdrawable: <span id="withdrawableAmount"></span>,
+        frozen: <span id="frozenAmount"></span>
+      </div>
       <table id="data-table-list" class="data-table-list">
       </table>
       <div id="submit-modal" style="display:none;">

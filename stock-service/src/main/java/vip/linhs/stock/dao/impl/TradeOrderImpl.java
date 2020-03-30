@@ -26,14 +26,14 @@ public class TradeOrderImpl extends BaseDao implements TradeOrderDao {
     @Override
     public List<TradeOrder> getAll() {
         return jdbcTemplate.query(TradeOrderImpl.SELECT_SQL, new Object[] {},
-                new BeanPropertyRowMapper<>(TradeOrder.class));
+                BeanPropertyRowMapper.newInstance(TradeOrder.class));
     }
 
     @Override
     public List<TradeOrder> getListByDate(Date date) {
         return jdbcTemplate.query(TradeOrderImpl.SELECT_SQL + " and create_time >= ?",
                 new Object[] { new java.sql.Date(date.getTime()) },
-                new BeanPropertyRowMapper<>(TradeOrder.class));
+                BeanPropertyRowMapper.newInstance(TradeOrder.class));
     }
 
     @Override

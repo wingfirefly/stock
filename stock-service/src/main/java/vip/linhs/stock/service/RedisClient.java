@@ -1,6 +1,10 @@
 package vip.linhs.stock.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -30,6 +34,16 @@ public class RedisClient {
         String value = get(key);
         stringRedisTemplate.delete(key);
         return value;
+    }
+
+    public List<Map<String, String>> getAll() {
+        return stringRedisTemplate.keys(StockConsts.CACHE_KEY_PREFIX + "*").stream().map(key -> {
+            String value = get(key);
+            HashMap<String, String> map = new HashMap<>();
+            map.put("key", key);
+            map.put("value", value);
+            return map;
+        }).collect(Collectors.toList());
     }
 
 }

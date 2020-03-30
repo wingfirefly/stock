@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import vip.linhs.stock.model.po.StockInfo;
+import vip.linhs.stock.model.vo.DailyIndexVo;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.service.StockService;
@@ -19,6 +20,11 @@ public class ReportController extends BaseController {
     @RequestMapping("stockList")
     public PageVo<StockInfo> getStockList(PageParam pageParam) {
         return stockService.getStockList(pageParam);
+    }
+
+    @RequestMapping("dailyIndexList")
+    public PageVo<DailyIndexVo> getDailyIndexList(PageParam pageParam) {
+        return stockService.getDailyIndexList(pageParam);
     }
 
 }

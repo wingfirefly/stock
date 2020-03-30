@@ -16,6 +16,10 @@ import org.springframework.stereotype.Repository;
 import vip.linhs.stock.dao.BaseDao;
 import vip.linhs.stock.dao.DailyIndexDao;
 import vip.linhs.stock.model.po.DailyIndex;
+import vip.linhs.stock.model.vo.DailyIndexVo;
+import vip.linhs.stock.model.vo.PageParam;
+import vip.linhs.stock.model.vo.PageVo;
+import vip.linhs.stock.util.SqlCondition;
 
 @Repository
 public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
@@ -59,8 +63,32 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
     public DailyIndex getDailyIndexByFullCodeAndDate(String fullCode, Date date) {
         List<DailyIndex> list = jdbcTemplate.query(
                 "select d.id, d.stock_info_id, d.date from daily_index d where stock_info_id = (select id from stock_info s where concat(s.exchange, s.code) = ?) and d.date = ? limit 0, 1",
-                new Object[] { fullCode, new java.sql.Date(date.getTime()) }, new BeanPropertyRowMapper<>(DailyIndex.class));
+                new Object[] { fullCode, new java.sql.Date(date.getTime()) }, BeanPropertyRowMapper.newInstance(DailyIndex.class));
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public PageVo<DailyIndexVo> getDailyIndexList(PageParam pageParam) {
+        String sql = "select"
+            + " s.name, s.abbreviation, s.code, d.date, d.pre_closing_price as preClosingPrice,"
+            + " d.closing_price as closingPrice, d.lowest_price as lowestPrice,"
+            + " d.highest_price as highestPrice, d.opening_price as openingPrice,"
+            + " d.trading_value as tradingValue, d.trading_volume as tradingVolume"
+            + " from daily_index d, stock_info s where d.stock_info_id = s.id";
+
+        SqlCondition dataSqlCondition = new SqlCondition(sql, pageParam.getCondition());
+        dataSqlCondition.addString("date", "date");
+
+        int totalRecords = jdbcTemplate.queryForObject(dataSqlCondition.getCountSql(),
+                dataSqlCondition.toArgs(), Integer.class);
+
+        dataSqlCondition.addSort("tradingValue", false, true);
+        dataSqlCondition.addSql(" limit ?, ?");
+        dataSqlCondition.addPage(pageParam.getStart(), pageParam.getLength());
+
+        List<DailyIndexVo> list = jdbcTemplate.query(dataSqlCondition.toSql(),
+                dataSqlCondition.toArgs(), BeanPropertyRowMapper.newInstance(DailyIndexVo.class));
+        return new PageVo<>(list, totalRecords);
     }
 
 }

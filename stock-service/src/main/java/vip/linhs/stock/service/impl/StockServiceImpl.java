@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import vip.linhs.stock.dao.StockLogDao;
 import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.po.StockLog;
+import vip.linhs.stock.model.vo.DailyIndexVo;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.parser.DailyIndexParser;
@@ -186,6 +188,12 @@ public class StockServiceImpl implements StockService {
     @Override
     public StockInfo getStockByFullCode(String code) {
         return stockInfoDao.getStockByFullCode(code);
+    }
+
+    @Override
+    public PageVo<DailyIndexVo> getDailyIndexList(PageParam pageParam) {
+        pageParam.getCondition().put("date", DateUtils.formatDate(new Date(), "yyyy-MM-dd") );
+        return dailyIndexDao.getDailyIndexList(pageParam);
     }
 
 }

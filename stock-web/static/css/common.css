@@ -194,6 +194,10 @@ a {
   margin-top: 94px;
 }
 
+.meta-content {
+  padding: 5px 5px;
+}
+
 body {
   background: #F4F4F4;
 }
@@ -222,14 +226,6 @@ body {
   background: #229966;
   border-radius: 5px;
   color: white;
-}
-
-.red {
-  background-color: red;
-}
-
-.blue {
-  background-color: blue;
 }
 
 /* frame */
@@ -300,5 +296,4 @@ body {
   .menu-nav li a {
     width: 80px;
   }
-
 }

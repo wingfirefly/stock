@@ -38,7 +38,7 @@ public class TradeRuleDaoImpl extends BaseDao implements TradeRuleDao {
         dataSqlCondition.addPage(pageParam.getStart(), pageParam.getLength());
 
         List<TradeRule> list = jdbcTemplate.query(dataSqlCondition.toSql(),
-                dataSqlCondition.toArgs(), new BeanPropertyRowMapper<>(TradeRule.class));
+                dataSqlCondition.toArgs(), BeanPropertyRowMapper.newInstance(TradeRule.class));
         return new PageVo<>(list, totalRecords);
     }
 

@@ -5,6 +5,7 @@ import java.util.List;
 import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.po.StockLog;
+import vip.linhs.stock.model.vo.DailyIndexVo;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 
@@ -31,5 +32,7 @@ public interface StockService {
     boolean existsTodayDailyIndex();
 
     StockInfo getStockByFullCode(String code);
+
+    PageVo<DailyIndexVo> getDailyIndexList(PageParam pageParam);
 
 }

@@ -42,7 +42,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     private boolean handleAuth(HttpServletRequest request, HttpServletResponse response, int userId)
             throws IOException {
         String url = request.getRequestURI();
-        logger.info("request_api: {}", url);
+        logger.debug("request_api: {}", url);
 
         boolean isLogin = userId > 0;
         boolean isOpen = openUrlList.contains(url);

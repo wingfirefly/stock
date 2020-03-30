@@ -43,7 +43,7 @@ public class HolidayCalendarDaoImpl extends BaseDao implements HolidayCalendarDa
         List<HolidayCalendar> list = jdbcTemplate.query(
                 "select id, date from holiday_calendar where date = ? and mark_for_delete = false",
                 new Object[] { new java.sql.Date(date.getTime()) },
-                new BeanPropertyRowMapper<>(HolidayCalendar.class));
+                BeanPropertyRowMapper.newInstance(HolidayCalendar.class));
         return list.isEmpty() ? null : list.get(0);
     }
 
