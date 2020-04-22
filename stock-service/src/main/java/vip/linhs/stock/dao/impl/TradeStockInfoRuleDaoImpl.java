@@ -15,7 +15,7 @@ import vip.linhs.stock.util.SqlCondition;
 @Repository
 public class TradeStockInfoRuleDaoImpl extends BaseDao implements TradeStockInfoRuleDao {
 
-    private static final String SELECT_SQL = "select id, stock_code as stockCode, rule_id as ruleId, state, create_time as createTime, update_time as updateTime from trade_stock_info_rule where mark_for_delete = false";
+    private static final String SELECT_SQL = "select id, stock_code as stockCode, rule_id as ruleId, state, create_time as createTime, update_time as updateTime from trade_stock_info_rule where 1 = 1";
 
     @Override
     public PageVo<TradeStockInfoRule> get(PageParam pageParam) {

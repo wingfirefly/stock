@@ -24,7 +24,7 @@ public class StockConsts {
 
     public static final String CACHE_KEY_TRADE_STRATEGY = CACHE_KEY_PREFIX + "trade:tradeStrategy";
 
-    public static final long DURATION_REDIS_DEFAULT = 3600 * 24;
+    public static final long DURATION_REDIS_DEFAULT = 3600 * 16;
 
     enum Exchange {
         SH("sh"), SZ("sz");

@@ -15,12 +15,12 @@ import vip.linhs.stock.util.SqlCondition;
 @Repository
 public class TradeRuleDaoImpl extends BaseDao implements TradeRuleDao {
 
-    private static final String SELECT_SQL = "select id, rate, state, description, create_time as createTime, update_time as updateTime from trade_rule where mark_for_delete = false";
+    private static final String SELECT_SQL = "select id, rate, state, description, create_time as createTime, update_time as updateTime from trade_rule where 1 = 1";
 
     @Override
     public TradeRule getTradeRuleByStockCode(String stockCode) {
          List<TradeRule> list = jdbcTemplate.query("select tr.id, tr.rate, tr.state"
-                + " from trade_rule tr, trade_stock_info_rule tsr, stock_info si where tr.id = tsr.rule_id and tsr.stock_code = si.code and si.code = ? and tr.state = 1 and tsr.state = 1 and tr.mark_for_delete = false",
+                + " from trade_rule tr, trade_stock_info_rule tsr, stock_info si where tr.id = tsr.rule_id and tsr.stock_code = si.code and si.code = ? and tr.state = 1 and tsr.state = 1",
                 new String[] { stockCode }, BeanPropertyRowMapper.newInstance(TradeRule.class));
          return list.isEmpty() ? null : list.get(0);
     }

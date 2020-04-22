@@ -13,7 +13,7 @@ import vip.linhs.stock.model.po.TradeOrder;
 @Repository
 public class TradeOrderImpl extends BaseDao implements TradeOrderDao {
 
-    private static final String SELECT_SQL = "select id, trade_code as tradeCode, stock_code as stockCode, price, volume, trade_type as tradeType, entrust_code as entrustCode, create_time as createTime, update_time as updateTime from trade_order where mark_for_delete = false";
+    private static final String SELECT_SQL = "select id, trade_code as tradeCode, stock_code as stockCode, price, volume, trade_type as tradeType, entrust_code as entrustCode, create_time as createTime, update_time as updateTime from trade_order where 1 = 1";
 
     @Override
     public void save(TradeOrder tradeOrder) {

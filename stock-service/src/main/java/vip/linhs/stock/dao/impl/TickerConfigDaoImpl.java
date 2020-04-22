@@ -14,7 +14,7 @@ public class TickerConfigDaoImpl extends BaseDao implements TickerConfigDao {
 
     @Override
     public List<TickerConfig> getListByKey(String key) {
-        String sql = "select c.id, c.`key`, c.`value`, c.robot_id as robotId, c.state from ticker_config c where c.`key` = ? and c.mark_for_delete = false";
+        String sql = "select c.id, c.`key`, c.`value`, c.robot_id as robotId, c.state from ticker_config c where c.`key` = ?";
         return jdbcTemplate.query(sql, new String[] { key }, BeanPropertyRowMapper.newInstance(TickerConfig.class));
     }
 

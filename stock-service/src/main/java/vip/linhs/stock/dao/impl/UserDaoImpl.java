@@ -12,7 +12,7 @@ import vip.linhs.stock.model.po.User;
 @Repository
 public class UserDaoImpl extends BaseDao implements UserDao {
 
-    private static final String SQL_SELECT = "select id, username, password, name, mobile, email, create_time as createTime, update_time as updateTime from user where mark_for_delete = false";
+    private static final String SQL_SELECT = "select id, username, password, name, mobile, email, create_time as createTime, update_time as updateTime from user where 1 = 1";
 
     @Override
     public User get(String username, String password) {

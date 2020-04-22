@@ -10,7 +10,6 @@ public class BaseModel implements Serializable {
     private int id;
     private Date createTime;
     private Date updateTime;
-    private boolean markForDelete;
 
     public int getId() {
         return id;
@@ -36,26 +35,16 @@ public class BaseModel implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public boolean isMarkForDelete() {
-        return markForDelete;
-    }
-
-    public void setMarkForDelete(boolean markForDelete) {
-        this.markForDelete = markForDelete;
-    }
-
     public void setBaiscModel(boolean insert) {
         updateTime = new Date();
         if (insert) {
             createTime = updateTime;
-            markForDelete = false;
         }
     }
 
     @Override
     public String toString() {
-        return "BaseModel [id=" + id + ", createTime=" + createTime + ", updateTime=" + updateTime + ", markForDelete="
-                + markForDelete + "]";
+        return "BaseModel [id=" + id + ", createTime=" + createTime + ", updateTime=" + updateTime + "]";
     }
 
 }

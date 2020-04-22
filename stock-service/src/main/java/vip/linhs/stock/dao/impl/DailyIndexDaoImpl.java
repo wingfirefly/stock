@@ -60,14 +60,6 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
     }
 
     @Override
-    public DailyIndex getDailyIndexByFullCodeAndDate(String fullCode, Date date) {
-        List<DailyIndex> list = jdbcTemplate.query(
-                "select d.id, d.stock_info_id, d.date from daily_index d where stock_info_id = (select id from stock_info s where concat(s.exchange, s.code) = ?) and d.date = ? limit 0, 1",
-                new Object[] { fullCode, new java.sql.Date(date.getTime()) }, BeanPropertyRowMapper.newInstance(DailyIndex.class));
-        return list.isEmpty() ? null : list.get(0);
-    }
-
-    @Override
     public PageVo<DailyIndexVo> getDailyIndexList(PageParam pageParam) {
         String sql = "select"
             + " s.name, s.abbreviation, s.code, d.date, d.pre_closing_price as preClosingPrice,"
@@ -89,6 +81,19 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
         List<DailyIndexVo> list = jdbcTemplate.query(dataSqlCondition.toSql(),
                 dataSqlCondition.toArgs(), BeanPropertyRowMapper.newInstance(DailyIndexVo.class));
         return new PageVo<>(list, totalRecords);
+    }
+
+    @Override
+    public List<DailyIndex> getDailyIndexListByDate(Date date) {
+        String sql = "select"
+            + " id, stock_info_id as stockInfoId, date, pre_closing_price as preClosingPrice,"
+            + " closing_price as closingPrice, lowest_price as lowestPrice,"
+            + " highest_price as highestPrice, opening_price as openingPrice,"
+            + " trading_value as tradingValue, trading_volume as tradingVolume"
+            + " from daily_index where date = ?";
+        List<DailyIndex> list = jdbcTemplate.query(sql,
+                new Object[] { new java.sql.Date(date.getTime()) }, BeanPropertyRowMapper.newInstance(DailyIndex.class));
+        return list;
     }
 
 }

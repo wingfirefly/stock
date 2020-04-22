@@ -133,7 +133,7 @@ public class TradeServiceImpl implements TradeService {
             return Collections.emptyList();
         }
         List<TradeOrder> tradeOrderList = getTradeOrderList();
-        return data.stream().map(v -> {
+        return data.stream().filter(v -> StockUtil.isStockCode(v.getZqdm())).map(v -> {
             DealVo dealVo = new DealVo();
             dealVo.setTradeCode(v.getCjbh());
             dealVo.setPrice(v.getCjjg());

@@ -14,8 +14,8 @@ public interface DailyIndexDao {
 
     void save(List<DailyIndex> list);
 
-    DailyIndex getDailyIndexByFullCodeAndDate(String fullCode, Date date);
-
     PageVo<DailyIndexVo> getDailyIndexList(PageParam pageParam);
+
+    List<DailyIndex> getDailyIndexListByDate(Date date);
 
 }

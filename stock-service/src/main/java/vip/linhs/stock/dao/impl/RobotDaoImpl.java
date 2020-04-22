@@ -12,7 +12,7 @@ import vip.linhs.stock.model.po.Robot;
 @Repository
 public class RobotDaoImpl extends BaseDao implements RobotDao {
 
-    private static final String SELECT_SQL = "select id, type, webhook, state from robot where mark_for_delete = false";
+    private static final String SELECT_SQL = "select id, type, webhook, state from robot where 1 = 1";
 
     @Override
     public Robot getById(int id) {

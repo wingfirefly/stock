@@ -179,11 +179,6 @@ public class StockServiceImpl implements StockService {
         return stockInfoDao.get(pageParam);
     }
 
-    @Override
-    public boolean existsTodayDailyIndex() {
-        return dailyIndexDao.getDailyIndexByFullCodeAndDate("sz000001", new Date()) != null;
-    }
-
     @Cacheable(value = StockConsts.CACHE_KEY_DATA_CODE, key = "#code")
     @Override
     public StockInfo getStockByFullCode(String code) {
@@ -194,6 +189,11 @@ public class StockServiceImpl implements StockService {
     public PageVo<DailyIndexVo> getDailyIndexList(PageParam pageParam) {
         pageParam.getCondition().put("date", DateUtils.formatDate(new Date(), "yyyy-MM-dd") );
         return dailyIndexDao.getDailyIndexList(pageParam);
+    }
+
+    @Override
+    public List<DailyIndex> getDailyIndexListByDate(Date date) {
+        return dailyIndexDao.getDailyIndexListByDate(date);
     }
 
 }

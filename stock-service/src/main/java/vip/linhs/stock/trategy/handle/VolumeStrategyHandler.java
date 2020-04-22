@@ -110,6 +110,7 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
         List<VolumeSubmitResult> submitList = result.getSubmitList();
 
         revokeList.forEach(request -> {
+            logger.info("revoek request: {}", request);
             TradeResultVo<RevokeResponse> resultVo = tradeApiService.revoke(request);
             if (!resultVo.isSuccess()) {
                 logger.error(resultVo.getMessage());
@@ -170,6 +171,7 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
     }
 
     private TradeResultVo<SubmitResponse> trade(SubmitRequest request) {
+        logger.info("submit request: {}", request);
         TradeResultVo<SubmitResponse> tradeResultVo = tradeApiService.submit(request);
         String name = stockService.getStockByFullCode(StockUtil.getFullCode(request.getStockCode())).getName();
         if (!tradeResultVo.isSuccess()) {

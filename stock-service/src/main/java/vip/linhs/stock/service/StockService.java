@@ -1,5 +1,6 @@
 package vip.linhs.stock.service;
 
+import java.util.Date;
 import java.util.List;
 
 import vip.linhs.stock.model.po.DailyIndex;
@@ -29,10 +30,10 @@ public interface StockService {
 
     PageVo<StockInfo> getStockList(PageParam pageParam);
 
-    boolean existsTodayDailyIndex();
-
     StockInfo getStockByFullCode(String code);
 
     PageVo<DailyIndexVo> getDailyIndexList(PageParam pageParam);
+
+    List<DailyIndex> getDailyIndexListByDate(Date date);
 
 }

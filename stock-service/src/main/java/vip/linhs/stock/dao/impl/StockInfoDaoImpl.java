@@ -10,15 +10,16 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import vip.linhs.stock.dao.BaseDao;
+import vip.linhs.stock.dao.StockInfoDao;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.util.SqlCondition;
 
 @Repository
-public class StockInfoDaoImpl extends BaseDao implements vip.linhs.stock.dao.StockInfoDao {
+public class StockInfoDaoImpl extends BaseDao implements StockInfoDao {
 
-    private static final String SELECT_SQL = "select id, code, name, exchange, abbreviation, state, create_time as createTime, update_time as updateTime from stock_info where mark_for_delete = false";
+    private static final String SELECT_SQL = "select id, code, name, exchange, abbreviation, state, create_time as createTime, update_time as updateTime from stock_info where 1 = 1";
 
     @Override
     public void add(List<StockInfo> list) {
@@ -46,7 +47,7 @@ public class StockInfoDaoImpl extends BaseDao implements vip.linhs.stock.dao.Sto
     @Override
     public void update(List<StockInfo> list) {
         jdbcTemplate.batchUpdate(
-                "update stock_info set code = ?, name = ?, exchange = ?, abbreviation = ? where mark_for_delete = false and id = ?",
+                "update stock_info set code = ?, name = ?, exchange = ?, abbreviation = ? where id = ?",
                 new BatchPreparedStatementSetter() {
 
                     @Override
