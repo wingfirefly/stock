@@ -2,12 +2,14 @@ package vip.linhs.stock.trategy.handle;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +114,7 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
         revokeList.forEach(request -> {
             logger.info("revoek request: {}", request);
             TradeResultVo<RevokeResponse> resultVo = tradeApiService.revoke(request);
+            logger.info("revoek response: {}", resultVo);
             if (!resultVo.isSuccess()) {
                 logger.error(resultVo.getMessage());
                 messageServicve.sendDingding(String.format("revoke error. request: %s, response: %s", request, resultVo.getMessage()));
@@ -137,8 +140,9 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
     private void setNeedRevoke(List<TradeOrder> tradeOrderList, String wtbh, List<RevokeRequest> revokeList, int userId) {
         String needRevokeWtbh = getNeedRevokeWtbh(tradeOrderList, wtbh);
         if (!StringUtils.isEmpty(needRevokeWtbh)) {
+            String revokes = String.format("%s_%s", DateUtils.formatDate(new Date(), "yyyyMMdd"), needRevokeWtbh);
             RevokeRequest request = new RevokeRequest(userId);
-            request.setRevokes(needRevokeWtbh);
+            request.setRevokes(revokes);
             revokeList.add(request);
         }
     }
@@ -173,6 +177,7 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
     private TradeResultVo<SubmitResponse> trade(SubmitRequest request) {
         logger.info("submit request: {}", request);
         TradeResultVo<SubmitResponse> tradeResultVo = tradeApiService.submit(request);
+        logger.info("submit response: {}", tradeResultVo);
         String name = stockService.getStockByFullCode(StockUtil.getFullCode(request.getStockCode())).getName();
         if (!tradeResultVo.isSuccess()) {
             logger.error(tradeResultVo.getMessage());
