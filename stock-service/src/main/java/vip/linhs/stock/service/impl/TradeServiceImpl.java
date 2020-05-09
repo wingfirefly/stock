@@ -88,7 +88,7 @@ public class TradeServiceImpl implements TradeService {
     }
 
     @Override
-    public  PageVo<TradeConfigVo> getConfigList(PageParam pageParam) {
+    public PageVo<TradeConfigVo> getConfigList(PageParam pageParam) {
         PageVo<TradeStockInfoRule> pageVo = tradeStockInfoRuleDao.get(pageParam);
         List<TradeStockInfoRule> list = pageVo.getData();
         List<TradeConfigVo> tradeConfigVoList = list.stream().map(tradeStockInfoRule -> {

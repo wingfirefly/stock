@@ -43,7 +43,7 @@ public class StockUtil {
         if (StringUtils.isEmpty(code)) {
             return null;
         }
-        if (code.startsWith("600") || code.startsWith("601") || code.startsWith("603") || code.startsWith("688")) {
+        if (code.startsWith("600") || code.startsWith("601") || code.startsWith("603") || code.startsWith("605") || code.startsWith("688")) {
             return Exchange.SH.getName();
         }
         if (code.startsWith("000") || code.startsWith("001") || code.startsWith("002")
@@ -63,7 +63,7 @@ public class StockUtil {
             if (ch == '*') {
                 continue;
             }
-            if (ch >= 'a' && ch <= 'z') {
+            if (ch > 31 & ch < 127) {
                 sb.append(ch);
             } else if (ch == '行') {
                 sb.append('h');

@@ -136,6 +136,7 @@
         $('#submit-modal input[name="price"]').val(data.price);
         $('#submit-modal input[name="stockCode"]').val(data.stockCode);
         $('#submit-modal input[name="tradeType"]').val(data.tradeType);
+        $('#submit-modal .span-message').text('');
         if (data.tradeType === 'S') {
           $('#btn-submit-trade').text('sale');
         } else {
@@ -155,6 +156,7 @@
         }
 
         $('#btn-submit-trade').attr('disabled', 'disabled');
+        $('#submit-modal .span-message').text('');
 
         $.ajax({
           url: url,
@@ -166,6 +168,7 @@
             $('#btn-submit-trade').removeAttr('disabled');
           },
           success: function(res) {
+            $('#submit-modal .span-message').text(res.message);
             dataTable.fnDraw();
           }
         });
@@ -226,6 +229,7 @@
          <input type="hidden" name="stockCode" />
          <input type="hidden" name="tradeType" />
          <button id="btn-submit-trade"  data-dismiss="modal">提交</button>
+         <span class="span-message" style="color: red"></span>
       </div>
     </div>
   </div>
