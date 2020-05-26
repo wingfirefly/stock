@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.dao.TradeMethodDao;
@@ -20,6 +21,7 @@ import vip.linhs.stock.dao.TradeOrderDao;
 import vip.linhs.stock.dao.TradeRuleDao;
 import vip.linhs.stock.dao.TradeStockInfoRuleDao;
 import vip.linhs.stock.dao.TradeUserDao;
+import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.po.TradeMethod;
 import vip.linhs.stock.model.po.TradeOrder;
@@ -32,6 +34,7 @@ import vip.linhs.stock.model.vo.trade.DealVo;
 import vip.linhs.stock.model.vo.trade.OrderVo;
 import vip.linhs.stock.model.vo.trade.StockVo;
 import vip.linhs.stock.model.vo.trade.TradeConfigVo;
+import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.service.StockService;
 import vip.linhs.stock.service.TradeService;
 import vip.linhs.stock.util.StockConsts;
@@ -57,6 +60,9 @@ public class TradeServiceImpl implements TradeService {
 
     @Autowired
     private StockService stockService;
+
+    @Autowired
+    private StockCrawlerService stockCrawlerService;
 
     @Cacheable(value = StockConsts.CACHE_KEY_TRADE_METHOD, key = "#name")
     @Override
@@ -167,6 +173,10 @@ public class TradeServiceImpl implements TradeService {
     public List<StockVo> getTradeStockList(List<GetStockListResponse> stockList) {
         List<StockVo> list = stockList.stream().filter(v -> StockUtil.isStockCode(v.getZqdm())).map(v -> {
             StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(v.getZqdm()));
+            DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(stockInfo.getCode());
+            BigDecimal rate = StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
+                    dailyIndex.getPreClosingPrice());
+
             StockVo stockVo = new StockVo();
             stockVo.setAbbreviation(stockInfo.getAbbreviation());
             stockVo.setStockCode(stockInfo.getCode());
@@ -177,6 +187,7 @@ public class TradeServiceImpl implements TradeService {
             stockVo.setPrice(new BigDecimal(v.getZxjg()));
             stockVo.setCostPrice(new BigDecimal(v.getCbjg()));
             stockVo.setProfit(new BigDecimal(v.getLjyk()));
+            stockVo.setRate(rate);
             return stockVo;
         }).collect(Collectors.toList());
         return list;
@@ -199,6 +210,28 @@ public class TradeServiceImpl implements TradeService {
             return orderVo;
         }).collect(Collectors.toList());
         return list;
+    }
+
+    @Override
+    public List<DealVo> getTradeHisDealList(List<GetHisDealDataResponse> data) {
+        if (data.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return data.stream().filter(v -> StockUtil.isStockCode(v.getZqdm())).map(v -> {
+            DealVo dealVo = new DealVo();
+            dealVo.setTradeCode(v.getCjbh());
+            dealVo.setPrice(v.getCjjg());
+            dealVo.setTradeDate(new StringBuilder(v.getCjrq()).insert(6, '-').insert(4, '-').toString());
+            dealVo.setTradeTime(new StringBuilder(v.getCjsj()).insert(4, ':').insert(2, ':').toString());
+            dealVo.setTradeType(v.getMmlb());
+            dealVo.setVolume(v.getCjsl());
+            dealVo.setEntrustCode(v.getWtbh());
+            dealVo.setStockCode(v.getZqdm());
+            StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(v.getZqdm()));
+            dealVo.setStockName(stockInfo.getName());
+            dealVo.setAbbreviation(stockInfo.getAbbreviation());
+            return dealVo;
+        }).collect(Collectors.toList());
     }
 
 }

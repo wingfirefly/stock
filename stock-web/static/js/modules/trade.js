@@ -5,7 +5,8 @@ function renderTradeMenu(current) {
     { id: 3, title: '交易配置', url: '/trade/configList.html' },
     { id: 4, title: 'cc', url: '/trade/stockList.html' },
     { id: 5, title: 'wt', url: '/trade/orderList.html' },
-    { id: 6, title: 'deal', url: '/trade/dealList.html' }
+    { id: 6, title: 'deal', url: '/trade/dealList.html' },
+    { id: 7, title: 'his deal', url: '/trade/hisDealList.html' }
   ];
 
   renderMenu(arr, '.menu-nav', current);

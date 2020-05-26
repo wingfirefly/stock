@@ -22,8 +22,8 @@ import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.ExecuteInfo;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.po.StockLog;
+import vip.linhs.stock.model.po.StockSelected;
 import vip.linhs.stock.model.po.Task;
-import vip.linhs.stock.model.po.TickerConfig;
 import vip.linhs.stock.model.po.TradeStrategy;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
@@ -31,9 +31,9 @@ import vip.linhs.stock.model.vo.TaskVo;
 import vip.linhs.stock.service.HolidayCalendarService;
 import vip.linhs.stock.service.MessageService;
 import vip.linhs.stock.service.StockCrawlerService;
+import vip.linhs.stock.service.StockSelectedService;
 import vip.linhs.stock.service.StockService;
 import vip.linhs.stock.service.TaskService;
-import vip.linhs.stock.service.TickerConfigService;
 import vip.linhs.stock.service.TradeStrategyService;
 import vip.linhs.stock.trategy.handle.StrategyHandler;
 import vip.linhs.stock.util.DecimalUtil;
@@ -45,7 +45,7 @@ public class TaskServiceImpl implements TaskService {
 
     private final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
 
-    private Map<String, BigDecimal> tickerMap = new HashMap<>();
+    private Map<String, BigDecimal> lastPriceMap = new HashMap<>();
 
     @Autowired
     private HolidayCalendarService holidayCalendarService;
@@ -66,7 +66,7 @@ public class TaskServiceImpl implements TaskService {
     private TradeStrategyService tradeStrategyService;
 
     @Autowired
-    private TickerConfigService tickerConfigService;
+    private StockSelectedService stockSelectedService;
 
     @Override
     public List<ExecuteInfo> getPendingTaskListById(int... id) {
@@ -87,7 +87,7 @@ public class TaskServiceImpl implements TaskService {
             case EndOfYear:
                 break;
             case BeginOfDay:
-                tickerMap.clear();
+                lastPriceMap.clear();
                 break;
             case EndOfDay:
                 break;
@@ -223,36 +223,31 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void runTicker() {
-        List<TickerConfig> configList = tickerConfigService.getListByKey(StockConsts.TickerConfigKey.StockList.value());
-        if (!configList.isEmpty()) {
-            TickerConfig tickerConfig = configList.get(0);
-            List<String> stockCodeList = Arrays.asList(tickerConfig.getValue().split(","));
-            stockCodeList.forEach(code -> {
-                DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(code);
-                if (dailyIndex != null) {
-                    if (tickerMap.containsKey(code)) {
-                        BigDecimal lastPrice = tickerMap.get(code);
-                        double rate = Math
-                                .abs(StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(), lastPrice)
-                                        .movePointRight(2).doubleValue());
-                        if (Double.compare(rate, 2) >= 0) {
-                            tickerMap.put(code, dailyIndex.getClosingPrice());
-                            String name = stockService.getStockByFullCode(StockUtil.getFullCode(code)).getName();
-                            String body = String.format("%s:当前价格:%.02f, 涨幅%.02f%%", name,
-                                dailyIndex.getClosingPrice().doubleValue(),
-                                StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
-                                        dailyIndex.getPreClosingPrice()).movePointRight(2).doubleValue());
-                            messageServicve.sendDingding(body);
-                        }
-                    } else {
-                        tickerMap.put(code, dailyIndex.getPreClosingPrice());
-                        String name = stockService.getStockByFullCode(StockUtil.getFullCode(code)).getName();
-                        String body = String.format("%s:当前价格:%.02f", name,
-                                dailyIndex.getClosingPrice().doubleValue());
-                        messageServicve.sendDingding(body);
-                    }
+        List<StockSelected> configList = stockSelectedService.getList();
+        for (StockSelected stockSelected : configList) {
+            String code = stockSelected.getCode();
+            DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(code);
+            if (dailyIndex == null) {
+                continue;
+            }
+            if (lastPriceMap.containsKey(code)) {
+                BigDecimal lastPrice = lastPriceMap.get(code);
+                double rate = Math.abs(StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(), lastPrice).doubleValue());
+                if (Double.compare(rate, stockSelected.getRate().doubleValue()) >= 0) {
+                    lastPriceMap.put(code, dailyIndex.getClosingPrice());
+                    String name = stockService.getStockByFullCode(StockUtil.getFullCode(code)).getName();
+                    String body = String.format("%s:当前价格:%.02f, 涨幅%.02f%%", name,
+                        dailyIndex.getClosingPrice().doubleValue(),
+                        StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
+                                dailyIndex.getPreClosingPrice()).movePointRight(2).doubleValue());
+                    messageServicve.sendDingding(body);
                 }
-            });
+            } else {
+                lastPriceMap.put(code, dailyIndex.getPreClosingPrice());
+                String name = stockService.getStockByFullCode(StockUtil.getFullCode(code)).getName();
+                String body = String.format("%s:当前价格:%.02f", name, dailyIndex.getClosingPrice().doubleValue());
+                messageServicve.sendDingding(body);
+            }
         }
     }
 

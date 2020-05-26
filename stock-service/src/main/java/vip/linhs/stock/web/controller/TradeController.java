@@ -16,6 +16,7 @@ import vip.linhs.stock.api.TradeResultVo;
 import vip.linhs.stock.api.request.AuthenticationRequest;
 import vip.linhs.stock.api.request.GetAssetsRequest;
 import vip.linhs.stock.api.request.GetDealDataRequest;
+import vip.linhs.stock.api.request.GetHisDealDataRequest;
 import vip.linhs.stock.api.request.GetOrdersDataRequest;
 import vip.linhs.stock.api.request.GetStockListRequest;
 import vip.linhs.stock.api.request.RevokeRequest;
@@ -23,6 +24,7 @@ import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.AuthenticationResponse;
 import vip.linhs.stock.api.response.GetAssetsResponse;
 import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.api.response.RevokeResponse;
@@ -110,6 +112,22 @@ public class TradeController extends BaseController {
         TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(request);
         if (dealData.isSuccess()) {
             List<DealVo> list = tradeService.getTradeDealList(dealData.getData());
+            return new PageVo<>(subList(list, pageParam), list.size());
+        }
+        return new PageVo<>(Collections.emptyList(), 0);
+    }
+
+    @RequestMapping("hisDealList")
+    public PageVo<DealVo> getHisDealList(PageParam pageParam) {
+        GetHisDealDataRequest request = new GetHisDealDataRequest(getUserId());
+        request.setEt(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
+        Date et = new Date();
+        et.setTime(et.getTime() - 7 * 24 * 3600 * 1000);
+        request.setSt(DateUtils.formatDate(et, "yyyy-MM-dd"));
+
+        TradeResultVo<GetHisDealDataResponse> dealData = tradeApiService.getHisDealData(request);
+        if (dealData.isSuccess()) {
+            List<DealVo> list = tradeService.getTradeHisDealList(dealData.getData());
             return new PageVo<>(subList(list, pageParam), list.size());
         }
         return new PageVo<>(Collections.emptyList(), 0);

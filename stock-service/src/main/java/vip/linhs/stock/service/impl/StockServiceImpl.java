@@ -81,7 +81,7 @@ public class StockServiceImpl implements StockService {
         }
     }
 
-    @CacheEvict(value = StockConsts.CACHE_KEY_DATA_CODE, allEntries = true)
+    @CacheEvict(value = StockConsts.CACHE_KEY_DATA_STOCK, allEntries = true)
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     @Override
     public void update(List<StockInfo> needAddedList, List<StockInfo> needUpdatedList, List<StockLog> stockLogList) {
@@ -179,7 +179,7 @@ public class StockServiceImpl implements StockService {
         return stockInfoDao.get(pageParam);
     }
 
-    @Cacheable(value = StockConsts.CACHE_KEY_DATA_CODE, key = "#code")
+    @Cacheable(value = StockConsts.CACHE_KEY_DATA_STOCK, key = "#code")
     @Override
     public StockInfo getStockByFullCode(String code) {
         return stockInfoDao.getStockByFullCode(code);

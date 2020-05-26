@@ -85,6 +85,13 @@
               }
             },
             {
+              title: 'rate',
+              render: function(row) {
+                var className = row.rate >= 0 ? 'red' : 'green';
+                return '<div class="'+ className + '">' + (row.rate * 100).toFixed(2) + '</div>';
+              }
+            },
+            {
               title: '金额',
               render: function(row) {
                 return (row.price * row.totalVolume).toFixed(0);
@@ -93,7 +100,7 @@
             {
               title: 'fit',
               render: function(row) {
-                var className = row.profit > 0 ? 'red' : 'green';
+                var className = row.profit >= 0 ? 'red' : 'green';
                 return '<div class="' + className + '">' + row.profit + '</div>';
               }
             },

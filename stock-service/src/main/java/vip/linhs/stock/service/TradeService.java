@@ -3,6 +3,7 @@ package vip.linhs.stock.service;
 import java.util.List;
 
 import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.model.po.TradeMethod;
@@ -45,5 +46,7 @@ public interface TradeService {
     List<StockVo> getTradeStockList(List<GetStockListResponse> stockList);
 
     List<OrderVo> getTradeOrderList(List<GetOrdersDataResponse> orderList);
+
+    List<DealVo> getTradeHisDealList(List<GetHisDealDataResponse> data);
 
 }

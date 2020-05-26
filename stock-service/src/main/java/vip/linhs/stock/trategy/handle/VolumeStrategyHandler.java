@@ -52,10 +52,10 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
     @Autowired
     private StockService stockService;
 
-    private final int UserId = 1;
 
     @Override
     public VolumeStrategyInput queryInput() {
+        int UserId = 1;
         TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(new GetDealDataRequest(UserId));
         if (!dealData.isSuccess()) {
             throw new ServiceException("execute VolumeStrategyService error: " + dealData.getMessage());

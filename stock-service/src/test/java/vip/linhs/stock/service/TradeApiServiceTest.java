@@ -97,7 +97,7 @@ public class TradeApiServiceTest {
         GetHisDealDataRequest request = new GetHisDealDataRequest(TradeApiServiceTest.UserId);
         request.setEt(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
         Date et = new Date();
-        et.setTime(et.getTime() - 2 * 24 * 3600 * 1000);
+        et.setTime(et.getTime() - 7 * 24 * 3600 * 1000);
         request.setSt(DateUtils.formatDate(et, "yyyy-MM-dd"));
         TradeResultVo<GetHisDealDataResponse> tradeResultVo = tradeApiService.getHisDealData(request);
         System.out.println(JSON.toJSONString(tradeResultVo));

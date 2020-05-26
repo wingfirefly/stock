@@ -9,7 +9,8 @@ public class StockConsts {
     public static final String CACHE_KEY_PREFIX = "stock:";
 
     private static final String CACHE_KEY_DATA_PREFIX = CACHE_KEY_PREFIX + "data:";
-    public static final String CACHE_KEY_DATA_CODE = StockConsts.CACHE_KEY_DATA_PREFIX + "stock";
+    public static final String CACHE_KEY_DATA_STOCK = StockConsts.CACHE_KEY_DATA_PREFIX + "stock";
+    public static final String CACHE_KEY_DATA_DAILYINDEX = StockConsts.CACHE_KEY_DATA_PREFIX + "dailyIndex";
 
     private static final String CACHE_KEY_CONFIG_PREFIX = CACHE_KEY_PREFIX + "config:";
     public static final String CACHE_KEY_CONFIG_TICKER = StockConsts.CACHE_KEY_CONFIG_PREFIX + "tickerConfig";
@@ -24,7 +25,7 @@ public class StockConsts {
 
     public static final String CACHE_KEY_TRADE_STRATEGY = CACHE_KEY_PREFIX + "trade:tradeStrategy";
 
-    public static final long DURATION_REDIS_DEFAULT = 3600 * 16;
+    public static final long DURATION_REDIS_DEFAULT = 3600 * 24 * 3;
 
     enum Exchange {
         SH("sh"), SZ("sz");
@@ -115,19 +116,6 @@ public class StockConsts {
         }
 
         public int value() {
-            return value;
-        }
-    }
-
-    public enum TickerConfigKey {
-        StockList("stock_list");
-        private String value;
-
-        private TickerConfigKey(String value) {
-            this.value = value;
-        }
-
-        public String value() {
             return value;
         }
     }

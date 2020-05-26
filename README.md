@@ -28,7 +28,7 @@
 - nodejs
 - redis
 
-文档和数据库表见[wiki](https://github.com/bosspen1/stock/wiki)
+<font color="red" size=5>文档和数据库表见[wiki](https://github.com/bosspen1/stock/wiki)</font>
 
 ------------
 

@@ -22,6 +22,10 @@ public class DealVo {
     private String stockName;
     private String abbreviation;
     /**
+     * 成交日期 YY-MM-DD
+     */
+    private String tradeDate;
+    /**
      * 成交时间 HH:mm:ss
      */
     private String tradeTime;
@@ -91,6 +95,14 @@ public class DealVo {
 
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
+    }
+
+    public String getTradeDate() {
+        return tradeDate;
+    }
+
+    public void setTradeDate(String tradeDate) {
+        this.tradeDate = tradeDate;
     }
 
     public String getTradeTime() {

@@ -96,7 +96,7 @@ public class ScheduledTasks {
     /**
      * update of stock
      */
-    @Scheduled(cron = "0 30 8 ? * MON-FRI")
+    @Scheduled(cron = "0 0 9 ? * MON-FRI")
     public void runUpdateOfStock() {
         boolean isHoliday = holidayCalendarService.isHoliday(new Date());
         if (isHoliday) {
