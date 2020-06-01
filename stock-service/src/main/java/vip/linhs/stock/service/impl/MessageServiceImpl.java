@@ -33,6 +33,7 @@ public class MessageServiceImpl implements MessageService {
         Robot robot = robotService.getSystem();
         if (robot == null) {
             MessageServiceImpl.logger.error("system robot not config");
+            return;
         }
         String target = robot.getWebhook();
         sendDingding(null, body, target, DingDingMessageType.Text);
@@ -43,6 +44,7 @@ public class MessageServiceImpl implements MessageService {
         Robot robot = robotService.getSystem();
         if (robot == null) {
             MessageServiceImpl.logger.error("system robot not config");
+            return;
         }
         String target = robot.getWebhook();
         sendDingding(title, body, target, DingDingMessageType.Markdown);

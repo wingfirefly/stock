@@ -94,7 +94,7 @@ public class TradeController extends BaseController {
         }
         if (id < 0) {
             if (e == null) {
-                new FieldInputException();
+                e = new FieldInputException();
             }
             e.addError("id", "id invalid");
         }
