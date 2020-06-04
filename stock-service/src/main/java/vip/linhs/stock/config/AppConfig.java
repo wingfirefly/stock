@@ -2,6 +2,7 @@ package vip.linhs.stock.config;
 
 import java.time.Duration;
 
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -58,7 +59,11 @@ public class AppConfig implements WebMvcConfigurer {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
         cm.setDefaultMaxPerRoute(30);
         cm.setMaxTotal(100);
-        return HttpClients.custom().setConnectionManager(cm).build();
+
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(1000 * 5)
+                .setSocketTimeout(1000 * 5).build();
+        return HttpClients.custom().setDefaultRequestConfig(requestConfig).setConnectionManager(cm).build();
     }
 
     @Bean

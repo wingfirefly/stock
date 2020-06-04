@@ -2,6 +2,8 @@
   width: 100%;
   text-align: center;
   padding: 10px 10px;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
 .data-table-list td, th {

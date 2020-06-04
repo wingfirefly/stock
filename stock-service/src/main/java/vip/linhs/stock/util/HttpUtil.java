@@ -101,7 +101,7 @@ public class HttpUtil {
         if (header != null) {
             header.entrySet().stream().forEach(entry -> httpGet.addHeader(entry.getKey(), entry.getValue()));
         }
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(3500).setConnectTimeout(3500).build();
+        RequestConfig requestConfig = RequestConfig.custom().build();
         httpGet.setConfig(requestConfig);
         return httpGet;
     }
@@ -111,7 +111,7 @@ public class HttpUtil {
         if (header != null) {
             header.entrySet().stream().forEach(entry -> httpPost.addHeader(entry.getKey(), entry.getValue()));
         }
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(3500).setConnectTimeout(3500).build();
+        RequestConfig requestConfig = RequestConfig.custom().build();
         httpPost.setConfig(requestConfig);
         return httpPost;
     }

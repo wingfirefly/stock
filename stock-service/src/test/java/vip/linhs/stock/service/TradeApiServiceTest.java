@@ -3,12 +3,10 @@ package vip.linhs.stock.service;
 import java.util.Date;
 
 import org.apache.http.client.utils.DateUtils;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.alibaba.fastjson.JSON;
 
@@ -30,7 +28,6 @@ import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.api.response.RevokeResponse;
 import vip.linhs.stock.api.response.SubmitResponse;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class TradeApiServiceTest {
 
@@ -44,7 +41,7 @@ public class TradeApiServiceTest {
         GetAssetsRequest request = new GetAssetsRequest(TradeApiServiceTest.UserId);
         TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
-        Assert.assertTrue(tradeResultVo.isSuccess());
+        Assertions.assertTrue(tradeResultVo.isSuccess());
     }
 
     @Test
@@ -56,7 +53,7 @@ public class TradeApiServiceTest {
         request.setStockCode("300542");
         TradeResultVo<SubmitResponse> tradeResultVo = tradeApiService.submit(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
-        Assert.assertTrue(tradeResultVo.isSuccess());
+        Assertions.assertTrue(tradeResultVo.isSuccess());
     }
 
     @Test
@@ -65,7 +62,7 @@ public class TradeApiServiceTest {
         request.setRevokes("20190527_299");
         TradeResultVo<RevokeResponse> tradeResultVo = tradeApiService.revoke(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
-        Assert.assertTrue(tradeResultVo.isSuccess());
+        Assertions.assertTrue(tradeResultVo.isSuccess());
     }
 
     @Test
@@ -73,7 +70,7 @@ public class TradeApiServiceTest {
         GetStockListRequest request = new GetStockListRequest(TradeApiServiceTest.UserId);
         TradeResultVo<GetStockListResponse> tradeResultVo = tradeApiService.getStockList(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
-        Assert.assertTrue(tradeResultVo.isSuccess());
+        Assertions.assertTrue(tradeResultVo.isSuccess());
     }
 
     @Test
@@ -81,7 +78,7 @@ public class TradeApiServiceTest {
         GetDealDataRequest request = new GetDealDataRequest(TradeApiServiceTest.UserId);
         TradeResultVo<GetDealDataResponse> tradeResultVo = tradeApiService.getDealData(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
-        Assert.assertTrue(tradeResultVo.isSuccess());
+        Assertions.assertTrue(tradeResultVo.isSuccess());
     }
 
     @Test
@@ -89,7 +86,7 @@ public class TradeApiServiceTest {
         GetOrdersDataRequest request = new GetOrdersDataRequest(TradeApiServiceTest.UserId);
         TradeResultVo<GetOrdersDataResponse> tradeResultVo = tradeApiService.getOrdersData(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
-        Assert.assertTrue(tradeResultVo.isSuccess());
+        Assertions.assertTrue(tradeResultVo.isSuccess());
     }
 
     @Test
@@ -101,7 +98,7 @@ public class TradeApiServiceTest {
         request.setSt(DateUtils.formatDate(et, "yyyy-MM-dd"));
         TradeResultVo<GetHisDealDataResponse> tradeResultVo = tradeApiService.getHisDealData(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
-        Assert.assertTrue(tradeResultVo.isSuccess());
+        Assertions.assertTrue(tradeResultVo.isSuccess());
     }
 
     @Test
@@ -113,7 +110,7 @@ public class TradeApiServiceTest {
         request.setSt(DateUtils.formatDate(et, "yyyy-MM-dd"));
         TradeResultVo<GetHisOrdersDataResponse> tradeResultVo = tradeApiService.getHisOrdersData(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
-        Assert.assertTrue(tradeResultVo.isSuccess());
+        Assertions.assertTrue(tradeResultVo.isSuccess());
     }
 
 }

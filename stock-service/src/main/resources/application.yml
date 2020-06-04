@@ -14,7 +14,9 @@ spring:
     database: 0
 
 logging:
-  file: /logs/stock_service.log
+  file:
+    name: /logs/stock-service.log
   level:
+    root: info
     org.springfromework.web: info
     org.springframework.jdbc: debug
