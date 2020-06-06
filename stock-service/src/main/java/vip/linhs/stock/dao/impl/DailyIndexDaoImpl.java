@@ -3,11 +3,11 @@ package vip.linhs.stock.dao.impl;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.SqlTypeValue;
 import org.springframework.jdbc.core.StatementCreatorUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -48,7 +48,7 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
     private static void setArgument(PreparedStatement ps, DailyIndex dailyIndex)
             throws SQLException {
         ps.setInt(1, dailyIndex.getStockInfoId());
-        StatementCreatorUtils.setParameterValue(ps, 2, SqlTypeValue.TYPE_UNKNOWN,
+        StatementCreatorUtils.setParameterValue(ps, 2, Types.DATE,
                 dailyIndex.getDate());
         ps.setBigDecimal(3, dailyIndex.getOpeningPrice());
         ps.setBigDecimal(4, dailyIndex.getPreClosingPrice());
