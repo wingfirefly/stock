@@ -144,7 +144,8 @@ public class TaskServiceImpl implements TaskService {
                 newValue = stockInfo.getName();
             } else {
                 StockInfo stockInfoInDb = stockGroupList.get(0);
-                if (!stockInfo.getName().equals(stockInfoInDb.getName())) {
+                if (!stockInfo.getName().equals(stockInfoInDb.getName())
+                        && StockUtil.isOriName(stockInfo.getName())) {
                     stocLogType = StockConsts.StockLogType.Rename;
                     oldValue = stockInfoInDb.getName();
                     newValue = stockInfo.getName();

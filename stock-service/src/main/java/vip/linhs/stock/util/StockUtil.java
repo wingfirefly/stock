@@ -86,4 +86,13 @@ public class StockUtil {
         return DecimalUtil.div(DecimalUtil.sub(a, b), b);
     }
 
+    public static boolean isOriName(String name) {
+        for (String namePrefix : Arrays.asList("N", "XD", "XR", "DR")) {
+            if (name.startsWith(namePrefix)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
