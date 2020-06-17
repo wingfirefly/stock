@@ -26,7 +26,7 @@ public class IfengStockInfoParserImpl implements StockInfoParser {
                 "<a href=\"http://finance.ifeng.com/app/hq/stock/(sh|sz)\\S{1,20}/index\\.shtml\" target=\"_blank\">(\\S{1,20}?)\\((\\S{1,8})\\)</a>");
         Matcher matcher = pattern.matcher(content);
 
-        ArrayList<StockInfo> list = new ArrayList<>(3000);
+        ArrayList<StockInfo> list = new ArrayList<>(5000);
 
         while (matcher.find()) {
             String exchange = matcher.group(1);
