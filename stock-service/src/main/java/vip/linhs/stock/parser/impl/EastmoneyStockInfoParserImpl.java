@@ -37,11 +37,15 @@ public class EastmoneyStockInfoParserImpl implements StockInfoParser {
         StockResultVo stockResultVo = JSON.parseObject(new String(newCharArr, 0, i), StockResultVo.class);
 
         // {"f12":"000718","f14":"苏宁环球"}
-        return stockResultVo.getData().getDiff().stream().map(diff -> {
+        return stockResultVo.getData().getDiff().stream().map(v -> {
             StockInfo stockInfo = new StockInfo();
-            stockInfo.setExchange(StockUtil.getExchange(diff.getF12()));
-            stockInfo.setName(diff.getF14());
-            stockInfo.setCode(diff.getF12());
+            String exhcange = StockUtil.getExchange(v.getF12());
+            if (exhcange == null && !v.getF12().startsWith("370")) {
+                throw new ServiceException("unkonw code " + v.getF12());
+            }
+            stockInfo.setExchange(exhcange);
+            stockInfo.setName(v.getF14());
+            stockInfo.setCode(v.getF12());
             return stockInfo;
         }).collect(Collectors.toList());
     }

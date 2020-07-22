@@ -3,6 +3,7 @@ package vip.linhs.stock.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
         String content = HttpUtil.sendGet(httpClient, "http://20.push2.eastmoney.com/api/qt/clist/get?pn=1&pz=10000000&np=1&fields=f12,f14&fs=" + fs);
         if (content != null) {
             List<StockInfo> list = stockInfoParser.parseStockInfoList(content);
+            list = list.stream().filter(v -> v.getExchange() != null).collect(Collectors.toList());
             list.forEach(stockInfo -> stockInfo.setAbbreviation(StockUtil.getPinyin(stockInfo.getName())));
             return list;
         }

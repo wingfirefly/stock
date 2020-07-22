@@ -62,7 +62,6 @@ public interface TradeApiService {
      */
     TradeResultVo<GetHisDealDataResponse> getHisDealData(GetHisDealDataRequest request);
 
-
     /**
      * 历史委托
      */
