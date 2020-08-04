@@ -28,8 +28,10 @@
 - nodejs
 - redis
 
-<font color="red" size=5>文档和数据库表见[wiki](https://github.com/bosspen1/stock/wiki)</font>
-把wiki clone下来就可以看到数据库表结构
+<font color="red" size=8>文档和数据库表见[wiki](https://github.com/bosspen1/stock/wiki)</font>
+
+<font color="red" size=8>把wiki clone下来就可以看到数据库表结构</font>
+
 ------------
 
 
