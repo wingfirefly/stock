@@ -117,7 +117,7 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
             logger.info("revoek response: {}", resultVo);
             if (!resultVo.isSuccess()) {
                 logger.error(resultVo.getMessage());
-                messageServicve.sendDingding(String.format("revoke error. request: %s, response: %s", request, resultVo.getMessage()));
+                messageServicve.send(String.format("revoke error. request: %s, response: %s", request, resultVo.getMessage()));
             }
         });
 
@@ -183,7 +183,7 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
             logger.error(tradeResultVo.getMessage());
         }
         String body = String.format("%s %s %d %.02f %s", request.getTradeType(), name, request.getAmount(), request.getPrice(), tradeResultVo.getMessage() == null ? "" : tradeResultVo.getMessage());
-        messageServicve.sendDingding(body);
+        messageServicve.send(body);
         return tradeResultVo;
     }
 

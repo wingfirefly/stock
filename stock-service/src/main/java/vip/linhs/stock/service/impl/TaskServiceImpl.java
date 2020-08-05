@@ -113,7 +113,7 @@ public class TaskServiceImpl implements TaskService {
             logger.error(e.getMessage(), e);
 
             String body = String.format("task: %s, error: %s", task.getName(), e.getMessage());
-            messageServicve.sendDingding(body);
+            messageServicve.send(body);
         }
 
         executeInfo.setCompleteTime(new Date());
@@ -241,13 +241,13 @@ public class TaskServiceImpl implements TaskService {
                         dailyIndex.getClosingPrice().doubleValue(),
                         StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
                                 dailyIndex.getPreClosingPrice()).movePointRight(2).doubleValue());
-                    messageServicve.sendDingding(body);
+                    messageServicve.send(body);
                 }
             } else {
                 lastPriceMap.put(code, dailyIndex.getPreClosingPrice());
                 String name = stockService.getStockByFullCode(StockUtil.getFullCode(code)).getName();
                 String body = String.format("%s:当前价格:%.02f", name, dailyIndex.getClosingPrice().doubleValue());
-                messageServicve.sendDingding(body);
+                messageServicve.send(body);
             }
         }
     }

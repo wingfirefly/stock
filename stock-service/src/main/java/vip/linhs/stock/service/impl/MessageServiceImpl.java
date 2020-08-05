@@ -29,7 +29,7 @@ public class MessageServiceImpl implements MessageService {
     private CloseableHttpClient httpClient;
 
     @Override
-    public void sendDingding(String body) {
+    public void send(String body) {
         Robot robot = robotService.getSystem();
         if (robot == null) {
             MessageServiceImpl.logger.error("system robot not config");
@@ -40,7 +40,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void sendDingdingMd(String title, String body) {
+    public void sendMd(String title, String body) {
         Robot robot = robotService.getSystem();
         if (robot == null) {
             MessageServiceImpl.logger.error("system robot not config");
@@ -74,6 +74,7 @@ public class MessageServiceImpl implements MessageService {
     private Map<String, Object> buildMarkdownMessageParams(String title, String text) {
         HashMap<String, Object> markdown = new HashMap<>();
         markdown.put("title", title);
+        markdown.put("content", text);
         markdown.put("text", text);
 
         HashMap<String, Object> params = new HashMap<>();
