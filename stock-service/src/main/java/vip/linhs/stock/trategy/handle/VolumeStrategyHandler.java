@@ -88,14 +88,19 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
                 String cjbh = getDealDataResponse.getCjbh();
                 String wtbh = getDealDataResponse.getWtbh();
                 double rate = tradeRule.getRate().doubleValue();
+                boolean isHandle = false;
                 if (SubmitRequest.B.equals(getDealDataResponse.getMmlb())) {
                     double tradePrice = (int) (price * (1 + rate) * 100) / 100.0;
-                    setNeedRevoke(tradeOrderList, wtbh, revokeList, userId);
-                    setNeedSubmit(tradeOrderList, SubmitRequest.S, stockCode, amount, tradePrice, cjbh, submitList, userId);
+                    isHandle = setNeedSubmit(tradeOrderList, SubmitRequest.S, stockCode, amount, tradePrice, cjbh, submitList, userId);
                 }
                 double tradePrice = (int) (price * (1 - rate) * 100) / 100.0;
-                setNeedRevoke(tradeOrderList, wtbh, revokeList, userId);
-                setNeedSubmit(tradeOrderList, SubmitRequest.B, stockCode, amount, tradePrice, cjbh, submitList, userId);
+                boolean submitResult = setNeedSubmit(tradeOrderList, SubmitRequest.B, stockCode, amount, tradePrice, cjbh, submitList, userId);
+                if (submitResult) {
+                    isHandle = true;
+                }
+                if (isHandle) {
+                    setNeedRevoke(tradeOrderList, wtbh, revokeList, userId);
+                }
             }
         }
 
@@ -147,8 +152,8 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
         }
     }
 
-    private void setNeedSubmit(List<TradeOrder> tradeOrderList, String tradeType, String stockCode,
-            int amount, double tradePrice, String cjbh, ArrayList<VolumeSubmitResult> submitList, int userId) {
+    private boolean setNeedSubmit(List<TradeOrder> tradeOrderList, String tradeType, String stockCode,
+            int amount, double tradePrice, String cjbh, List<VolumeSubmitResult> submitList, int userId) {
         TradeOrder tradeOrderInDb = getByCondition(tradeOrderList, v -> cjbh.equals(v.getTradeCode())
                 && tradeType.equals(v.getTradeType()));
         if (tradeOrderInDb == null) {
@@ -159,7 +164,9 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
             request.setStockCode(stockCode);
             request.setTradeCode(cjbh);
             submitList.add(request);
+            return true;
         }
+        return false;
     }
 
     private String getNeedRevokeWtbh(List<TradeOrder> tradeOrderList, String wtbh) {
