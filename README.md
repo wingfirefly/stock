@@ -50,4 +50,5 @@ npm start
 
 ------------
 
-##### 有什么问题和建议或者有好的交易策略欢迎和我交流 <240440056@qq.com>
+##### 有什么问题和建议或者有好的交易策略欢迎和我交流, 微信: wildaww
+[点击查看微信群二维码](http://manager.gulugj.com/Qrcode/GroupQrcode/uncode?id=MTM1MzgzNTM2MzIz#)
