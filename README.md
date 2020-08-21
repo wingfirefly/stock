@@ -51,5 +51,6 @@ npm start
 ------------
 
 ##### 有什么问题和建议或者有好的交易策略欢迎和我交流，币的交易也可以, 微信: wildaww
-正在做其他平台的接口，希望非东方财富用户加入，需要您的帮助。
-[点击查看微信群二维码](http://manager.gulugj.com/Qrcode/GroupQrcode/uncode?id=MTM1MzgzNTM2MzIz#)
+项目文档正在整理
+正在做其他平台的接口, 希望非东方财富用户加入, 需要您的帮助。
+[点击查看微信群二维码](https://github.com/bosspen1/stock/blob/master/wechat.png)
