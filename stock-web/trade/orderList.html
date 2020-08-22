@@ -21,7 +21,7 @@
   <script type="text/javascript" src="/static/js/util/common.js"></script>
   <script type="text/javascript" src="/static/js/util/frame.js"></script>
   <script type="text/javascript" src="/static/js/modules/trade.js"></script>
-  <script type="text/javascript" src="https://cdn.bootcss.com/jquery-modal/0.9.2/jquery.modal.js"></script>
+  <script type="text/javascript" src="/static/js/lib/jquery-modal/jquery.modal.js"></script>
 
   <script type="text/javascript">
     pageConfiguration.needAuth = true;
@@ -52,7 +52,7 @@
                 return ++index;
               }
             },
-            /*{
+            {
               title: '股票名称',
               render: function(row) {
                 return row.stockName;
@@ -63,12 +63,6 @@
               render: function(row) {
                 return row.stockCode;
               }
-            },*/
-            {
-              title: '缩写',
-              render: function(row) {
-                return row.abbreviation;
-              }
             },
             {
               title: '数量',
@@ -77,7 +71,7 @@
               }
             },
             {
-              title: 'p',
+              title: '价格',
               render: function(row) {
                 return row.price;
               }
@@ -88,7 +82,7 @@
                 return row.tradeType;
               }
             },
-/*            {
+/*          {
               title: '状态',
               render: function(row) {
                 return row.state;

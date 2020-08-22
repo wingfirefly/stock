@@ -51,16 +51,10 @@
                 return ++index;
               }
             },
-           /* {
+            {
               title: '股票名称',
               render: function(row) {
                 return '<a target="_blank" href="https://www.baidu.com/s?wd=' + row.stockName + '%20股票">' + row.stockName + '</a>';;
-              }
-            },*/
-            {
-              title: '缩写',
-              render: function(row) {
-                return row.abbreviation;
               }
             },
             {
@@ -70,31 +64,31 @@
               }
             },
             {
-              title: 'entr编号',
+              title: '委托编号',
               render: function(row) {
                 return row.entrustCode;
               }
             },
             {
-              title: 'deal编号',
+              title: '成交编号',
               render: function(row) {
                 return row.tradeCode;
               }
             },
             {
-              title: 'p',
+              title: '成交价格',
               render: function(row) {
                 return row.price;
               }
             },
             {
-              title: 'v',
+              title: '成交数量v',
               render: function(row) {
                 return row.volume;
               }
             },
             {
-              title: '关联编号(s)',
+              title: '关联编号(卖)',
               render: function(row) {
                 if (!row.relatedSaleEntrustCode) {
                   row.relatedSaleEntrustCode = '';
@@ -103,7 +97,7 @@
               }
             },
             {
-              title: '关联编号(b)',
+              title: '关联编号(卖)',
               render: function(row) {
                 if (!row.relatedBuyEntrustCode) {
                   row.relatedBuyEntrustCode = '';
@@ -123,15 +117,15 @@
                 var html = '';
                 var options = { stockCode: row.stockCode, tradeCode: row.tradeCode, tradeType: 'S' };
                 if (row.relatedSaleEntrustCode) {
-                  html += ' <button class="btn btn-delete" data-options=' + JSON.stringify(options) + '>删除s</button>';
+                  html += ' <button class="btn btn-delete" data-options=' + JSON.stringify(options) + '>删除卖</button>';
                 } else {
-                  html += ' <button class="btn btn-add" data-options=' + JSON.stringify(options) + '>添加s</button>';
+                  html += ' <button class="btn btn-add" data-options=' + JSON.stringify(options) + '>添加卖</button>';
                 }
                 options.tradeType = 'B';
                 if (row.relatedBuyEntrustCode) {
-                  html += ' <button class="btn btn-delete" data-options=' + JSON.stringify(options) + '>删除b</button>';
+                  html += ' <button class="btn btn-delete" data-options=' + JSON.stringify(options) + '>删除买</button>';
                 } else {
-                  html += ' <button class="btn btn-add" data-options=' + JSON.stringify(options) + '>添加b</button>';
+                  html += ' <button class="btn btn-add" data-options=' + JSON.stringify(options) + '>添加买</button>';
                 }
                 return html;
               }

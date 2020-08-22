@@ -11,13 +11,13 @@ public class MessageServiceTest {
     private MessageService messageService;
 
     @Test
-    public void testSendDingding() {
-        messageService.sendDingding("[大笑]");
+    public void testSend() {
+        messageService.send("[大笑]");
     }
 
     @Test
-    public void testSendDingdingMd() {
-        messageService.sendDingdingMd("daily", "### code 300542");
+    public void testSendMd() {
+        messageService.sendMd("daily", "### code 300542");
     }
 
 }
