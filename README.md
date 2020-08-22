@@ -30,7 +30,7 @@
 
 <font color="red" size=8>文档和数据库表见[wiki](https://github.com/bosspen1/stock/wiki)</font>
 
-<font color="red" size=8>把wiki clone下来就可以看到数据库表结构</font>
+<font color="red" size=8>把wiki clone下来就可以看到数据库表结构和部署文档</font>
 
 ------------
 
@@ -51,6 +51,4 @@ npm start
 ------------
 
 ##### 有什么问题和建议或者有好的交易策略欢迎和我交流，币的交易也可以, 微信: wildaww
-项目文档正在整理
-正在做其他平台的接口, 希望非东方财富用户加入, 需要您的帮助。
 [点击查看微信群二维码](https://github.com/bosspen1/stock/blob/master/wechat.png)
