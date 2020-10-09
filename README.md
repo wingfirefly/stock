@@ -51,4 +51,4 @@ npm start
 ------------
 
 ##### 有什么问题和建议或者有好的交易策略欢迎和我交流，币的交易也可以, 微信: wildaww
-[点击查看微信群二维码](https://github.com/bosspen1/stock/blob/master/wechat.png)
+[点击查看微信群二维码](https://github.com/bosspen1/s_image/blob/master/wechat.png)
