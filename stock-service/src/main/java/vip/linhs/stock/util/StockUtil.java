@@ -43,7 +43,7 @@ public class StockUtil {
         if (StringUtils.isEmpty(code)) {
             return null;
         }
-        if (code.startsWith("600") || code.startsWith("601") || code.startsWith("603") || code.startsWith("605") || code.startsWith("688")) {
+        if (code.startsWith("600") || code.startsWith("601") || code.startsWith("603") || code.startsWith("605") || code.startsWith("688") || code.startsWith("689")) {
             return Exchange.SH.getName();
         }
         if (code.startsWith("000") || code.startsWith("001") || code.startsWith("002")
