@@ -2,12 +2,21 @@ package vip.linhs.stock.api.response;
 
 public class GetStockListResponse {
 
+    private String Zqmc;
     private String Zqdm;
     private String Zqsl;
     private String Zxjg;
     private String Kysl;
     private String Cbjg;
     private String Ljyk;
+
+    public String getZqmc() {
+        return Zqmc;
+    }
+
+    public void setZqmc(String zqmc) {
+        Zqmc = zqmc;
+    }
 
     public String getZqdm() {
         return Zqdm;
@@ -55,6 +64,12 @@ public class GetStockListResponse {
 
     public void setLjyk(String ljyk) {
         Ljyk = ljyk;
+    }
+
+    @Override
+    public String toString() {
+        return "GetStockListResponse [Zqmc=" + Zqmc + ", Zqdm=" + Zqdm + ", Zqsl=" + Zqsl + ", Zxjg=" + Zxjg + ", Kysl="
+                + Kysl + ", Cbjg=" + Cbjg + ", Ljyk=" + Ljyk + "]";
     }
 
 }

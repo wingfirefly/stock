@@ -21,7 +21,7 @@ var killTask = function(port, callback) {
 
     if (pid) {
       exec('taskkill /F /pid ' + pid, function(err) {
-        if (err) { console.log('error'); }
+        if (err) { console.log('error {}', err); }
         if (callback) { callback(); }
       });
     } else {

@@ -110,7 +110,7 @@ public class TaskServiceImpl implements TaskService {
             }
         } catch (Exception e) {
             executeInfo.setMessage(e.getMessage());
-            logger.error(e.getMessage(), e);
+            logger.error("task {} error", executeInfo.getTaskId(), e);
 
             String body = String.format("task: %s, error: %s", task.getName(), e.getMessage());
             messageServicve.send(body);
@@ -121,9 +121,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void runUpdateOfStock() {
-        List<StockInfo> list = stockService.getAll().stream().filter(stockInfo ->
-               !StockUtil.isCompositeIndex(stockInfo.getExchange(), stockInfo.getCode())
-        ).collect(Collectors.toList());
+        List<StockInfo> list = stockService.getAll().stream().filter(v -> !v.isIndex()).collect(Collectors.toList());
         Map<String, List<StockInfo>> dbStockMap = list.stream().collect(Collectors.groupingBy(StockInfo::getCode));
 
         ArrayList<StockInfo> needAddedList = new ArrayList<>();
@@ -175,14 +173,8 @@ public class TaskServiceImpl implements TaskService {
             if (stockInfo.getState() != state.value()) {
                 StockConsts.StockLogType stockLogType = null;
                 switch (state) {
-                case Listed:
-                    stockLogType = StockConsts.StockLogType.ReListed;
-                    break;
                 case Terminated:
                     stockLogType = StockConsts.StockLogType.Terminated;
-                    break;
-                case Delisted:
-                    stockLogType = StockConsts.StockLogType.Delisted;
                     break;
                 default:
                     throw new ServiceException("未找到状态" + state);
@@ -197,8 +189,7 @@ public class TaskServiceImpl implements TaskService {
 
     private void runUpdateOfDailyIndex() {
         List<StockInfo> list = stockService.getAll().stream()
-                .filter(stockInfo -> stockInfo.getState() != StockConsts.StockState.Delisted.value()
-                        && stockInfo.getState() != StockConsts.StockState.Terminated.value())
+                .filter(stockInfo -> (stockInfo.isA() || stockInfo.isIndex()) && stockInfo.isValid())
                 .collect(Collectors.toList());
 
         Date date = new Date();

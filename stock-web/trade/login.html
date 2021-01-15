@@ -52,7 +52,7 @@
 
     function reloadVerifiCode() {
         var img = $('#img-verifi-code');
-        img.attr('src', 'https://jy.xzsec.com/Login/YZM?randNum=0.9033461201665647&_ra=' + Math.random());
+        img.attr('src', 'https://jywg.18.cn/Login/YZM?randNum=0.9033461201665647&_ra=' + Math.random());
     }
 
   </script>
@@ -74,7 +74,7 @@
               <div class="login-border">
                 <div class="form-group">
                   <div class="label" data-key="phone_email">交易账户id</div>
-                  <input name="userId" type="text" class="txt_input" required="required" pattern="[a-zA-Z0-9_]+" maxlength="12" placeholder="交易账户id" />
+                  <input name="userId" type="text" class="txt_input" required="required" pattern="[0-9]+" maxlength="12" placeholder="交易账户id" />
                 </div>
                 <div class="form-group">
                   <div class="label" data-key="_password">密码</div>
@@ -82,7 +82,7 @@
                 </div>
                 <div class="form-group">
                   <div class="label" data-key="phone_email">验证码</div>
-                  <input name="identifyCode" type="text" class="txt_input" required="required" pattern="[0-9_]{4}"  maxlength="4" placeholder="验证码" />
+                  <input name="identifyCode" type="text" class="txt_input" required="required" pattern="[0-9_]{4}"  maxlength="4" placeholder="验证码" autocomplete="off" />
                 </div>
                 <div class="form-group">
                   <div class="g-verifi-code">

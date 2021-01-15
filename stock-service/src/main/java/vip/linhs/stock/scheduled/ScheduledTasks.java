@@ -42,7 +42,7 @@ public class ScheduledTasks {
             List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.BeginOfYear.getId());
             executeTask(list);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("task runBeginOfYear error", e);
         }
     }
 
@@ -55,7 +55,7 @@ public class ScheduledTasks {
             List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.EndOfYear.getId());
             executeTask(list);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("task runEndOfYear error", e);
         }
     }
 
@@ -72,7 +72,7 @@ public class ScheduledTasks {
             List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.BeginOfDay.getId());
             executeTask(list);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("task runBeginOfDay error", e);
         }
     }
 
@@ -89,7 +89,7 @@ public class ScheduledTasks {
             List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.EndOfDay.getId());
             executeTask(list);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("task runEndOfDay error", e);
         }
     }
 
@@ -107,7 +107,7 @@ public class ScheduledTasks {
                     Task.UpdateOfStockState.getId());
             executeTask(list);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("task runUpdateOfStock error", e);
         }
     }
 
@@ -124,7 +124,7 @@ public class ScheduledTasks {
             List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.UpdateOfDailyIndex.getId());
             executeTask(list);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("task runUpdateOfDailyIndex error", e);
         }
     }
 
@@ -147,7 +147,7 @@ public class ScheduledTasks {
             List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.Ticker.getId(), Task.TradeTicker.getId());
             executeTask(list);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("task runTicker error", e);
         }
     }
 

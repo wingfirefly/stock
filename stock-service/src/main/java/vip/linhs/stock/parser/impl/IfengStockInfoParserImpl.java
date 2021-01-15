@@ -12,8 +12,8 @@ import vip.linhs.stock.exception.ServiceException;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.parser.StockInfoParser;
 import vip.linhs.stock.util.StockConsts.StockState;
-import vip.linhs.stock.util.StockUtil;
 
+@Deprecated
 @Component("ifengStockInfoParser")
 public class IfengStockInfoParserImpl implements StockInfoParser {
 
@@ -32,10 +32,6 @@ public class IfengStockInfoParserImpl implements StockInfoParser {
             String exchange = matcher.group(1);
             String name = matcher.group(2);
             String code = matcher.group(3);
-
-            if (!StockUtil.isStockCode(code)) {
-                continue;
-            }
 
             StockInfo stockInfo = new StockInfo();
             stockInfo.setExchange(exchange);

@@ -11,6 +11,7 @@ public class GetDealDataResponse {
      */
     public static final String S = "S";
 
+    private String Zqmc;
     /**
      * 委托编号
      */
@@ -47,6 +48,14 @@ public class GetDealDataResponse {
      * @see #S
      */
     private String Mmlb;
+
+    public String getZqmc() {
+        return Zqmc;
+    }
+
+    public void setZqmc(String zqmc) {
+        Zqmc = zqmc;
+    }
 
     public String getWtbh() {
         return Wtbh;
@@ -114,8 +123,8 @@ public class GetDealDataResponse {
 
     @Override
     public String toString() {
-        return "GetDealDataResponse [Wtbh=" + Wtbh + ", Cjbh=" + Cjbh + ", Cjjg=" + Cjjg + ", Cjsl="
-                + Cjsl + ", Zqdm=" + Zqdm + ", Cjsj=" + Cjsj + ", Mmlb=" + Mmlb + ", Wtsl=" + Wtsl + "]";
+        return "GetDealDataResponse [Zqmc=" + Zqmc + ", Wtbh=" + Wtbh + ", Cjbh=" + Cjbh + ", Cjjg=" + Cjjg + ", Cjsl="
+                + Cjsl + ", Zqdm=" + Zqdm + ", Cjsj=" + Cjsj + ", Wtsl=" + Wtsl + ", Mmlb=" + Mmlb + "]";
     }
 
 }

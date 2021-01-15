@@ -39,6 +39,7 @@ textarea,
 menu {
   margin: 0;
   padding: 0;
+  font-size: 12px;
 }
 
 header,
@@ -218,6 +219,7 @@ body {
 
 .disabled {
   background-color: #C0C0C0 !important;
+  pointer-events: none;
 }
 
 .btn {
@@ -226,6 +228,10 @@ body {
   background: #229966;
   border-radius: 5px;
   color: white;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* frame */

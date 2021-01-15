@@ -31,4 +31,10 @@ public class DecimalUtil {
         return a.compareTo(b);
     }
 
+    public static BigDecimal fromStr(String value) {
+        value = value.trim();
+        value = value.replaceAll(",", "");
+        return new BigDecimal(value);
+    }
+
 }

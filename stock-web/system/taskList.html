@@ -98,6 +98,7 @@
                 } else if (row.state === 2) {
                    html += ' <button class="btn btn-invalid" data-id="' + row.id + '">失效</button>';
                 }
+                html += ' <button class="btn btn-execute" data-id="' + row.id + '">执行</button>';
                 return html;
               }
             }
@@ -118,6 +119,11 @@
         changeState(id, 0);
       });
 
+      table.on('click', '.btn-execute', function() {
+        var id = $(this).data('id');
+        execute(id, this);
+      });
+
     }
 
     function changeState(id, state) {
@@ -131,6 +137,26 @@
         headers: getRequestHeaders(),
         error: function(xhr, status, errorThrown) {
           ExceptionHandler.handleCommonError(xhr);
+        },
+        success: function(res) {
+          dataTable.fnDraw(1);
+        }
+      });
+    }
+
+    function execute(id, _btn) {
+      $(_btn).addClass('disabled');
+
+      $.ajax({
+        url: GlobalConfig.serverUrl + '/api/system/executeTask',
+        type: 'POST',
+        data: {
+          id: id
+        },
+        headers: getRequestHeaders(),
+        error: function(xhr, status, errorThrown) {
+          ExceptionHandler.handleCommonError(xhr);
+          $(_btn).removeClass('disabled');
         },
         success: function(res) {
           dataTable.fnDraw(1);

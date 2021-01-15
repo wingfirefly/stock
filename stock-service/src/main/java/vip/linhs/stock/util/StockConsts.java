@@ -1,5 +1,7 @@
 package vip.linhs.stock.util;
 
+import java.util.NoSuchElementException;
+
 public class StockConsts {
 
     public static final String KEY_AUTH_USER_ID = "user_id";
@@ -25,9 +27,9 @@ public class StockConsts {
 
     public static final String CACHE_KEY_TRADE_STRATEGY = CACHE_KEY_PREFIX + "trade:tradeStrategy";
 
-    public static final long DURATION_REDIS_DEFAULT = 3600 * 24 * 3;
+    public static final long DURATION_REDIS_DEFAULT = 3600 * 24 * 2;
 
-    enum Exchange {
+    public enum Exchange {
         SH("sh"), SZ("sz");
         private String name;
 
@@ -38,6 +40,24 @@ public class StockConsts {
         public String getName() {
             return name;
         }
+
+        public boolean isSh() {
+            return name.equals("sh");
+        }
+
+        public boolean isSz() {
+            return name.equals("sh");
+        }
+
+        public static Exchange valueOfName(String name) {
+            for (Exchange exchange : Exchange.values()) {
+                if (exchange.name.equals(name)) {
+                    return exchange;
+                }
+            }
+            throw new NoSuchElementException("no exchange named " + name);
+        }
+
     }
 
     public enum StockState {
@@ -52,11 +72,7 @@ public class StockConsts {
         /**
          * 终止上市
          */
-        Terminated(2),
-        /**
-         * 退市
-         */
-        Delisted(3);
+        Terminated(2);
         private int value;
 
         private StockState(int value) {
@@ -68,8 +84,21 @@ public class StockConsts {
         }
     }
 
+    public enum StockType {
+        A(0), Index(1), ETF(2), B(3);
+        private int value;
+
+        private StockType(int value) {
+            this.value = value;
+        }
+
+        public int value() {
+            return value;
+        }
+    }
+
     public enum StockLogType {
-        New(0), Rename(1), Terminated(2), Delisted(3), ReListed(4);
+        New(0), Rename(1), Terminated(2);
         private int value;
 
         private StockLogType(int value) {
@@ -95,7 +124,7 @@ public class StockConsts {
     }
 
     public enum RobotType {
-        DingDing(0);
+        DingDing(0), WetChat(1);
         private int value;
 
         private RobotType(int value) {
@@ -121,7 +150,7 @@ public class StockConsts {
     }
 
     public enum MessageType {
-        DingDing(0);
+        DingDing(0), Email(1);
         private int value;
 
         private MessageType(int value) {

@@ -46,10 +46,12 @@ $(function() {
 function renderMenu(arr, selector, current) {
   var content = '';
   $.each(arr, function(index, item) {
-    if (current === item.id) {
-      content += '<li class="current"><a href="javascript:void(0);">' + item.title +'</a></li>';
-    } else {
-      content += '<li ><a href="' + item.url + '">' + item.title +'</a></li>';
+    if (item.state !== 0) {
+      if (current === item.id) {
+        content += '<li class="current"><a href="javascript:void(0);">' + item.title +'</a></li>';
+      } else {
+        content += '<li ><a href="' + item.url + '">' + item.title +'</a></li>';
+      }
     }
   });
 

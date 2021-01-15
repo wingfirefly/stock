@@ -3,6 +3,7 @@ package vip.linhs.stock.dao.impl;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.stereotype.Repository;
@@ -35,6 +36,16 @@ public class StockLogDaoImpl extends BaseDao implements StockLogDao {
                         return list.size();
                     }
                 });
+    }
+
+    @Override
+    public void setStockIdByCodeType(List<String> list, int type) {
+        String whereCause = String.join(",",
+                list.stream().map(str -> "?").collect(Collectors.toList()));
+        String sql = "update stock_log l, stock_info s set l.stock_info_id = s.id where l.new_value = s.name and s.id > 1 and s.code in ("
+                + whereCause + ") and l.type = ?";
+        list.add(String.valueOf(type));
+        jdbcTemplate.update(sql, list.toArray());
     }
 
 }

@@ -103,9 +103,9 @@
               render: function(row) {
                 var html = '';
                 var options = { stockCode: row.stockCode, price: row.price, tradeType: 'B' };
-                html += ' <a class="btn btn-sbumit" data-options=' + JSON.stringify(options) + '>卖</a>';
-                options.tradeType = 'S';
                 html += ' <a class="btn btn-sbumit" data-options=' + JSON.stringify(options) + '>买</a>';
+                options.tradeType = 'S';
+                html += ' <a class="btn btn-sbumit" data-options=' + JSON.stringify(options) + '>卖</a>';
                 return html;
               }
             }
@@ -156,7 +156,7 @@
           url = GlobalConfig.serverUrl + '/api/trade/sale';
         }
 
-        $('#btn-submit-trade').attr('disabled', 'disabled');
+        $('#btn-submit-trade').addClass('disabled');
         $('#submit-modal .span-message').text('');
 
         $.ajax({
@@ -166,10 +166,11 @@
           headers: getRequestHeaders(),
           error: function(xhr, status, errorThrown) {
             ExceptionHandler.handleCommonError(xhr);
-            $('#btn-submit-trade').removeAttr('disabled');
+            $('#btn-submit-trade').removeClass('disabled');
           },
           success: function(res) {
             $('#submit-modal .span-message').text(res.message);
+            $('#btn-submit-trade').removeClass('disabled');
             dataTable.fnDraw();
           }
         });
@@ -179,7 +180,7 @@
         if (isBusinessTime()) {
           dataTable.fnDraw();
         }
-      }, 8000);
+      }, 10000);
 
       function stopTask() {
         clearInterval(taskId);
@@ -229,7 +230,7 @@
          <input type="number" name="price" min="0.9" step="0.01" max="100">
          <input type="hidden" name="stockCode" />
          <input type="hidden" name="tradeType" />
-         <button id="btn-submit-trade"  data-dismiss="modal">提交</button>
+         <button id="btn-submit-trade" class="btn" data-dismiss="modal">提交</button>
          <span class="span-message" style="color: red"></span>
       </div>
     </div>

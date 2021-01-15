@@ -6,7 +6,8 @@ function renderTradeMenu(current) {
     { id: 4, title: '我的持仓', url: '/trade/stockList.html' },
     { id: 5, title: '我的委托', url: '/trade/orderList.html' },
     { id: 6, title: '我的成交', url: '/trade/dealList.html' },
-    { id: 7, title: '历史成交', url: '/trade/hisDealList.html' }
+    { id: 7, title: '历史成交', url: '/trade/hisDealList.html' },
+    { id: 8, title: '银证转账', url: '/trade/transfer.html', state: 0 }
   ];
 
   renderMenu(arr, '.menu-nav', current);

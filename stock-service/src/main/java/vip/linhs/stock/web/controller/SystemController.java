@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import vip.linhs.stock.exception.FieldInputException;
+import vip.linhs.stock.model.po.ExecuteInfo;
 import vip.linhs.stock.model.vo.CommonResponse;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
@@ -53,6 +54,15 @@ public class SystemController extends BaseController {
         taskService.changeTaskState(state, id);
         CommonResponse response = CommonResponse.buildResponse("success");
         return response;
+    }
+
+    @PostMapping("executeTask")
+    public CommonResponse executeTask(int id) {
+        List<ExecuteInfo> list = taskService.getPendingTaskListById(id);
+        for (ExecuteInfo executeInfo : list) {
+            taskService.executeTask(executeInfo);
+        }
+        return CommonResponse.buildResponse("ok");
     }
 
     @RequestMapping("cacheList")

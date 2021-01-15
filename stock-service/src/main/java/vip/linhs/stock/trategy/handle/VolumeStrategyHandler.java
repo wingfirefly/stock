@@ -190,7 +190,11 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
             logger.error(tradeResultVo.getMessage());
         }
         String body = String.format("%s %s %d %.02f %s", request.getTradeType(), name, request.getAmount(), request.getPrice(), tradeResultVo.getMessage() == null ? "" : tradeResultVo.getMessage());
-        messageServicve.send(body);
+        try {
+            messageServicve.send(body);
+        } catch (Exception e) {
+            logger.error("send message error", e);
+        }
         return tradeResultVo;
     }
 

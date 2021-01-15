@@ -69,7 +69,9 @@
               title: '操作',
               render: function(row) {
                 var html = '';
-                html += ' <button class="btn btn-delete" data-key="' + row.key + '">删除</button>';
+                if (!row.key.startWith('stock:auth:token::')) {
+                  html += ' <button class="btn btn-delete" data-key="' + row.key + '">删除</button>';
+                }
                 return html;
               }
             }

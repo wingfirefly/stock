@@ -16,6 +16,10 @@ public class GetOrdersDataResponse {
     public static final String S = "S";
 
     /**
+     * 证券名称
+     */
+    private String Zqmc;
+    /**
      * 委托编号
      */
     private String Wtbh;
@@ -51,6 +55,14 @@ public class GetOrdersDataResponse {
      * @see #S
      */
     private String Mmlb;
+
+    public String getZqmc() {
+        return Zqmc;
+    }
+
+    public void setZqmc(String zqmc) {
+        Zqmc = zqmc;
+    }
 
     public String getWtbh() {
         return Wtbh;
@@ -106,6 +118,12 @@ public class GetOrdersDataResponse {
 
     public void setMmlb(String mmlb) {
         Mmlb = mmlb;
+    }
+
+    @Override
+    public String toString() {
+        return "GetOrdersDataResponse [Zqmc=" + Zqmc + ", Wtbh=" + Wtbh + ", Wtsj=" + Wtsj + ", Zqdm=" + Zqdm
+                + ", Wtsl=" + Wtsl + ", Wtjg=" + Wtjg + ", Wtzt=" + Wtzt + ", Mmlb=" + Mmlb + "]";
     }
 
 }

@@ -12,6 +12,7 @@ import org.apache.http.client.utils.DateUtils;
 import org.springframework.stereotype.Component;
 
 import vip.linhs.stock.model.po.DailyIndex;
+import vip.linhs.stock.util.DecimalUtil;
 
 @Component
 public class DailyIndexParser {
@@ -76,8 +77,11 @@ public class DailyIndexParser {
         }
 
         Collections.sort(list, (o1, o2) -> o1.getDate().compareTo(o2.getDate()));
-        BigDecimal preClosingPrice = BigDecimal.ZERO;
+        BigDecimal preClosingPrice = null;
         for (DailyIndex dailyIndex : list) {
+            if (preClosingPrice == null) {
+                preClosingPrice = dailyIndex.getOpeningPrice();
+            }
             dailyIndex.setPreClosingPrice(preClosingPrice);
             preClosingPrice = dailyIndex.getClosingPrice();
         }
@@ -104,12 +108,12 @@ public class DailyIndexParser {
 
         String dateStr = values[0].substring(9, 19);
         Date date = DateUtils.parseDate(dateStr, new String[] { "MM/dd/yyyy" });
-        BigDecimal openingPrice = new BigDecimal(values[1]);
-        BigDecimal highestPrice = new BigDecimal(values[2]);
-        BigDecimal lowestPrice = new BigDecimal(values[3]);
-        BigDecimal closingPrice = new BigDecimal(values[4]);
+        BigDecimal openingPrice = DecimalUtil.fromStr(values[1]);
+        BigDecimal highestPrice = DecimalUtil.fromStr(values[2]);
+        BigDecimal lowestPrice = DecimalUtil.fromStr(values[3]);
+        BigDecimal closingPrice = DecimalUtil.fromStr(values[4]);
         long tradingVolume = Long.parseLong(values[5].replaceAll(",", ""));
-        BigDecimal tradingValue = new BigDecimal(values[6].replaceAll(",", ""));
+        BigDecimal tradingValue = DecimalUtil.fromStr(values[6]);
 
         DailyIndex dailyIndex = new DailyIndex();
         dailyIndex.setOpeningPrice(openingPrice);

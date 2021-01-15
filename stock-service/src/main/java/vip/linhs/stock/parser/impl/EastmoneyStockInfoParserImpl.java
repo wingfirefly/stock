@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSON;
 import vip.linhs.stock.exception.ServiceException;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.parser.StockInfoParser;
+import vip.linhs.stock.util.StockConsts;
 import vip.linhs.stock.util.StockConsts.StockState;
 import vip.linhs.stock.util.StockUtil;
 
@@ -30,22 +31,24 @@ public class EastmoneyStockInfoParserImpl implements StockInfoParser {
             }
             if (ch == 'Ａ') {
                 ch = 'A';
+            } else if (ch == 'Ｂ') {
+                ch = 'B';
             }
             newCharArr[i++] = ch;
         }
 
         StockResultVo stockResultVo = JSON.parseObject(new String(newCharArr, 0, i), StockResultVo.class);
 
-        // {"f12":"000718","f14":"苏宁环球"}
+        // {"f12":"000718","f13":0,"f14":"苏宁环球"}
         return stockResultVo.getData().getDiff().stream().map(v -> {
             StockInfo stockInfo = new StockInfo();
-            String exhcange = StockUtil.getExchange(v.getF12());
-            if (exhcange == null && !v.getF12().startsWith("370")) {
-                throw new ServiceException("unkonw code " + v.getF12());
-            }
+            String exhcange = v.getF13() == 0 ? StockConsts.Exchange.SZ.getName() : StockConsts.Exchange.SH.getName();
+            int type = StockUtil.getStockType(exhcange, v.getF12());;
             stockInfo.setExchange(exhcange);
             stockInfo.setName(v.getF14());
             stockInfo.setCode(v.getF12());
+            stockInfo.setExchange(exhcange);
+            stockInfo.setType(type);
             return stockInfo;
         }).collect(Collectors.toList());
     }
@@ -86,6 +89,7 @@ public class EastmoneyStockInfoParserImpl implements StockInfoParser {
     public static class StockResultDiffVo {
 
         private String f12;
+        private int f13;
         private String f14;
 
         public String getF12() {
@@ -94,6 +98,14 @@ public class EastmoneyStockInfoParserImpl implements StockInfoParser {
 
         public void setF12(String f12) {
             this.f12 = f12;
+        }
+
+        public int getF13() {
+            return f13;
+        }
+
+        public void setF13(int f13) {
+            this.f13 = f13;
         }
 
         public String getF14() {

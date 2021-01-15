@@ -1,5 +1,7 @@
 package vip.linhs.stock.model.po;
 
+import vip.linhs.stock.util.StockConsts;
+
 public class StockInfo extends BaseModel {
 
     private static final long serialVersionUID = 1L;
@@ -9,6 +11,7 @@ public class StockInfo extends BaseModel {
     private String exchange;
     private String abbreviation;
     private int state;
+    private int type;
 
     public String getCode() {
         return code;
@@ -50,10 +53,30 @@ public class StockInfo extends BaseModel {
         this.state = state;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public boolean isValid() {
+        return state != StockConsts.StockState.Terminated.value();
+    }
+
+    public boolean isA() {
+        return type == StockConsts.StockType.A.value();
+    }
+
+    public boolean isIndex() {
+        return type == StockConsts.StockType.Index.value();
+    }
+
     @Override
     public String toString() {
         return "StockInfo [code=" + code + ", name=" + name + ", exchange=" + exchange + ", abbreviation="
-                + abbreviation + ", state=" + state + ", BaseModel=" + super.toString() + "]";
+                + abbreviation + ", state=" + state + ", type=" + type + ", BaseModel=" + super.toString() + "]";
     }
 
 }

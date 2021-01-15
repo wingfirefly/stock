@@ -37,7 +37,8 @@ public class StockCrawlerServiceTest {
 
     @Test
     public void testGetHistoryDailyIndexs() {
-        List<DailyIndex> list = stockCrawlerService.getHistoryDailyIndexs("300542");
+       // List<DailyIndex> list = stockCrawlerService.getHistoryDailyIndexs("300542");
+        List<DailyIndex> list = stockCrawlerService.getHistoryDailyIndexs("688580");
         Assertions.assertFalse(list.isEmpty());
     }
 

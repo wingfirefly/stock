@@ -51,4 +51,9 @@ public class GetAssetsResponse {
         Djzj = djzj;
     }
 
+    @Override
+    public String toString() {
+        return "GetAssetsResponse [Zzc=" + Zzc + ", Kyzj=" + Kyzj + ", Kqzj=" + Kqzj + ", Djzj=" + Djzj + "]";
+    }
+
 }

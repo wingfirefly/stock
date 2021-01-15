@@ -8,4 +8,6 @@ public interface StockLogDao {
 
     void add(List<StockLog> list);
 
+    void setStockIdByCodeType(List<String> list, int type);
+
 }

@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.http.client.utils.DateUtils;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -31,7 +34,6 @@ import vip.linhs.stock.parser.DailyIndexParser;
 import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.service.StockService;
 import vip.linhs.stock.util.StockConsts;
-import vip.linhs.stock.util.StockUtil;
 
 @Service
 public class StockServiceImpl implements StockService {
@@ -55,6 +57,9 @@ public class StockServiceImpl implements StockService {
     @Autowired
     private DailyIndexParser dailyIndexParser;
 
+    @Autowired
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
     @Override
     public List<StockInfo> getAll() {
         PageParam pageParam = new PageParam();
@@ -67,9 +72,7 @@ public class StockServiceImpl implements StockService {
     @Override
     public List<StockInfo> getAllListed() {
         return getAll().stream().filter(stockInfo ->
-            stockInfo.getState() != StockConsts.StockState.Delisted.value()
-                && stockInfo.getState() != StockConsts.StockState.Terminated.value()
-                && !StockUtil.isCompositeIndex(stockInfo.getExchange(), stockInfo.getCode())
+            stockInfo.isValid() && stockInfo.isA()
         ).collect(Collectors.toList());
     }
 
@@ -97,7 +100,7 @@ public class StockServiceImpl implements StockService {
         if (needAddedList != null && !needAddedList.isEmpty()) {
             List<String> newCodeList = needAddedList.stream().map(StockInfo::getCode)
                     .collect(Collectors.toList());
-            stockInfoDao.setStockIdByCodeType(newCodeList, StockConsts.StockLogType.New.value());
+            stockLogDao.setStockIdByCodeType(newCodeList, StockConsts.StockLogType.New.value());
         }
     }
 
@@ -117,9 +120,7 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public void saveDailyIndexToFile(String rootPath) {
-        List<StockInfo> list = getAll().stream().filter(stockInfo ->
-            !StockUtil.isCompositeIndex(stockInfo.getExchange(), stockInfo.getCode())
-        ).collect(Collectors.toList());
+        List<StockInfo> list = getAll().stream().filter(StockInfo::isA).collect(Collectors.toList());
 
         File root = new File(rootPath);
 
@@ -134,33 +135,64 @@ public class StockServiceImpl implements StockService {
                     }
                 }
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                logger.error("get daily index error {} {}", stockInfo.getExchange(), stockInfo.getCode(), e);
             }
         });
     }
 
     @Override
     public void saveDailyIndexFromFile(String rootPath) {
-        List<StockInfo> list = getAll().stream().filter(stockInfo ->
-            !StockUtil.isCompositeIndex(stockInfo.getExchange(), stockInfo.getCode())
-        ).collect(Collectors.toList());
+        List<StockInfo> list = getAll().stream().filter(StockInfo::isA).collect(Collectors.toList());
 
         File root = new File(rootPath);
+
+        AtomicInteger atomicInteger = new AtomicInteger(0);
 
         list.forEach(stockInfo -> {
             logger.info("start save {}: {}", stockInfo.getName(), stockInfo.getCode());
             try {
-                File file = new File(root, stockInfo.getExchange() + "/" + stockInfo.getCode() + ".txt");
-                try (FileReader in = new FileReader(file)) {
-                    String content = FileCopyUtils.copyToString(in);
-                    List<DailyIndex> dailyIndexList = dailyIndexParser.parseHistoryDailyIndexList(content);
-                    dailyIndexList.forEach(dailyIndex -> dailyIndex.setStockInfoId(stockInfo.getId()));
-                    dailyIndexDao.save(dailyIndexList);
+                threadPoolTaskExecutor.execute(() -> {
+                    try {
+                        atomicInteger.incrementAndGet();
+                        handleStockDaily(root, stockInfo);
+                    } finally {
+                        atomicInteger.decrementAndGet();
+                    }
+                });
+            } catch(RejectedExecutionException ex) {
+                logger.error("task rejected {} {}", stockInfo.getExchange(), stockInfo.getCode());
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    logger.error(e.getMessage());
                 }
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                handleStockDaily(root, stockInfo);
             }
         });
+
+        while (atomicInteger.get() <= 0) {
+            logger.info("sub task is not completed");
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                logger.error(e.getMessage());
+            }
+        }
+
+    }
+
+    private void handleStockDaily(File root, StockInfo stockInfo) {
+        try {
+            File file = new File(root, stockInfo.getExchange() + "/" + stockInfo.getCode() + ".txt");
+            try (FileReader in = new FileReader(file)) {
+                String content = FileCopyUtils.copyToString(in);
+                List<DailyIndex> dailyIndexList = dailyIndexParser.parseHistoryDailyIndexList(content);
+                dailyIndexList.forEach(dailyIndex -> dailyIndex.setStockInfoId(stockInfo.getId()));
+                dailyIndexDao.save(dailyIndexList);
+            }
+        } catch (Exception e) {
+            logger.error("save daily index error {} {}", stockInfo.getExchange(), stockInfo.getCode(), e);
+        }
     }
 
     @Override
@@ -182,7 +214,17 @@ public class StockServiceImpl implements StockService {
     @Cacheable(value = StockConsts.CACHE_KEY_DATA_STOCK, key = "#code")
     @Override
     public StockInfo getStockByFullCode(String code) {
-        return stockInfoDao.getStockByFullCode(code);
+        StockInfo stockInfo = stockInfoDao.getStockByFullCode(code);
+        if (stockInfo == null) {
+            stockInfo = new StockInfo();
+            stockInfo.setAbbreviation("wlrzq");
+            stockInfo.setCode(code);
+            stockInfo.setName("未录入证券");
+            stockInfo.setExchange(StockConsts.Exchange.SH.getName());
+            stockInfo.setState(StockConsts.StockState.Terminated.value());
+            stockInfo.setType(StockConsts.StockType.A.value());
+        }
+        return stockInfo;
     }
 
     @Override

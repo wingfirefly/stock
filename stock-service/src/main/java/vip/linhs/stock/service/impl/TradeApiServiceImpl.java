@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,8 @@ import vip.linhs.stock.service.TradeService;
 
 @Service
 public class TradeApiServiceImpl extends AbstractTradeApiService {
+
+    private final Logger logger = LoggerFactory.getLogger(TradeApiServiceImpl.class);
 
     private static final List<String> IgnoreList = Arrays.asList("class", "userId", "method");
 
@@ -46,7 +50,7 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
             TradeResultVo<T> resultVo = JSON.parseObject(content, new TypeReference<TradeResultVo<T>>() {});
             if (resultVo.isSuccess()) {
                 List<T> list = resultVo.getData();
-                ArrayList<T> newList = new ArrayList<>(list.size());
+                ArrayList<T> newList = new ArrayList<>();
                 if (list != null) {
                     list.forEach(d -> {
                         String text = JSON.toJSONString(d);
@@ -73,7 +77,10 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         String url = getUrl(request);
         Map<String, Object>  params = getParams(request);
         Map<String, String> header = getHeader(request);
+
+        logger.debug("trade {} request: {}", request.getMethod(), params);
         String content = tradeClient.send(url, params, header);
+        logger.debug("trade {} response: {}", request.getMethod(), content);
 
         ResponseParser responseParse = getResponseParser(request);
         return responseParse.parse(content, responseType);
@@ -92,7 +99,9 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
             ResponseParser responseParse = defaultReponseParser;
             TradeResultVo<AuthenticationResponse> resultVo = responseParse.parse(content, new TypeReference<AuthenticationResponse>() {});
             if (resultVo.isSuccess()) {
-                String content2 = tradeClient.sendNewInstance("https://jy.xzsec.com/Trade/Buy", new HashMap<>());
+                TradeMethod authCheckTradeMethod = tradeService.getTradeMethodByName(BaseTradeRequest.TradeRequestMethod.AuthenticationCheckRequest.value());
+
+                String content2 = tradeClient.sendNewInstance(authCheckTradeMethod.getUrl(), new HashMap<>());
                 String validateKey = getValidateKey(content2);
 
                 AuthenticationResponse response = new AuthenticationResponse();
@@ -121,7 +130,7 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         return defaultReponseParser ;
     }
 
-    private Map<String, Object> getParams(Object request) {
+    private Map<String, Object> getParams(BaseTradeRequest request) {
         Map<Object, Object> beanMap = new BeanMap(request);
         HashMap<String, Object> params = new HashMap<>();
         beanMap.entrySet().stream().filter(entry -> !TradeApiServiceImpl.IgnoreList.contains(entry.getKey()))

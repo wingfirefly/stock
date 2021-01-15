@@ -55,8 +55,7 @@ public class ApiExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public CommonResponse handleServiceException(ServiceException e, HttpServletRequest request) {
-        logger.error("{}: service error", request.getRequestURI());
-        logger.error(e.getMessage(), e);
+        logger.error("{}: service error", request.getRequestURI(), e);
         return CommonResponse.buildResponse(e.getMessage());
     }
 
@@ -64,8 +63,7 @@ public class ApiExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public CommonResponse handleUnknowException(Exception e, HttpServletRequest request) {
-        logger.error("{}: internal server error", request.getRequestURI());
-        logger.error(e.getMessage(), e);
+        logger.error("{}: internal server error", request.getRequestURI(), e);
         return CommonResponse.buildResponse("Internal Server Error");
     }
 

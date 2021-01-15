@@ -2,6 +2,8 @@ package vip.linhs.stock.util;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.util.StringUtils;
 
@@ -11,10 +13,32 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 import vip.linhs.stock.util.StockConsts.Exchange;
+import vip.linhs.stock.util.StockConsts.StockType;
 
 public class StockUtil {
 
+    private static final List<String> CODES_SH_A = Arrays.asList("600", "601", "603", "605", "688", "689");
+    private static final List<String> CODES_SH_INDEX = Arrays.asList("000001");
+    private static final List<String> CODES_SH_ETF = Arrays.asList("51", "58");
+
+    private static final List<String> CODES_SZ_A = Arrays.asList("000", "001", "002", "003", "004", "300");
+    private static final List<String> CODES_SZ_INDEX = Arrays.asList("399001", "399006");
+    private static final List<String> CODES_SZ_ETF = Arrays.asList("15");
+
     private StockUtil() {
+    }
+
+    private static String getExchange(String code) {
+        if (StringUtils.isEmpty(code)) {
+            return null;
+        }
+        if (isCodeStart(code, CODES_SH_A, CODES_SH_ETF)) {
+            return Exchange.SH.getName();
+        }
+        if (isCodeStart(code, CODES_SZ_A, CODES_SZ_ETF)) {
+            return Exchange.SZ.getName();
+        }
+        return null;
     }
 
     public static String getFullCode(String code) {
@@ -28,31 +52,25 @@ public class StockUtil {
         return exchange + code;
     }
 
-    public static boolean isCompositeIndex(String exchange, String code) {
-        return Arrays.asList("sh000001").contains(exchange + code);
+    public static int getStockType(String exhcange, String code) {
+        if (StockConsts.Exchange.valueOfName(exhcange).isSh()) {
+            if (CODES_SH_INDEX.contains(code)) {
+                return StockType.Index.value();
+            }
+        } else {
+            if (CODES_SZ_INDEX.contains(code)) {
+                return StockType.Index.value();
+            }
+        }
+        if (isCodeStart(code, CODES_SH_A, CODES_SZ_A)) {
+            return StockType.A.value();
+        }
+        if (isCodeStart(code, CODES_SH_ETF, CODES_SZ_ETF)) {
+            return StockType.ETF.value();
+        }
+        throw new NoSuchElementException("no stock type exhcange " + exhcange + ", code " + code);
     }
 
-    public static boolean isStockCode(String code) {
-        if (StringUtils.isEmpty(code)) {
-            return false;
-        }
-        return StockUtil.getExchange(code) != null;
-    }
-
-    public static String getExchange(String code) {
-        if (StringUtils.isEmpty(code)) {
-            return null;
-        }
-        if (code.startsWith("600") || code.startsWith("601") || code.startsWith("603") || code.startsWith("605") || code.startsWith("688") || code.startsWith("689")) {
-            return Exchange.SH.getName();
-        }
-        if (code.startsWith("000") || code.startsWith("001") || code.startsWith("002")
-                || code.startsWith("003") || code.startsWith("004")
-                || code.startsWith("300")) {
-            return Exchange.SZ.getName();
-        }
-        return null;
-    }
 
     public static String getPinyin(String name) {
         HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
@@ -93,6 +111,14 @@ public class StockUtil {
             }
         }
         return true;
+    }
+
+    private static boolean isCodeStart(String code, List<String> list) {
+        return list.stream().anyMatch(v -> code.startsWith(v));
+    }
+
+    private static boolean isCodeStart(String code, List<String> list01, List<String> list02) {
+        return isCodeStart(code, list01) || isCodeStart(code, list02);
     }
 
 }

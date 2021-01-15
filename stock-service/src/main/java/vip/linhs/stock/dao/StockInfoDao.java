@@ -12,8 +12,6 @@ public interface StockInfoDao {
 
     void update(List<StockInfo> list);
 
-    void setStockIdByCodeType(List<String> list, int type);
-
     PageVo<StockInfo> get(PageParam pageParam);
 
     StockInfo getStockByFullCode(String code);
