@@ -5,7 +5,7 @@
 - 支持etf, 转债交易
 - 接口升级
 - 任务管理增加执行功能
-- 其他体验优化 
+- 其他体验优化
 
 ------------
 
@@ -22,6 +22,8 @@
 - 注意事项
  1. 不要把调用接口频率调太大, 以免被东方财富监控. 有朋友循环不停歇请求, 导致账号被东方财富警告
  2. 自带一个自动策略, 如需要使用, 请务必弄清楚后再配置启用, 以免自动挂错误的单造成不必要损失
+ 3. 习惯用maven的朋友可以搜索gradle转maven, 进行项目转换.
+- 祝大家在市场都能赚到钱
 
 ------------
 
@@ -42,7 +44,7 @@
 
 <font color="red" size=8>文档和数据库表见[wiki](https://github.com/bosspen1/stock/wiki)</font>
 
-<font color="red" size=8>把wiki clone下来就可以看到数据库表结构和部署文档</font>
+<font color="red" size=8>把wiki clone下来就可以看到数据库表结构和部署和升级文档</font>
 
 <font color="red" size=8>如需和github集成自动构建可以引入[deployment](https://github.com/bosspen1/deployment)</font>
 
@@ -54,6 +56,7 @@
 ### service
 ```shell
 gradle build -x test
+java -jar stock-service.jar
 ```
 
 ### web
@@ -64,6 +67,6 @@ npm start
 
 ------------
 
-##### 有什么问题和建议或者有好的交易策略欢迎和我交流, 币的交易也可以, 微信: wildaww
+## 有什么问题和建议或者有好的交易策略欢迎和我或者进群交流, 币的交易也可以, 微信: wildaww
 [点击查看微信群二维码](http://qmta9pe04.hd-bkt.clouddn.com/wechat.jpg)
 二维码过期可以在issue里通知我更新
