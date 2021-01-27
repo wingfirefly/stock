@@ -92,7 +92,7 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
             + " trading_value as tradingValue, trading_volume as tradingVolume"
             + " from daily_index where date = ?";
         List<DailyIndex> list = jdbcTemplate.query(sql,
-                new Object[] { new java.sql.Date(date.getTime()) }, BeanPropertyRowMapper.newInstance(DailyIndex.class));
+                new Object[] { date.getTime() }, BeanPropertyRowMapper.newInstance(DailyIndex.class));
         return list;
     }
 

@@ -32,11 +32,9 @@ public class TradeClient {
     }
 
     public void openSession() {
-        CookieStore cookieStore = new BasicCookieStore();
-        CloseableHttpClient httpClient = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
         ClientWrapper wrapper = new ClientWrapper();
-        wrapper.httpClient = httpClient;
-        wrapper.cookieStore = cookieStore;
+        wrapper.cookieStore = new BasicCookieStore();
+        wrapper.httpClient = HttpClients.custom().setDefaultCookieStore(wrapper.cookieStore).build();
         threadLocal.set(wrapper);
     }
 

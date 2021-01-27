@@ -52,8 +52,11 @@ public class StockUtil {
         return exchange + code;
     }
 
-    public static int getStockType(String exhcange, String code) {
-        if (StockConsts.Exchange.valueOfName(exhcange).isSh()) {
+    public static int getStockType(String exchange, String code) {
+        if (exchange == null) {
+            exchange = StockUtil.getExchange(code);
+        }
+        if (StockConsts.Exchange.valueOfName(exchange).isSh()) {
             if (CODES_SH_INDEX.contains(code)) {
                 return StockType.Index.value();
             }
@@ -68,9 +71,8 @@ public class StockUtil {
         if (isCodeStart(code, CODES_SH_ETF, CODES_SZ_ETF)) {
             return StockType.ETF.value();
         }
-        throw new NoSuchElementException("no stock type exhcange " + exhcange + ", code " + code);
+        throw new NoSuchElementException("no stock type exchange " + exchange + ", code " + code);
     }
-
 
     public static String getPinyin(String name) {
         HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
@@ -81,7 +83,7 @@ public class StockUtil {
             if (ch == '*') {
                 continue;
             }
-            if (ch > 31 & ch < 127) {
+            if (ch > 31 && ch < 127) {
                 sb.append(ch);
             } else if (ch == '行') {
                 sb.append('h');
@@ -114,7 +116,7 @@ public class StockUtil {
     }
 
     private static boolean isCodeStart(String code, List<String> list) {
-        return list.stream().anyMatch(v -> code.startsWith(v));
+        return list.stream().anyMatch(code::startsWith);
     }
 
     private static boolean isCodeStart(String code, List<String> list01, List<String> list02) {

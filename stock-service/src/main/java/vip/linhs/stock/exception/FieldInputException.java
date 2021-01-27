@@ -9,7 +9,7 @@ public class FieldInputException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    private List<FieldError> fieldErrors = new ArrayList<>();
+    private final List<FieldError> fieldErrors = new ArrayList<>();
 
     public void addError(String key, String value) {
         FieldError e = new FieldError("", key, value);

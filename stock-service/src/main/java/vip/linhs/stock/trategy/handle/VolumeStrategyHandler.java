@@ -33,6 +33,7 @@ import vip.linhs.stock.service.TradeService;
 import vip.linhs.stock.trategy.model.VolumeStrategyInput;
 import vip.linhs.stock.trategy.model.VolumeStrategyResult;
 import vip.linhs.stock.trategy.model.VolumeSubmitResult;
+import vip.linhs.stock.util.StockConsts.StockType;
 import vip.linhs.stock.util.StockUtil;
 
 @Component("volumeStrategyHandler")
@@ -52,10 +53,9 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
     @Autowired
     private StockService stockService;
 
-
     @Override
     public VolumeStrategyInput queryInput() {
-        int UserId = 1;
+        final int UserId = 1;
         TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(new GetDealDataRequest(UserId));
         if (!dealData.isSuccess()) {
             throw new ServiceException("execute VolumeStrategyService error: " + dealData.getMessage());
@@ -90,10 +90,10 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
                 double rate = tradeRule.getRate().doubleValue();
                 boolean isHandle = false;
                 if (SubmitRequest.B.equals(getDealDataResponse.getMmlb())) {
-                    double tradePrice = (int) (price * (1 + rate) * 100) / 100.0;
+                    double tradePrice = (int) (price * (1 + rate) * getPrecision(stockCode)) / getPrecision(stockCode);
                     isHandle = setNeedSubmit(tradeOrderList, SubmitRequest.S, stockCode, amount, tradePrice, cjbh, submitList, userId);
                 }
-                double tradePrice = (int) (price * (1 - rate) * 100) / 100.0;
+                double tradePrice = (int) (price * (1 - rate) * getPrecision(stockCode)) / getPrecision(stockCode);
                 boolean submitResult = setNeedSubmit(tradeOrderList, SubmitRequest.B, stockCode, amount, tradePrice, cjbh, submitList, userId);
                 if (submitResult) {
                     isHandle = true;
@@ -109,7 +109,6 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
         result.setSubmitList(submitList);
         return result;
     }
-
 
     @Override
     public void handleResult(VolumeStrategyInput input, VolumeStrategyResult result) {
@@ -132,7 +131,7 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
                 TradeOrder tradeOrder = new TradeOrder();
                 tradeOrder.setTradeCode(request.getTradeCode());
                 tradeOrder.setStockCode(request.getStockCode());
-                tradeOrder.setPrice(new BigDecimal(request.getPrice()));
+                tradeOrder.setPrice(BigDecimal.valueOf(request.getPrice()));
                 tradeOrder.setVolume(request.getAmount());
                 tradeOrder.setTradeType(request.getTradeType());
                 tradeOrder.setEntrustCode(saleResultVo.getData().get(0).getWtbh());
@@ -238,6 +237,14 @@ public class VolumeStrategyHandler extends BaseStrategyHandler<VolumeStrategyInp
             response.setCjsl(String.valueOf(cjsl + cjsl2));
         }
         return response;
+    }
+
+    private double getPrecision(String code) {
+        int type = StockUtil.getStockType(null, code);
+        if (type == StockType.ETF.value()) {
+            return 1000;
+        }
+        return 100;
     }
 
 }

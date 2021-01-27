@@ -2,6 +2,7 @@ package vip.linhs.stock.web.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -17,6 +18,7 @@ import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.TaskVo;
 import vip.linhs.stock.service.RedisClient;
 import vip.linhs.stock.service.TaskService;
+import vip.linhs.stock.util.StockConsts;
 
 @RestController
 @RequestMapping("system")
@@ -37,9 +39,7 @@ public class SystemController extends BaseController {
     public CommonResponse changeTaskState(int id, int state) {
         FieldInputException e = null;
         if (state != 0 && state != 2) {
-            if (e == null) {
-                e = new FieldInputException();
-            }
+            e = new FieldInputException();
             e.addError("state", "state invalid");
         }
         if (id < 0) {
@@ -68,6 +68,7 @@ public class SystemController extends BaseController {
     @RequestMapping("cacheList")
     public PageVo<Map<String, String>> getCacheList(PageParam pageParam) {
         List<Map<String, String>> list = redisClient.getAll();
+        list = list.stream().filter(v -> !v.get("key").startsWith(StockConsts.CACHE_KEY_TOKEN)).collect(Collectors.toList());
         return new PageVo<>(subList(list, pageParam), list.size());
     }
 

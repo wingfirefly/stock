@@ -84,7 +84,7 @@ public class MessageServiceImpl implements MessageService {
         return params;
     }
 
-    private static enum DingDingMessageType {
+    private enum DingDingMessageType {
         Text, Markdown
     }
 

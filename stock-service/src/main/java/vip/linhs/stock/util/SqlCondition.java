@@ -1,6 +1,7 @@
 package vip.linhs.stock.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -51,9 +52,7 @@ public class SqlCondition {
     public SqlCondition addSql(String sql, Object... args) {
         if (!StringUtils.isEmpty(sql)) {
             sqlString.append(sql);
-            for (Object o : args) {
-                objList.add(o);
-            }
+            objList.addAll(Arrays.asList(args));
         }
         return this;
     }

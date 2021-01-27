@@ -176,6 +176,7 @@ public class StockServiceImpl implements StockService {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 logger.error(e.getMessage());
+                Thread.currentThread().interrupt();
             }
         }
 

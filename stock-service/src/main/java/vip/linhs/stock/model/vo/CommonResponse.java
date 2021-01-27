@@ -2,6 +2,8 @@ package vip.linhs.stock.model.vo;
 
 public class CommonResponse {
 
+    public static final String DEFAULT_MESSAGE_SUCCESS = "success";
+
     private String message;
 
     public CommonResponse(String message) {

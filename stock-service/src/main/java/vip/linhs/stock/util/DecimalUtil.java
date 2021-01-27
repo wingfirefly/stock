@@ -33,7 +33,7 @@ public class DecimalUtil {
 
     public static BigDecimal fromStr(String value) {
         value = value.trim();
-        value = value.replaceAll(",", "");
+        value = value.replace(",", "");
         return new BigDecimal(value);
     }
 

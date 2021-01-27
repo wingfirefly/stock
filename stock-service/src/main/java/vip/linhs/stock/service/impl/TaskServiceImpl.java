@@ -105,6 +105,7 @@ public class TaskServiceImpl implements TaskService {
                 break;
             case TradeTicker:
                 runTradeTicker();
+                break;
             default:
                 break;
             }

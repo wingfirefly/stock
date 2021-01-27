@@ -35,7 +35,7 @@ public class UserController extends BaseController {
             e.addError("user", "username or password is error");
             throw e;
         }
-        String token = UUID.randomUUID().toString().replaceAll("-", "");
+        String token = UUID.randomUUID().toString().replace("-", "");
         userService.putToSession(user, token);
 
         UserVo userVo = new UserVo();

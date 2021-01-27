@@ -93,7 +93,7 @@ public class DailyIndexParser {
         // <tr><td><a name="06/06/2018">06/06/2018</a></td><td>23.10</td><td>25.45</td><td>22.72</td><td>24.28</td>
         // <td>17,867,500</td><td>433,192,000</td><td>0.68</td><td><span class='changeup'>2.88 %</span></td><td></td>
         // <td><span class='changeup'>12.02 %</span></td><td>10365.125</td><td><span class='changedn'>-0.20 %</class></td><
-        content = content.replaceAll(" class=altertd", "");
+        content = content.replace(" class=altertd", "");
         Pattern pattern = Pattern.compile("<td>([\\s\\S]{3,60}?)</td>");
         Matcher matcher = pattern.matcher(content);
 
@@ -112,7 +112,7 @@ public class DailyIndexParser {
         BigDecimal highestPrice = DecimalUtil.fromStr(values[2]);
         BigDecimal lowestPrice = DecimalUtil.fromStr(values[3]);
         BigDecimal closingPrice = DecimalUtil.fromStr(values[4]);
-        long tradingVolume = Long.parseLong(values[5].replaceAll(",", ""));
+        long tradingVolume = Long.parseLong(values[5].replace(",", ""));
         BigDecimal tradingValue = DecimalUtil.fromStr(values[6]);
 
         DailyIndex dailyIndex = new DailyIndex();

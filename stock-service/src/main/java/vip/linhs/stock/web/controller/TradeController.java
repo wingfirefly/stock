@@ -68,7 +68,7 @@ public class TradeController extends BaseController {
             tradeUser.setCookie(response.getCookie());
             tradeUser.setValidateKey(response.getValidateKey());
             tradeService.update(tradeUser);
-            resultVo.setMessage("success");
+            resultVo.setMessage(CommonResponse.DEFAULT_MESSAGE_SUCCESS);
         }
         return CommonResponse.buildResponse(resultVo.getMessage());
     }
@@ -87,9 +87,7 @@ public class TradeController extends BaseController {
     public CommonResponse changeConfigState(int id, int state) {
         FieldInputException e = null;
         if (state != 0 && state != 1) {
-            if (e == null) {
-                e = new FieldInputException();
-            }
+            e = new FieldInputException();
             e.addError("state", "state invalid");
         }
         if (id < 0) {
@@ -102,7 +100,7 @@ public class TradeController extends BaseController {
             throw e;
         }
         tradeService.changeConfigState(state, id);
-        CommonResponse response = CommonResponse.buildResponse("success");
+        CommonResponse response = CommonResponse.buildResponse(CommonResponse.DEFAULT_MESSAGE_SUCCESS);
         return response;
     }
 
@@ -148,7 +146,7 @@ public class TradeController extends BaseController {
         tradeOrder.setTradeType(tradeType);
         tradeOrder.setVolume(0);
         tradeService.saveTradeOrder(tradeOrder);
-        return CommonResponse.buildResponse("success");
+        return CommonResponse.buildResponse(CommonResponse.DEFAULT_MESSAGE_SUCCESS);
     }
 
     @RequestMapping("deleteTradeCode")
@@ -159,7 +157,7 @@ public class TradeController extends BaseController {
             throw e;
         }
         tradeService.deleteTradeCode(tradeCode, tradeType);
-        return CommonResponse.buildResponse("success");
+        return CommonResponse.buildResponse(CommonResponse.DEFAULT_MESSAGE_SUCCESS);
     }
 
     @RequestMapping("buy")

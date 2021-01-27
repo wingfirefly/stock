@@ -134,9 +134,7 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         Map<Object, Object> beanMap = new BeanMap(request);
         HashMap<String, Object> params = new HashMap<>();
         beanMap.entrySet().stream().filter(entry -> !TradeApiServiceImpl.IgnoreList.contains(entry.getKey()))
-                .forEach(entry -> {
-                    params.put(String.valueOf(entry.getKey()), entry.getValue());
-                });
+                .forEach(entry -> params.put(String.valueOf(entry.getKey()), entry.getValue()));
         return params;
     }
 
