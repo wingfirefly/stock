@@ -53,6 +53,8 @@
 
 ## 使用说明
 
+按照wiki里面的deployment文档准备好环境后
+
 ### service
 ```shell
 gradle build -x test
