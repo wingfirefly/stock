@@ -38,6 +38,9 @@
           },
           success: function(result) {
             $('.error-message', loginForm).text(result.message);
+            if (result.message !== 'success') {
+              reloadVerifiCode();
+            }
           }
         });
         return false;
