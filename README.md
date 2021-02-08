@@ -70,5 +70,5 @@ npm start
 ------------
 
 ## 有什么问题和建议或者有好的交易策略欢迎和我或者进群交流, 币的交易也可以, 微信: wildaww
-[点击查看微信群二维码](http://qmta9pe04.hd-bkt.clouddn.com/wechat.jpg)
+[点击查看微信群二维码](http://qo74u8etr.hn-bkt.clouddn.com/wechat.jpg)
 二维码过期可以在issue里通知我更新
