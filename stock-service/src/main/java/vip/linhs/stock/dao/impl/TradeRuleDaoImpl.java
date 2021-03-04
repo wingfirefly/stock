@@ -15,15 +15,7 @@ import vip.linhs.stock.util.SqlCondition;
 @Repository
 public class TradeRuleDaoImpl extends BaseDao implements TradeRuleDao {
 
-    private static final String SELECT_SQL = "select id, rate, state, description, create_time as createTime, update_time as updateTime from trade_rule where 1 = 1";
-
-    @Override
-    public TradeRule getTradeRuleByStockCode(String stockCode) {
-         List<TradeRule> list = jdbcTemplate.query("select tr.id, tr.rate, tr.state"
-                + " from trade_rule tr, trade_stock_info_rule tsr, stock_info si where tr.id = tsr.rule_id and tsr.stock_code = si.code and si.code = ? and tr.state = 1 and tsr.state = 1",
-                new String[] { stockCode }, BeanPropertyRowMapper.newInstance(TradeRule.class));
-         return list.isEmpty() ? null : list.get(0);
-    }
+    private static final String SELECT_SQL = "select id, stock_code as stockCode, strategy_id as strategyId, user_id as userId, type, value, volume, open_price as openPrice, highest_price as highestPrice, lowest_price as lowestPrice, state, description, create_time as createTime, update_time as updateTime from trade_rule where 1 = 1";
 
     @Override
     public PageVo<TradeRule> get(PageParam pageParam) {
@@ -40,6 +32,11 @@ public class TradeRuleDaoImpl extends BaseDao implements TradeRuleDao {
         List<TradeRule> list = jdbcTemplate.query(dataSqlCondition.toSql(),
                 dataSqlCondition.toArgs(), BeanPropertyRowMapper.newInstance(TradeRule.class));
         return new PageVo<>(list, totalRecords);
+    }
+
+    @Override
+    public void updateState(int state, int id) {
+        jdbcTemplate.update("update trade_rule set state = ? where id = ?", state, id);
     }
 
 }

@@ -19,11 +19,14 @@ import com.alibaba.fastjson.TypeReference;
 import vip.linhs.stock.api.TradeResultVo;
 import vip.linhs.stock.api.request.AuthenticationRequest;
 import vip.linhs.stock.api.request.BaseTradeRequest;
+import vip.linhs.stock.api.request.GetAssetsRequest;
+import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.AuthenticationResponse;
 import vip.linhs.stock.client.TradeClient;
 import vip.linhs.stock.model.po.TradeMethod;
 import vip.linhs.stock.model.po.TradeUser;
 import vip.linhs.stock.service.AbstractTradeApiService;
+import vip.linhs.stock.service.SystemConfigService;
 import vip.linhs.stock.service.TradeService;
 
 @Service
@@ -72,18 +75,36 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
     @Autowired
     private TradeClient tradeClient;
 
+    @Autowired
+    private SystemConfigService systemConfigService;
+
     @Override
     public <T> TradeResultVo<T> send(BaseTradeRequest request, TypeReference<T> responseType) {
+        ResponseParser responseParse = getResponseParser(request);
+
         String url = getUrl(request);
         Map<String, Object>  params = getParams(request);
         Map<String, String> header = getHeader(request);
 
         logger.debug("trade {} request: {}", request.getMethod(), params);
-        String content = tradeClient.send(url, params, header);
+        String content;
+        if (systemConfigService.isMock()) {
+            content = getMockData(request);
+        } else {
+            content = tradeClient.send(url, params, header);
+        }
         logger.debug("trade {} response: {}", request.getMethod(), content);
 
-        ResponseParser responseParse = getResponseParser(request);
         return responseParse.parse(content, responseType);
+    }
+
+    private String getMockData(BaseTradeRequest request) {
+        if (request instanceof SubmitRequest) {
+            return "{\"Message\":null,\"Status\":0,\"Data\":[{\"Wtbh\": \"" + System.currentTimeMillis() + "\"}]}";
+        } else if (request instanceof GetAssetsRequest) {
+            return "{\"Message\":null,\"Status\":0,\"Data\":[{\"Zzc\": \"100000\", \"Kyzj\": \"50000\", \"Kqzj\": \"80000\", \"Djzj\": \"20000\" }]}";
+        }
+        return "{\"Message\":null,\"Status\":0,\"Data\":[]}";
     }
 
     @Override

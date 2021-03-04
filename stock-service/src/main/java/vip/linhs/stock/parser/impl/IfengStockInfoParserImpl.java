@@ -21,7 +21,7 @@ public class IfengStockInfoParserImpl implements StockInfoParser {
 
     @Override
     public List<StockInfo> parseStockInfoList(String content) {
-        content = content.replaceAll("Ａ", "A");
+        content = content.replace("Ａ", "A");
         Pattern pattern = Pattern.compile(
                 "<a href=\"http://finance.ifeng.com/app/hq/stock/(sh|sz)\\S{1,20}/index\\.shtml\" target=\"_blank\">(\\S{1,20}?)\\((\\S{1,8})\\)</a>");
         Matcher matcher = pattern.matcher(content);

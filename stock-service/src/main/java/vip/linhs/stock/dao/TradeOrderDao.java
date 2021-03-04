@@ -1,18 +1,17 @@
 package vip.linhs.stock.dao;
 
-import java.util.Date;
 import java.util.List;
 
 import vip.linhs.stock.model.po.TradeOrder;
 
 public interface TradeOrderDao {
 
-    void save(TradeOrder tradeOrder);
+    void add(TradeOrder tradeOrder);
 
-    List<TradeOrder> getAll();
+    void update(TradeOrder tradeOrder);
 
-    List<TradeOrder> getListByDate(Date date);
+    List<TradeOrder> getLastListByRuleId(int ruleId);
 
-    void delete(String tradeCode, String tradeType);
+    void setInvalidByRuleId(int ruleId);
 
 }

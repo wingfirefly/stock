@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vip.linhs.stock.exception.FieldInputException;
 import vip.linhs.stock.model.po.ExecuteInfo;
+import vip.linhs.stock.model.po.SystemConfig;
 import vip.linhs.stock.model.vo.CommonResponse;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.TaskVo;
 import vip.linhs.stock.service.RedisClient;
+import vip.linhs.stock.service.SystemConfigService;
 import vip.linhs.stock.service.TaskService;
 import vip.linhs.stock.util.StockConsts;
 
@@ -29,6 +31,9 @@ public class SystemController extends BaseController {
 
     @Autowired
     private RedisClient redisClient;
+
+    @Autowired
+    private SystemConfigService systemConfigService;
 
     @RequestMapping("taskList")
     public PageVo<TaskVo> getTaskList(PageParam pageParam) {
@@ -82,6 +87,12 @@ public class SystemController extends BaseController {
         redisClient.remove(key);
         CommonResponse response = CommonResponse.buildResponse("success");
         return response;
+    }
+
+    @RequestMapping("configList")
+    public PageVo<SystemConfig> getSystemConfigList(PageParam pageParam) {
+        List<SystemConfig> list = systemConfigService.getAll();
+        return new PageVo<>(subList(list, pageParam), list.size());
     }
 
 }

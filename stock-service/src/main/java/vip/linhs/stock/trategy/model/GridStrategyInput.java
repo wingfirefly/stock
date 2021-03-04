@@ -4,11 +4,12 @@ import java.util.List;
 
 import vip.linhs.stock.api.response.GetDealDataResponse;
 import vip.linhs.stock.model.po.TradeOrder;
+import vip.linhs.stock.model.vo.trade.TradeRuleVo;
 
-public class VolumeStrategyInput extends BaseStrategyInput {
+public class GridStrategyInput extends BaseStrategyInput {
 
-    public VolumeStrategyInput(int userId) {
-        super(userId);
+    public GridStrategyInput(TradeRuleVo tradeRuleVo) {
+        super(tradeRuleVo);
     }
 
     private List<GetDealDataResponse> dealDataList;
@@ -30,7 +31,5 @@ public class VolumeStrategyInput extends BaseStrategyInput {
     public void setTradeOrderList(List<TradeOrder> tradeOrderList) {
         this.tradeOrderList = tradeOrderList;
     }
-
-
 
 }

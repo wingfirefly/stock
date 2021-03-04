@@ -6,6 +6,8 @@ public interface HolidayCalendarService {
 
     void updateCurrentYear();
 
-    boolean isHoliday(Date date);
+    boolean isBusinessDate(Date date);
+
+    boolean isBusinessTime(Date date);
 
 }

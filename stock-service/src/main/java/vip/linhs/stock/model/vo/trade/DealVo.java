@@ -37,10 +37,6 @@ public class DealVo {
      */
     private String tradeType;
 
-    private String relatedBuyEntrustCode;
-
-    private String relatedSaleEntrustCode;
-
     public String getEntrustCode() {
         return entrustCode;
     }
@@ -119,22 +115,6 @@ public class DealVo {
 
     public void setTradeType(String tradeType) {
         this.tradeType = tradeType;
-    }
-
-    public String getRelatedBuyEntrustCode() {
-        return relatedBuyEntrustCode;
-    }
-
-    public void setRelatedBuyEntrustCode(String relatedBuyEntrustCode) {
-        this.relatedBuyEntrustCode = relatedBuyEntrustCode;
-    }
-
-    public String getRelatedSaleEntrustCode() {
-        return relatedSaleEntrustCode;
-    }
-
-    public void setRelatedSaleEntrustCode(String relatedSaleEntrustCode) {
-        this.relatedSaleEntrustCode = relatedSaleEntrustCode;
     }
 
 }

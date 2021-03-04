@@ -54,15 +54,57 @@
               }
             },
             {
-              title: '编号',
+              title: '代码',
               render: function(row) {
-                return row.id;
+                return row.stockCode;
               }
             },
             {
-              title: '比率(%)',
+              title: '股票名称',
               render: function(row) {
-                return (row.rate * 100).toFixed(2);
+                return row.stockName;
+              }
+            },
+            {
+              title: '规则',
+              render: function(row) {
+                return row.strategyName;
+              }
+            },
+            {
+              title: '类型',
+              render: function(row) {
+                return row.type;
+              }
+            },
+            {
+              title: '值',
+              render: function(row) {
+                return row.value;
+              }
+            },
+            {
+              title: '交易量',
+              render: function(row) {
+                return row.volume;
+              }
+            },
+            {
+              title: '初始价格',
+              render: function(row) {
+                return row.openPrice;
+              }
+            },
+            {
+              title: '最高价格',
+              render: function(row) {
+                return row.highestPrice;
+              }
+            },
+            {
+              title: '最低价格',
+              render: function(row) {
+                return row.lowestPrice;
               }
             },
             {
@@ -74,19 +116,20 @@
             {
               title: '最后更新时间',
               render: function(row) {
-                return new Date(row.updateTime).format('yyyy-MM-dd hh:mm');
-              }
-            },
-            {
-              title: '描述',
-              render: function(row) {
-                return row.description;
+                return new Date(row.updateTime).format('yyyy-MM-dd hh:mm:ss');
               }
             },
             {
               title: '操作',
               render: function(row) {
-                 return '';
+                var html = '';
+                if (row.state === 0) {
+                  html += ' <button class="btn btn-validate" data-id="' + row.id + '">生效</button>';
+                } else if (row.state === 1) {
+                  html += ' <button class="btn btn-invalid" data-id="' + row.id + '">失效</button>';
+                }
+                html += ' <button class="btn btn-reset" data-id="' + row.id + '">重置交易</button>';
+                return html;
               }
             }
           ],
@@ -94,6 +137,54 @@
             index = 0;
           }
         },
+      });
+
+      table.on('click', '.btn-validate', function() {
+        var id = $(this).data('id');
+        changeState(id, 1);
+      });
+
+      table.on('click', '.btn-invalid', function() {
+        var id = $(this).data('id');
+        changeState(id, 0);
+      });
+
+      table.on('click', '.btn-reset', function() {
+        var id = $(this).data('id');
+        $.ajax({
+          url: GlobalConfig.serverUrl + '/api/trade/resetRule',
+          type: 'POST',
+          data: {
+            id: id
+          },
+          headers: getRequestHeaders(),
+          error: function(xhr, status, errorThrown) {
+            ExceptionHandler.handleCommonError(xhr);
+          },
+          success: function(res) {
+            alert(res.message);
+            dataTable.fnDraw(1);
+          }
+        });
+      });
+    }
+
+    function changeState(id, state) {
+      $.ajax({
+        url: GlobalConfig.serverUrl + '/api/trade/changeRuleState',
+        type: 'POST',
+        data: {
+          id: id,
+          state: state
+        },
+        headers: getRequestHeaders(),
+        error: function(xhr, status, errorThrown) {
+          ExceptionHandler.handleCommonError(xhr);
+        },
+        success: function(res) {
+          alert(res.message);
+          dataTable.fnDraw(1);
+        }
       });
     }
 

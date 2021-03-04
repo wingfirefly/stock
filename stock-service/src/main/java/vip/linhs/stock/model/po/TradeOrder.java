@@ -1,24 +1,32 @@
 package vip.linhs.stock.model.po;
 
 import java.math.BigDecimal;
+import java.util.Date;
+
+import vip.linhs.stock.api.response.GetOrdersDataResponse;
 
 public class TradeOrder extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 
-    private String tradeCode;
+    private int ruleId;
     private String stockCode;
+    private String entrustCode;
+    private String dealCode;
+    private String relatedDealCode;
     private BigDecimal price;
     private int volume;
     private String tradeType;
-    private String entrustCode;
+    private String tradeState;
+    private Date tradeTime;
+    private int state;
 
-    public String getTradeCode() {
-        return tradeCode;
+    public int getRuleId() {
+        return ruleId;
     }
 
-    public void setTradeCode(String tradeCode) {
-        this.tradeCode = tradeCode;
+    public void setRuleId(int ruleId) {
+        this.ruleId = ruleId;
     }
 
     public String getStockCode() {
@@ -27,6 +35,30 @@ public class TradeOrder extends BaseModel {
 
     public void setStockCode(String stockCode) {
         this.stockCode = stockCode;
+    }
+
+    public String getEntrustCode() {
+        return entrustCode;
+    }
+
+    public void setEntrustCode(String entrustCode) {
+        this.entrustCode = entrustCode;
+    }
+
+    public String getDealCode() {
+        return dealCode;
+    }
+
+    public void setDealCode(String dealCode) {
+        this.dealCode = dealCode;
+    }
+
+    public String getRelatedDealCode() {
+        return relatedDealCode;
+    }
+
+    public void setRelatedDealCode(String relatedDealCode) {
+        this.relatedDealCode = relatedDealCode;
     }
 
     public BigDecimal getPrice() {
@@ -53,19 +85,40 @@ public class TradeOrder extends BaseModel {
         this.tradeType = tradeType;
     }
 
-    public String getEntrustCode() {
-        return entrustCode;
+    public String getTradeState() {
+        return tradeState;
     }
 
-    public void setEntrustCode(String entrustCode) {
-        this.entrustCode = entrustCode;
+    public void setTradeState(String tradeState) {
+        this.tradeState = tradeState;
     }
 
-    @Override
-    public String toString() {
-        return "TradeOrder [tradeCode=" + tradeCode + ", stockCode=" + stockCode + ", price="
-                + price + ", volume=" + volume + ", tradeType=" + tradeType + ", entrustCode="
-                + entrustCode + ", BaseModel=" + super.toString() + "]";
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    public Date getTradeTime() {
+        return tradeTime;
+    }
+
+    public void setTradeTime(Date tradeTime) {
+        this.tradeTime = tradeTime;
+    }
+
+    public boolean isDealed() {
+        return GetOrdersDataResponse.YICHENG.equals(tradeState);
+    }
+
+    public boolean isValid() {
+        return isDealed() || GetOrdersDataResponse.YIBAO.equals(tradeState);
+    }
+
+    public boolean isManual() {
+        return relatedDealCode.startsWith("m");
     }
 
 }

@@ -20,7 +20,7 @@
   <script type="text/javascript" src="/static/js/util/config.js"></script>
   <script type="text/javascript" src="/static/js/util/common.js"></script>
   <script type="text/javascript" src="/static/js/util/frame.js"></script>
-  <script type="text/javascript" src="/static/js/modules/trade.js"></script>
+  <script type="text/javascript" src="/static/js/modules/system.js"></script>
 
   <script type="text/javascript">
 
@@ -37,7 +37,7 @@
         src: table,
         dataTable: {
           ajax: {
-            url: GlobalConfig.serverUrl + '/api/trade/configList',
+            url: GlobalConfig.serverUrl + '/api/system/configList',
             type: 'GET',
             data: {},
             headers: getRequestHeaders(),
@@ -54,21 +54,21 @@
               }
             },
             {
-              title: '规则',
+              title: '名称',
               render: function(row) {
-                return row.ruleId;
+                return row.name;
               }
             },
             {
-              title: '代码',
+              title: '值1',
               render: function(row) {
-                return row.stockCode;
+                return row.value1;
               }
             },
             {
-              title: '股票名称',
+              title: '值2',
               render: function(row) {
-                return row.stockName;
+                return row.value2;
               }
             },
             {
@@ -80,19 +80,19 @@
             {
               title: '最后更新时间',
               render: function(row) {
-                return new Date(row.updateTime).format('yyyy-MM-dd hh:mm');
+                return new Date(row.updateTime).format('yyyy-MM-dd hh:mm:ss');
               }
             },
             {
               title: '操作',
               render: function(row) {
                 var html = '';
-                 if (row.state === 0) {
-                   html += ' <button class="btn btn-validate" data-id="' + row.id + '">生效</button>';
-                 } else if (row.state === 1) {
-                   html += ' <button class="btn btn-invalid" data-id="' + row.id + '">失效</button>';
-                 }
-                 return html;
+                if (row.state === 0) {
+                  html += ' <button class="btn btn-validate" data-id="' + row.id + '">生效</button>';
+                } else if (row.state === 1) {
+                  html += ' <button class="btn btn-invalid" data-id="' + row.id + '">失效</button>';
+                }
+                return '';
               }
             }
           ],
@@ -116,7 +116,7 @@
 
     function changeState(id, state) {
       $.ajax({
-        url: GlobalConfig.serverUrl + '/api/trade/changeConfigState',
+        url: GlobalConfig.serverUrl + '/api/system/changeConfigState',
         type: 'POST',
         data: {
           id: id,

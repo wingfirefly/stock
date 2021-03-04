@@ -51,13 +51,17 @@ public class MessageServiceImpl implements MessageService {
     }
 
     private void sendDingding(String title, String body, String target, DingDingMessageType type) {
-        Message message = new Message(StockConsts.MessageType.DingDing.value(), target, body, new Date());
-        Map<String, Object> params = type == DingDingMessageType.Text
-                ? buildTextMessageParams(message.getBody())
-                : buildMarkdownMessageParams(title, message.getBody());
-        MessageServiceImpl.logger.info("send message content: {}", params);
-        String result = HttpUtil.sendPostJson(httpClient, message.getTarget(), params);
-        MessageServiceImpl.logger.info("send message result: {}", result);
+        try {
+            Message message = new Message(StockConsts.MessageType.DingDing.value(), target, body, new Date());
+            Map<String, Object> params = type == DingDingMessageType.Text
+                    ? buildTextMessageParams(message.getBody())
+                    : buildMarkdownMessageParams(title, message.getBody());
+            MessageServiceImpl.logger.info("send message content: {}", params);
+            String result = HttpUtil.sendPostJson(httpClient, message.getTarget(), params);
+            MessageServiceImpl.logger.info("send message result: {}", result);
+        } catch (Exception e) {
+            MessageServiceImpl.logger.error("send message error", e);
+        }
     }
 
     private Map<String, Object> buildTextMessageParams(String content) {

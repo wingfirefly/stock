@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.http.client.utils.DateUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,8 +30,6 @@ import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.api.response.RevokeResponse;
 import vip.linhs.stock.api.response.SubmitResponse;
 import vip.linhs.stock.exception.FieldInputException;
-import vip.linhs.stock.model.po.TradeOrder;
-import vip.linhs.stock.model.po.TradeRule;
 import vip.linhs.stock.model.po.TradeUser;
 import vip.linhs.stock.model.vo.AccountVo;
 import vip.linhs.stock.model.vo.CommonResponse;
@@ -40,7 +38,7 @@ import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.trade.DealVo;
 import vip.linhs.stock.model.vo.trade.OrderVo;
 import vip.linhs.stock.model.vo.trade.StockVo;
-import vip.linhs.stock.model.vo.trade.TradeConfigVo;
+import vip.linhs.stock.model.vo.trade.TradeRuleVo;
 import vip.linhs.stock.service.TradeApiService;
 import vip.linhs.stock.service.TradeService;
 
@@ -67,24 +65,19 @@ public class TradeController extends BaseController {
             tradeUser.setId(request.getUserId());
             tradeUser.setCookie(response.getCookie());
             tradeUser.setValidateKey(response.getValidateKey());
-            tradeService.update(tradeUser);
+            tradeService.updateTradeUser(tradeUser);
             resultVo.setMessage(CommonResponse.DEFAULT_MESSAGE_SUCCESS);
         }
         return CommonResponse.buildResponse(resultVo.getMessage());
     }
 
     @RequestMapping("ruleList")
-    public PageVo<TradeRule> getRuleList(PageParam pageParam) {
-        return tradeService.getRuleList(pageParam);
+    public PageVo<TradeRuleVo> getRuleList(PageParam pageParam) {
+        return tradeService.getTradeRuleList(pageParam);
     }
 
-    @RequestMapping("configList")
-    public PageVo<TradeConfigVo> getConfigList(PageParam pageParam) {
-        return tradeService.getConfigList(pageParam);
-    }
-
-    @PostMapping("changeConfigState")
-    public CommonResponse changeConfigState(int id, int state) {
+    @PostMapping("changeRuleState")
+    public CommonResponse changeRuleState(int id, int state) {
         FieldInputException e = null;
         if (state != 0 && state != 1) {
             e = new FieldInputException();
@@ -99,9 +92,23 @@ public class TradeController extends BaseController {
         if (e != null && e.hasErrors()) {
             throw e;
         }
-        tradeService.changeConfigState(state, id);
+        tradeService.changeTradeRuleState(state, id);
         CommonResponse response = CommonResponse.buildResponse(CommonResponse.DEFAULT_MESSAGE_SUCCESS);
         return response;
+    }
+
+    @RequestMapping("resetRule")
+    public CommonResponse resetRule(int id) {
+        FieldInputException e = null;
+        if (id < 0) {
+            e = new FieldInputException();
+            e.addError("id", "id invalid");
+        }
+        if (e != null && e.hasErrors()) {
+            throw e;
+        }
+        tradeService.resetRule(id);
+        return CommonResponse.buildResponse(CommonResponse.DEFAULT_MESSAGE_SUCCESS);
     }
 
     @RequestMapping("dealList")
@@ -118,10 +125,10 @@ public class TradeController extends BaseController {
     @RequestMapping("hisDealList")
     public PageVo<DealVo> getHisDealList(PageParam pageParam) {
         GetHisDealDataRequest request = new GetHisDealDataRequest(getUserId());
-        request.setEt(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
+        request.setEt(DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
         Date et = new Date();
         et.setTime(et.getTime() - 7 * 24 * 3600 * 1000);
-        request.setSt(DateUtils.formatDate(et, "yyyy-MM-dd"));
+        request.setSt(DateFormatUtils.format(et, "yyyy-MM-dd"));
 
         TradeResultVo<GetHisDealDataResponse> dealData = tradeApiService.getHisDealData(request);
         if (dealData.isSuccess()) {
@@ -129,35 +136,6 @@ public class TradeController extends BaseController {
             return new PageVo<>(subList(list, pageParam), list.size());
         }
         return new PageVo<>(Collections.emptyList(), 0);
-    }
-
-    @RequestMapping("addTradeCode")
-    public CommonResponse addTradeCode(String stockCode, String tradeCode, String tradeType) {
-        if (!SubmitRequest.S.equals(tradeType) && !SubmitRequest.B.equals(tradeType)) {
-            FieldInputException e = new FieldInputException();
-            e.addError("tradeType", "tradeType invalid");
-            throw e;
-        }
-        TradeOrder tradeOrder = new TradeOrder();
-        tradeOrder.setEntrustCode("0000");
-        tradeOrder.setPrice(BigDecimal.ZERO);
-        tradeOrder.setStockCode(stockCode);
-        tradeOrder.setTradeCode(tradeCode);
-        tradeOrder.setTradeType(tradeType);
-        tradeOrder.setVolume(0);
-        tradeService.saveTradeOrder(tradeOrder);
-        return CommonResponse.buildResponse(CommonResponse.DEFAULT_MESSAGE_SUCCESS);
-    }
-
-    @RequestMapping("deleteTradeCode")
-    public CommonResponse deleteTradeCode(String stockCode, String tradeCode, String tradeType) {
-        if (!SubmitRequest.S.equals(tradeType) && !SubmitRequest.B.equals(tradeType)) {
-            FieldInputException e = new FieldInputException();
-            e.addError("tradeType", "tradeType invalid");
-            throw e;
-        }
-        tradeService.deleteTradeCode(tradeCode, tradeType);
-        return CommonResponse.buildResponse(CommonResponse.DEFAULT_MESSAGE_SUCCESS);
     }
 
     @RequestMapping("buy")
@@ -208,7 +186,7 @@ public class TradeController extends BaseController {
     @RequestMapping("revoke")
     public CommonResponse revoke(String entrustCode) {
         RevokeRequest request = new RevokeRequest(getUserId());
-        String revokes = String.format("%s_%s", DateUtils.formatDate(new Date(), "yyyyMMdd"), entrustCode);
+        String revokes = String.format("%s_%s", DateFormatUtils.format(new Date(), "yyyyMMdd"), entrustCode);
         request.setRevokes(revokes);
         TradeResultVo<RevokeResponse> response = tradeApiService.revoke(request);
         return CommonResponse.buildResponse(response.getMessage());

@@ -23,7 +23,7 @@ public abstract class BaseTradeRequest {
         return "BaseTradeRequest [userId=" + userId + ", method=" + getMethod() + "]";
     }
 
-    public static enum TradeRequestMethod {
+    public enum TradeRequestMethod {
         GetAssertsRequest("get_asserts"), SubmitRequest("submit"), RevokeRequest("revoke"), GetStockList("get_stock_list"),
         GetOrdersDataRequest("get_orders_data"), GetDealDataRequest("get_deal_data"), AuthenticationRequest("authentication"),
         AuthenticationCheckRequest("authentication_check"), GetHisDealDataRequest("get_his_deal_data"), GetHisOrdersDataRequest("get_his_orders_data");

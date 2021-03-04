@@ -9,7 +9,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.apache.http.client.utils.DateUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,7 +170,7 @@ public class StockServiceImpl implements StockService {
             }
         });
 
-        while (atomicInteger.get() <= 0) {
+        while (atomicInteger.get() > 0) {
             logger.info("sub task is not completed");
             try {
                 Thread.sleep(500);
@@ -230,7 +230,7 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public PageVo<DailyIndexVo> getDailyIndexList(PageParam pageParam) {
-        pageParam.getCondition().put("date", DateUtils.formatDate(new Date(), "yyyy-MM-dd") );
+        pageParam.getCondition().put("date", DateFormatUtils.format(new Date(), "yyyy-MM-dd") );
         return dailyIndexDao.getDailyIndexList(pageParam);
     }
 

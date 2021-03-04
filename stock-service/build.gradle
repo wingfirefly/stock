@@ -28,6 +28,7 @@ dependencies {
   implementation 'com.alibaba:fastjson:1.2.48'
   implementation 'com.belerweb:pinyin4j:2.5.0'
   implementation 'commons-beanutils:commons-beanutils:1.9.3'
+  implementation 'org.apache.commons:commons-lang3:3.11'
 
   runtimeOnly 'mysql:mysql-connector-java'
   developmentOnly 'org.springframework.boot:spring-boot-devtools'

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.http.client.utils.DateUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +24,17 @@ import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.po.StockLog;
 import vip.linhs.stock.model.po.StockSelected;
 import vip.linhs.stock.model.po.Task;
-import vip.linhs.stock.model.po.TradeStrategy;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.TaskVo;
+import vip.linhs.stock.model.vo.trade.TradeRuleVo;
 import vip.linhs.stock.service.HolidayCalendarService;
 import vip.linhs.stock.service.MessageService;
 import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.service.StockSelectedService;
 import vip.linhs.stock.service.StockService;
 import vip.linhs.stock.service.TaskService;
-import vip.linhs.stock.service.TradeStrategyService;
+import vip.linhs.stock.service.TradeService;
 import vip.linhs.stock.trategy.handle.StrategyHandler;
 import vip.linhs.stock.util.DecimalUtil;
 import vip.linhs.stock.util.StockConsts;
@@ -63,10 +63,10 @@ public class TaskServiceImpl implements TaskService {
     private MessageService messageServicve;
 
     @Autowired
-    private TradeStrategyService tradeStrategyService;
+    private StockSelectedService stockSelectedService;
 
     @Autowired
-    private StockSelectedService stockSelectedService;
+    private TradeService tradeService;
 
     @Override
     public List<ExecuteInfo> getPendingTaskListById(int... id) {
@@ -111,7 +111,7 @@ public class TaskServiceImpl implements TaskService {
             }
         } catch (Exception e) {
             executeInfo.setMessage(e.getMessage());
-            logger.error("task {} error", executeInfo.getTaskId(), e);
+            logger.error("task {} {} error", task.getName(), executeInfo.getId(), e);
 
             String body = String.format("task: %s, error: %s", task.getName(), e.getMessage());
             messageServicve.send(body);
@@ -198,7 +198,7 @@ public class TaskServiceImpl implements TaskService {
         List<DailyIndex> dailyIndexList = stockService.getDailyIndexListByDate(date);
         List<Integer> stockIdList = dailyIndexList.stream().map(DailyIndex::getStockInfoId).collect(Collectors.toList());
 
-        final String currentDateStr = DateUtils.formatDate(date, "yyyy-MM-dd");
+        final String currentDateStr = DateFormatUtils.format(date, "yyyy-MM-dd");
         for (StockInfo stockInfo : list) {
             if (stockIdList.contains(stockInfo.getId())) {
                 continue;
@@ -208,7 +208,7 @@ public class TaskServiceImpl implements TaskService {
                     && DecimalUtil.bg(dailyIndex.getOpeningPrice(), BigDecimal.ZERO)
                     && dailyIndex.getTradingVolume() > 0
                     && DecimalUtil.bg(dailyIndex.getTradingValue(), BigDecimal.ZERO)
-                    && currentDateStr.equals(DateUtils.formatDate(dailyIndex.getDate(), "yyyy-MM-dd"))) {
+                    && currentDateStr.equals(DateFormatUtils.format(dailyIndex.getDate(), "yyyy-MM-dd"))) {
                 dailyIndex.setStockInfoId(stockInfo.getId());
                 stockService.saveDailyIndex(dailyIndex);
             }
@@ -245,15 +245,19 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void runTradeTicker() {
-        List<TradeStrategy> list = tradeStrategyService.getAll();
-        list.forEach(v -> {
-            if (v.getState() == StockConsts.TradeState.Valid.value()) {
-                String beanName = v.getBeanName();
+        PageParam pageParam = new PageParam();
+        pageParam.setStart(0);
+        pageParam.setLength(Integer.MAX_VALUE);
+        PageVo<TradeRuleVo> pageVo = tradeService.getTradeRuleList(pageParam);
+
+        pageVo.getData().forEach(v -> {
+            if (v.isValid()) {
+                String beanName = v.getStrategyBeanName();
                 StrategyHandler strategyHandler = SpringUtil.getBean(beanName, StrategyHandler.class);
                 try {
-                    strategyHandler.handle();
+                    strategyHandler.handle(v);
                 } catch (Exception e) {
-                    logger.error("strategyHandler {} error", v.getName(), e);
+                    logger.error("strategyHandler {} {} error", v.getStockCode(), v.getStrategyName(), e);
                 }
             }
         });

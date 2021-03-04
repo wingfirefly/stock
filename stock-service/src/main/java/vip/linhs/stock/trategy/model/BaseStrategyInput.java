@@ -1,19 +1,25 @@
 package vip.linhs.stock.trategy.model;
 
+import vip.linhs.stock.model.vo.trade.TradeRuleVo;
+
 public class BaseStrategyInput {
 
-    private int userId;
+    private TradeRuleVo tradeRuleVo;
 
-    public BaseStrategyInput(int userId) {
-        this.userId = userId;
+    public BaseStrategyInput(TradeRuleVo tradeRuleVo) {
+        this.tradeRuleVo = tradeRuleVo;
+    }
+
+    public TradeRuleVo getTradeRuleVo() {
+        return tradeRuleVo;
+    }
+
+    public void setTradeRuleVo(TradeRuleVo tradeRuleVo) {
+        this.tradeRuleVo = tradeRuleVo;
     }
 
     public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
+        return tradeRuleVo.getUserId();
     }
 
 }

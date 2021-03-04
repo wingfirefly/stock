@@ -6,8 +6,8 @@ import vip.linhs.stock.model.vo.PageVo;
 
 public interface TradeRuleDao {
 
-    TradeRule getTradeRuleByStockCode(String stockCode);
-
     PageVo<TradeRule> get(PageParam pageParam);
+
+    void updateState(int state, int id);
 
 }

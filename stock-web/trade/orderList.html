@@ -28,7 +28,7 @@
     var dataTable = new DataTable();
 
     function onload() {
-      renderTradeMenu(5);
+      renderTradeMenu(4);
 
       var table = $('#data-table-list');
       var index = 0;
@@ -93,7 +93,7 @@
               render: function(row) {
                 var html = '';
                 var options = { entrustCode: row.entrustCode };
-                html += ' <a class="btn btn-revoke" data-options=' + JSON.stringify(options) + '>che</a>';
+                html += ' <a class="btn btn-revoke" data-options=' + JSON.stringify(options) + '>撤单</a>';
                 return html;
               }
             }

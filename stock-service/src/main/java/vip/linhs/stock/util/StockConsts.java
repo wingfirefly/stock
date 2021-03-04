@@ -12,15 +12,12 @@ public class StockConsts {
 
     private static final String CACHE_KEY_DATA_PREFIX = CACHE_KEY_PREFIX + "data:";
     public static final String CACHE_KEY_DATA_STOCK = StockConsts.CACHE_KEY_DATA_PREFIX + "stock";
-    public static final String CACHE_KEY_DATA_DAILYINDEX = StockConsts.CACHE_KEY_DATA_PREFIX + "dailyIndex";
 
     private static final String CACHE_KEY_CONFIG_PREFIX = CACHE_KEY_PREFIX + "config:";
-    public static final String CACHE_KEY_CONFIG_TICKER = StockConsts.CACHE_KEY_CONFIG_PREFIX + "tickerConfig";
     public static final String CACHE_KEY_CONFIG_ROBOT = StockConsts.CACHE_KEY_CONFIG_PREFIX + "robot";
 
     private static final String CACHE_KEY_TRADE_PREFIX = CACHE_KEY_PREFIX + "trade:";
     public static final String CACHE_KEY_TRADE_USER = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeUser";
-    public static final String CACHE_KEY_TRADE_RULE = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeRule";
     public static final String CACHE_KEY_TRADE_METHOD = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeMethod";
 
     public static final String CACHE_KEY_TOKEN = CACHE_KEY_PREFIX + "auth:token";

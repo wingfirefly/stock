@@ -1,6 +1,5 @@
 package vip.linhs.stock.scheduled;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -64,8 +63,8 @@ public class ScheduledTasks {
      */
     @Scheduled(cron = "0 0 6 ? * MON-FRI")
     public void runBeginOfDay() {
-        boolean isHoliday = holidayCalendarService.isHoliday(new Date());
-        if (isHoliday) {
+        boolean isBusinessTime = holidayCalendarService.isBusinessDate(new Date());
+        if (!isBusinessTime) {
             return;
         }
         try {
@@ -81,8 +80,8 @@ public class ScheduledTasks {
      */
     @Scheduled(cron = "0 0 22 ? * MON-FRI")
     public void runEndOfDay() {
-        boolean isHoliday = holidayCalendarService.isHoliday(new Date());
-        if (isHoliday) {
+        boolean isBusinessTime = holidayCalendarService.isBusinessDate(new Date());
+        if (!isBusinessTime) {
             return;
         }
         try {
@@ -98,8 +97,8 @@ public class ScheduledTasks {
      */
     @Scheduled(cron = "0 0 9 ? * MON-FRI")
     public void runUpdateOfStock() {
-        boolean isHoliday = holidayCalendarService.isHoliday(new Date());
-        if (isHoliday) {
+        boolean isBusinessTime = holidayCalendarService.isBusinessDate(new Date());
+        if (!isBusinessTime) {
             return;
         }
         try {
@@ -116,8 +115,8 @@ public class ScheduledTasks {
      */
     @Scheduled(cron = "0 0 17,18,19 ? * MON-FRI")
     public void runUpdateOfDailyIndex() {
-        boolean isHoliday = holidayCalendarService.isHoliday(new Date());
-        if (isHoliday) {
+        boolean isBusinessTime = holidayCalendarService.isBusinessDate(new Date());
+        if (!isBusinessTime) {
             return;
         }
         try {
@@ -133,16 +132,11 @@ public class ScheduledTasks {
      */
     @Scheduled(cron = "0,15,30,45 * 9,10,11,13,14 ? * MON-FRI")
     public void runTicker() {
-        boolean isHoliday = holidayCalendarService.isHoliday(new Date());
-        if (isHoliday) {
+        boolean isBusinessTime = holidayCalendarService.isBusinessTime(new Date());
+        if (!isBusinessTime) {
             return;
         }
-        Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
-        if (hour == 9 && minute < 30 || hour == 11 && minute > 30) {
-             return;
-        }
+
         try {
             List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.Ticker.getId(), Task.TradeTicker.getId());
             executeTask(list);
@@ -159,8 +153,8 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 0,20,40 * ? * MON-FRI")
     public void heartbeat() {
-        boolean isHoliday = holidayCalendarService.isHoliday(new Date());
-        if (isHoliday) {
+        boolean isBusinessTime = holidayCalendarService.isBusinessDate(new Date());
+        if (!isBusinessTime) {
             return;
         }
         List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.TradeTicker.getId());

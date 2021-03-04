@@ -2,7 +2,7 @@ package vip.linhs.stock.service;
 
 import java.util.Date;
 
-import org.apache.http.client.utils.DateUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,10 +92,10 @@ public class TradeApiServiceTest {
     @Test
     public void testGetHisDealData() {
         GetHisDealDataRequest request = new GetHisDealDataRequest(TradeApiServiceTest.UserId);
-        request.setEt(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
+        request.setEt(DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
         Date et = new Date();
         et.setTime(et.getTime() - 7 * 24 * 3600 * 1000);
-        request.setSt(DateUtils.formatDate(et, "yyyy-MM-dd"));
+        request.setSt(DateFormatUtils.format(et, "yyyy-MM-dd"));
         TradeResultVo<GetHisDealDataResponse> tradeResultVo = tradeApiService.getHisDealData(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
         Assertions.assertTrue(tradeResultVo.isSuccess());
@@ -104,10 +104,10 @@ public class TradeApiServiceTest {
     @Test
     public void testGetHisOrdersData() {
         GetHisOrdersDataRequest request = new GetHisOrdersDataRequest(TradeApiServiceTest.UserId);
-        request.setEt(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
+        request.setEt(DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
         Date et = new Date();
         et.setTime(et.getTime() - 2 * 24 * 3600 * 1000);
-        request.setSt(DateUtils.formatDate(et, "yyyy-MM-dd"));
+        request.setSt(DateFormatUtils.format(et, "yyyy-MM-dd"));
         TradeResultVo<GetHisOrdersDataResponse> tradeResultVo = tradeApiService.getHisOrdersData(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
         Assertions.assertTrue(tradeResultVo.isSuccess());

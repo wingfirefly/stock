@@ -27,7 +27,7 @@
     var dataTable = new DataTable();
 
     function onload() {
-      renderTradeMenu(6);
+      renderTradeMenu(5);
 
       var table = $('#data-table-list');
       var index = 0;
@@ -88,46 +88,9 @@
               }
             },
             {
-              title: '关联编号(卖)',
-              render: function(row) {
-                if (!row.relatedSaleEntrustCode) {
-                  row.relatedSaleEntrustCode = '';
-                }
-                return row.relatedSaleEntrustCode;
-              }
-            },
-            {
-              title: '关联编号(买)',
-              render: function(row) {
-                if (!row.relatedBuyEntrustCode) {
-                  row.relatedBuyEntrustCode = '';
-                }
-                return row.relatedBuyEntrustCode;
-              }
-            },
-            {
               title: '时间',
               render: function(row) {
                 return row.tradeTime;
-              }
-            },
-            {
-              title: '操作',
-              render: function(row) {
-                var html = '';
-                var options = { stockCode: row.stockCode, tradeCode: row.tradeCode, tradeType: 'S' };
-                if (row.relatedSaleEntrustCode) {
-                  html += ' <button class="btn btn-delete" data-options=' + JSON.stringify(options) + '>删除卖</button>';
-                } else {
-                  html += ' <button class="btn btn-add" data-options=' + JSON.stringify(options) + '>添加卖</button>';
-                }
-                options.tradeType = 'B';
-                if (row.relatedBuyEntrustCode) {
-                  html += ' <button class="btn btn-delete" data-options=' + JSON.stringify(options) + '>删除买</button>';
-                } else {
-                  html += ' <button class="btn btn-add" data-options=' + JSON.stringify(options) + '>添加买</button>';
-                }
-                return html;
               }
             }
           ],
