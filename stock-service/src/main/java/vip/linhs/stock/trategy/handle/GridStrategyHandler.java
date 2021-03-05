@@ -95,9 +95,9 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
                 tradeOrder.setTradeState(GetOrdersDataResponse.YICHENG);
 
                 Date tradeTime = tradeOrder.getTradeTime();
-                DateUtils.setHours(tradeTime, Integer.valueOf(dealData.getCjsj().substring(0, 2)));
-                DateUtils.setMinutes(tradeTime, Integer.valueOf(dealData.getCjsj().substring(2, 4)));
-                DateUtils.setSeconds(tradeTime, Integer.valueOf(dealData.getCjsj().substring(4, 6)));
+                tradeTime = DateUtils.setHours(tradeTime, Integer.valueOf(dealData.getCjsj().substring(0, 2)));
+                tradeTime = DateUtils.setMinutes(tradeTime, Integer.valueOf(dealData.getCjsj().substring(2, 4)));
+                tradeTime = DateUtils.setSeconds(tradeTime, Integer.valueOf(dealData.getCjsj().substring(4, 6)));
 
                 tradeOrder.setTradeTime(tradeTime);
                 tradeOrder.setTradeType(dealData.getMmlb());
