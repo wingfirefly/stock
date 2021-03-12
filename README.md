@@ -1,6 +1,13 @@
 # stock
 
 ## 升级日志
+### 升级只针对以前已经部署的朋友, 新来的朋友直接按最新步骤来就行
+2021-03-12
+- 交易挂单接口升级到v2, 原有接口部分eft不能购买. 更新脚本, 然后到系统管理-缓存, 删除 stock:trade:tradeMethod::submit 项
+```sql
+update trade_method set url = 'https://jywg.18.cn/Trade/SubmitTradeV2?validatekey=${validatekey}' where name = 'submit';
+```
+
 2021-03-07
 - mock开关, 方便测试
 - 将原有策略修改成更易懂的网格交易策略
