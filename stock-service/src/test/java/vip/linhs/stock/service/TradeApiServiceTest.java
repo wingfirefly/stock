@@ -48,9 +48,10 @@ public class TradeApiServiceTest {
     public void testSubmit() {
         SubmitRequest request = new SubmitRequest(TradeApiServiceTest.UserId);
         request.setAmount(100);
-        request.setPrice(41);
+        request.setPrice(1.291);
         request.setTradeType(SubmitRequest.B);
-        request.setStockCode("300542");
+        request.setStockCode("588000");
+        request.setZqmc("科创50ETF");
         TradeResultVo<SubmitResponse> tradeResultVo = tradeApiService.submit(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
         Assertions.assertTrue(tradeResultVo.isSuccess());

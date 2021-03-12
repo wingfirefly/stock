@@ -88,7 +88,7 @@
             {
               title: '金额',
               render: function(row) {
-                return (row.price * row.totalVolume).toFixed(0);
+                return (row.price * row.totalVolume).toFixed(2);
               }
             },
             {
@@ -102,7 +102,7 @@
               title: '操作',
               render: function(row) {
                 var html = '';
-                var options = { stockCode: row.stockCode, price: row.price, tradeType: 'B' };
+                var options = { stockCode: row.stockCode, price: row.price, tradeType: 'B', stockName: row.name };
                 html += ' <a class="btn btn-sbumit" data-options=' + JSON.stringify(options) + '>买</a>';
                 options.tradeType = 'S';
                 html += ' <a class="btn btn-sbumit" data-options=' + JSON.stringify(options) + '>卖</a>';

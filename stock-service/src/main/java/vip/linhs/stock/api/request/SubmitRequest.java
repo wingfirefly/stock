@@ -14,6 +14,8 @@ public class SubmitRequest extends BaseTradeRequest {
     private String stockCode;
     private double price;
     private int amount;
+    private String zqmc = "unknow";
+
     /**
      * 买卖类别
      *
@@ -58,6 +60,14 @@ public class SubmitRequest extends BaseTradeRequest {
         this.tradeType = tradeType;
     }
 
+    public String getZqmc() {
+        return zqmc;
+    }
+
+    public void setZqmc(String zqmc) {
+        this.zqmc = zqmc;
+    }
+
     @Override
     public String getMethod() {
         return BaseTradeRequest.TradeRequestMethod.SubmitRequest.value();
@@ -66,7 +76,7 @@ public class SubmitRequest extends BaseTradeRequest {
     @Override
     public String toString() {
         return "SubmitRequest [stockCode=" + stockCode + ", price=" + price + ", amount=" + amount + ", tradeType="
-                + tradeType + ", " + super.toString() + "]";
+                + tradeType + ", " +  ", zqmc=" + zqmc + super.toString() + "]";
     }
 
 }

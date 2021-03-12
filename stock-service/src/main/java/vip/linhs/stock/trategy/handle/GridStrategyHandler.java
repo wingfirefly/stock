@@ -113,6 +113,10 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
                         if (tradeOrder.getTradeTime().getTime() <= last5MinTime) {
                             tradeOrder.setTradeState(GetOrdersDataResponse.YICHE);
                         }
+                    } else {
+                        if (GetOrdersDataResponse.YICHE.equals(orderData.getWtzt())) {
+                            tradeOrder.setTradeState(GetOrdersDataResponse.YICHE);
+                        }
                     }
                 }
             }
@@ -189,6 +193,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
         result.setTradeType(tradeType);
         result.setStockCode(stockCode);
         result.setRelatedDealCode(dealCode);
+        result.setZqmc(tradeRuleVo.getStockName());
         submitList.add(result);
     }
 

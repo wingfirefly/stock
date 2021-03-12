@@ -139,22 +139,24 @@ public class TradeController extends BaseController {
     }
 
     @RequestMapping("buy")
-    public CommonResponse buy(int amount, double price, String stockCode) {
+    public CommonResponse buy(int amount, double price, String stockCode, String stockName) {
         SubmitRequest request = new SubmitRequest(getUserId());
         request.setAmount(amount);
         request.setPrice(price);
         request.setStockCode(stockCode);
+        request.setZqmc(stockName);
         request.setTradeType(SubmitRequest.B);
         TradeResultVo<SubmitResponse> response = tradeApiService.submit(request);
         return CommonResponse.buildResponse(response.getMessage());
     }
 
     @RequestMapping("sale")
-    public CommonResponse sale(int amount, double price, String stockCode) {
+    public CommonResponse sale(int amount, double price, String stockCode, String stockName) {
         SubmitRequest request = new SubmitRequest(getUserId());
         request.setAmount(amount);
         request.setPrice(price);
         request.setStockCode(stockCode);
+        request.setZqmc(stockName);
         request.setTradeType(SubmitRequest.S);
         TradeResultVo<SubmitResponse> response = tradeApiService.submit(request);
         return CommonResponse.buildResponse(response.getMessage());
