@@ -57,7 +57,7 @@ update trade_method set url = 'https://jywg.18.cn/Trade/SubmitTradeV2?validateke
 
 <font color="red" size=8>文档和数据库表见[wiki](https://github.com/bosspen1/stock/wiki)</font>
 
-<font color="red" size=8>把wiki clone下来就可以看到数据库表结构和部署和升级文档</font>
+<font color="red" size=8>**把wiki clone下来就可以看到数据库表结构和部署和升级文档!!!**</font>
 
 <font color="red" size=8>如需和github集成自动构建可以引入[deployment](https://github.com/bosspen1/deployment)</font>
 
