@@ -2,11 +2,6 @@
 
 ## 升级日志
 ### 升级只针对以前已经部署的朋友, 新来的朋友直接按最新步骤来就行
-2021-03-12
-- 交易挂单接口升级到v2, 原有接口部分eft不能购买. 更新脚本, 然后到系统管理-缓存, 删除 stock:trade:tradeMethod::submit 项
-```sql
-update trade_method set url = 'https://jywg.18.cn/Trade/SubmitTradeV2?validatekey=${validatekey}' where name = 'submit';
-```
 
 2021-03-07
 - mock开关, 方便测试
@@ -57,7 +52,7 @@ update trade_method set url = 'https://jywg.18.cn/Trade/SubmitTradeV2?validateke
 
 <font color="red" size=8>文档和数据库表见[wiki](https://github.com/bosspen1/stock/wiki)</font>
 
-<font color="red" size=8>**把wiki clone下来就可以看到数据库表结构和部署和升级文档!!!**</font>
+<font color="red" size=10>**注意: 把wiki clone下来就可以看到数据库表结构和部署和升级文档!!!**</font>
 
 <font color="red" size=8>如需和github集成自动构建可以引入[deployment](https://github.com/bosspen1/deployment)</font>
 
