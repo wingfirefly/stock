@@ -36,6 +36,7 @@ import vip.linhs.stock.model.vo.trade.TradeRuleVo;
 import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.service.StockService;
 import vip.linhs.stock.service.TradeService;
+import vip.linhs.stock.util.DecimalUtil;
 import vip.linhs.stock.util.StockConsts;
 import vip.linhs.stock.util.StockUtil;
 
@@ -109,8 +110,10 @@ public class TradeServiceImpl implements TradeService {
             BigDecimal rate = BigDecimal.ZERO;
             if (stockInfo.isValid()) {
                 DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(stockInfo.getCode());
-                rate = StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
-                        dailyIndex.getPreClosingPrice());
+                if (DecimalUtil.bg(dailyIndex.getClosingPrice(), BigDecimal.ZERO)) {
+                    rate = StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
+                            dailyIndex.getPreClosingPrice());
+                }
             }
 
             StockVo stockVo = new StockVo();

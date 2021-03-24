@@ -12,7 +12,7 @@ import vip.linhs.stock.service.TradeService;
 import vip.linhs.stock.trategy.handle.StrategyHandler;
 
 @SpringBootTest
-public class GriStrategyHandlerTest {
+public class GridStrategyHandlerTest {
 
     @Autowired
     @Qualifier("gridStrategyHandler")
@@ -26,7 +26,7 @@ public class GriStrategyHandlerTest {
         PageParam pageParam = new PageParam();
         pageParam.setStart(0);
         pageParam.setLength(Integer.MAX_VALUE);
-        PageVo<TradeRuleVo>  pageVo = tradeService.getTradeRuleList(pageParam);
+        PageVo<TradeRuleVo> pageVo = tradeService.getTradeRuleList(pageParam);
         TradeRuleVo tradeRuleVo = pageVo.getData().stream().filter(v -> v.getStrategyId() == 1).findAny().get();
         if (tradeRuleVo.isValid()) {
             strategyHandler.handle(tradeRuleVo);

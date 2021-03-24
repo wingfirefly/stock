@@ -133,6 +133,7 @@
       });
 
       function setValue(data) {
+        $('#submit-modal input[name="stockName"]').val(data.stockName);
         $('#submit-modal input[name="amount"]').val(200);
         $('#submit-modal input[name="price"]').val(data.price);
         $('#submit-modal input[name="stockCode"]').val(data.stockCode);
@@ -146,6 +147,7 @@
       }
 
       $('#btn-submit-trade').on('click', function() {
+        var stockName = $('#submit-modal input[name="stockName"]').val();
         var amount = $('#submit-modal input[name="amount"]').val();
         var price = $('#submit-modal input[name="price"]').val();
         var stockCode = $('#submit-modal input[name="stockCode"]').val();
@@ -162,14 +164,14 @@
         $.ajax({
           url: url,
           type: 'POST',
-          data: { amount, price, stockCode },
+          data: { amount, price, stockCode, stockName },
           headers: getRequestHeaders(),
           error: function(xhr, status, errorThrown) {
             ExceptionHandler.handleCommonError(xhr);
             $('#btn-submit-trade').removeClass('disabled');
           },
           success: function(res) {
-            $('#submit-modal .span-message').text(res.message);
+            $('#submit-modal .span-message').text(res.message || 'success');
             $('#btn-submit-trade').removeClass('disabled');
             dataTable.fnDraw();
           }
@@ -226,6 +228,7 @@
       <table id="data-table-list" class="data-table-list">
       </table>
       <div id="submit-modal" style="display:none;">
+         <input type="text" name="stockName" readonly="true">
          <input type="number" name="amount" min="100" step="100" max="5000">
          <input type="number" name="price" min="0.9" step="0.01" max="100">
          <input type="hidden" name="stockCode" />
