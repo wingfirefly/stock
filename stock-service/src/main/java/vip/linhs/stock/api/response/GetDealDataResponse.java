@@ -121,6 +121,10 @@ public class GetDealDataResponse {
         Wtsl = wtsl;
     }
 
+    public String getFormatDealTime() {
+        return new StringBuilder(Cjsj).insert(4, ':').insert(2, ':').toString();
+    }
+
     @Override
     public String toString() {
         return "GetDealDataResponse [Zqmc=" + Zqmc + ", Wtbh=" + Wtbh + ", Cjbh=" + Cjbh + ", Cjjg=" + Cjjg + ", Cjsl="

@@ -1,11 +1,13 @@
 package vip.linhs.stock.service;
 
+import java.util.Date;
 import java.util.List;
 
 import vip.linhs.stock.api.response.GetDealDataResponse;
 import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
+import vip.linhs.stock.model.po.TradeDeal;
 import vip.linhs.stock.model.po.TradeMethod;
 import vip.linhs.stock.model.po.TradeOrder;
 import vip.linhs.stock.model.po.TradeUser;
@@ -41,5 +43,9 @@ public interface TradeService {
     void saveTradeOrderList(List<TradeOrder> tradeOrderList);
 
     void resetRule(int id);
+
+    List<TradeDeal> getTradeDealListByDate(Date date);
+
+    void saveTradeDealList(List<TradeDeal> list);
 
 }

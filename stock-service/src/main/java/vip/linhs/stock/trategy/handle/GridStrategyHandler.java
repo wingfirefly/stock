@@ -3,7 +3,6 @@ package vip.linhs.stock.trategy.handle;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -39,6 +38,7 @@ import vip.linhs.stock.util.DecimalUtil;
 import vip.linhs.stock.util.StockConsts;
 import vip.linhs.stock.util.StockConsts.StockType;
 import vip.linhs.stock.util.StockUtil;
+import vip.linhs.stock.util.TradeUtil;
 
 @Component("gridStrategyHandler")
 public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, GridStrategyResult> {
@@ -69,7 +69,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
             throw new ServiceException("execute GridStrategyHandler get order error: " + dealData.getMessage());
         }
 
-        List<GetDealDataResponse> dealDataList = mergeDealList(dealData.getData()
+        List<GetDealDataResponse> dealDataList = TradeUtil.mergeDealList(dealData.getData()
                 .stream().filter(v -> v.getZqdm().equals(tradeRuleVo.getStockCode())).collect(Collectors.toList()));
 
         // 30 day, yibao yicheng
@@ -279,43 +279,6 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
     private <T> T getByCondition(List<T> list, Predicate<T> predicate) {
         Optional<T> optional = list.stream().filter(predicate).findAny();
         return optional.orElse(null);
-    }
-
-    /**
-     * merge the partial-deal list
-     */
-    private List<GetDealDataResponse> mergeDealList(List<GetDealDataResponse> data) {
-        LinkedHashMap<String, GetDealDataResponse> map = new LinkedHashMap<>();
-        for (GetDealDataResponse getDealDataResponse : data) {
-            String wtbh = getDealDataResponse.getWtbh();
-            GetDealDataResponse response = map.get(wtbh);
-            if (response == null) {
-                response = mergeDeal(null, getDealDataResponse);
-                map.put(wtbh, response);
-            } else {
-                mergeDeal(response, getDealDataResponse);
-            }
-        }
-        return map.values().stream().filter(v -> v.getCjsl().equals(v.getWtsl())).collect(Collectors.toList());
-    }
-
-    private GetDealDataResponse mergeDeal(GetDealDataResponse response, GetDealDataResponse getDealDataResponse) {
-        if (response == null) {
-            response = new GetDealDataResponse();
-            response.setCjbh(getDealDataResponse.getCjbh());
-            response.setCjjg(getDealDataResponse.getCjjg());
-            response.setCjsj(getDealDataResponse.getCjsj());
-            response.setCjsl(getDealDataResponse.getCjsl());
-            response.setMmlb(getDealDataResponse.getMmlb());
-            response.setWtbh(getDealDataResponse.getWtbh());
-            response.setWtsl(getDealDataResponse.getWtsl());
-            response.setZqdm(getDealDataResponse.getZqdm());
-        } else {
-            int cjsl = Integer.parseInt(response.getCjsl());
-            int cjsl2 = Integer.parseInt(getDealDataResponse.getCjsl());
-            response.setCjsl(String.valueOf(cjsl + cjsl2));
-        }
-        return response;
     }
 
     private double getPrecision(String code) {

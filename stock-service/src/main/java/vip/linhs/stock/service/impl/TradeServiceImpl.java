@@ -2,6 +2,7 @@ package vip.linhs.stock.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import vip.linhs.stock.api.response.GetDealDataResponse;
 import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
+import vip.linhs.stock.dao.TradeDealDao;
 import vip.linhs.stock.dao.TradeMethodDao;
 import vip.linhs.stock.dao.TradeOrderDao;
 import vip.linhs.stock.dao.TradeRuleDao;
@@ -22,6 +24,7 @@ import vip.linhs.stock.dao.TradeStrategyDao;
 import vip.linhs.stock.dao.TradeUserDao;
 import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.StockInfo;
+import vip.linhs.stock.model.po.TradeDeal;
 import vip.linhs.stock.model.po.TradeMethod;
 import vip.linhs.stock.model.po.TradeOrder;
 import vip.linhs.stock.model.po.TradeRule;
@@ -59,6 +62,9 @@ public class TradeServiceImpl implements TradeService {
     private TradeStrategyDao tradeStrategyDao;
 
     @Autowired
+    private TradeDealDao tradeDealDao;
+
+    @Autowired
     private StockService stockService;
 
     @Autowired
@@ -91,7 +97,7 @@ public class TradeServiceImpl implements TradeService {
             DealVo dealVo = new DealVo();
             dealVo.setTradeCode(v.getCjbh());
             dealVo.setPrice(v.getCjjg());
-            dealVo.setTradeTime(new StringBuilder(v.getCjsj()).insert(4, ':').insert(2, ':').toString());
+            dealVo.setTradeTime(v.getFormatDealTime());
             dealVo.setTradeType(v.getMmlb());
             dealVo.setVolume(v.getCjsl());
             dealVo.setEntrustCode(v.getWtbh());
@@ -221,6 +227,16 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public void resetRule(int id) {
         tradeOrderDao.setInvalidByRuleId(id);
+    }
+
+    @Override
+    public void saveTradeDealList(List<TradeDeal> list) {
+        list.forEach(tradeDealDao::add);
+    }
+
+    @Override
+    public List<TradeDeal> getTradeDealListByDate(Date date) {
+        return tradeDealDao.getByDate(date);
     }
 
 }

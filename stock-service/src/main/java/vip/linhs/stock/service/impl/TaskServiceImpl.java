@@ -10,11 +10,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import vip.linhs.stock.api.TradeResultVo;
+import vip.linhs.stock.api.request.GetDealDataRequest;
+import vip.linhs.stock.api.response.GetDealDataResponse;
 import vip.linhs.stock.config.SpringUtil;
 import vip.linhs.stock.dao.ExecuteInfoDao;
 import vip.linhs.stock.exception.ServiceException;
@@ -24,6 +28,7 @@ import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.model.po.StockLog;
 import vip.linhs.stock.model.po.StockSelected;
 import vip.linhs.stock.model.po.Task;
+import vip.linhs.stock.model.po.TradeDeal;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.TaskVo;
@@ -34,11 +39,13 @@ import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.service.StockSelectedService;
 import vip.linhs.stock.service.StockService;
 import vip.linhs.stock.service.TaskService;
+import vip.linhs.stock.service.TradeApiService;
 import vip.linhs.stock.service.TradeService;
 import vip.linhs.stock.trategy.handle.StrategyHandler;
 import vip.linhs.stock.util.DecimalUtil;
 import vip.linhs.stock.util.StockConsts;
 import vip.linhs.stock.util.StockUtil;
+import vip.linhs.stock.util.TradeUtil;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -67,6 +74,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private TradeService tradeService;
+
+    @Autowired
+    private TradeApiService tradeApiService;
 
     @Override
     public List<ExecuteInfo> getPendingTaskListById(int... id) {
@@ -245,6 +255,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void runTradeTicker() {
+        runStrategy();
+        runDealNotice();
+    }
+
+    private void runStrategy() {
         PageParam pageParam = new PageParam();
         pageParam.setStart(0);
         pageParam.setLength(Integer.MAX_VALUE);
@@ -261,6 +276,47 @@ public class TaskServiceImpl implements TaskService {
                 }
             }
         });
+    }
+
+    private void runDealNotice() {
+        TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(new GetDealDataRequest(1));
+        if (!dealData.isSuccess()) {
+            logger.error("runDealNotice error {}", dealData.getMessage());
+        }
+        List<GetDealDataResponse> list = TradeUtil.mergeDealList(dealData.getData());
+        List<TradeDeal> tradeDealList = tradeService.getTradeDealListByDate(new Date());
+
+        List<String> dealCodeList = tradeDealList.stream().map(TradeDeal::getDealCode).collect(Collectors.toList());
+
+        StringBuilder sb = new StringBuilder();
+
+        List<TradeDeal> needNotifyList = list.stream().filter(v -> !dealCodeList.contains(v.getCjbh())).map(v -> {
+            TradeDeal tradeDeal = new TradeDeal();
+            tradeDeal.setDealCode(v.getCjbh());
+            tradeDeal.setPrice(new BigDecimal(v.getCjjg()));
+            tradeDeal.setStockCode(v.getZqdm());
+
+            Date tradeTime = new Date();
+            tradeTime = DateUtils.setHours(tradeTime, Integer.valueOf(v.getCjsj().substring(0, 2)));
+            tradeTime = DateUtils.setMinutes(tradeTime, Integer.valueOf(v.getCjsj().substring(2, 4)));
+            tradeTime = DateUtils.setSeconds(tradeTime, Integer.valueOf(v.getCjsj().substring(4, 6)));
+
+            tradeDeal.setTradeTime(tradeTime);
+            tradeDeal.setTradeType(v.getMmlb());
+            tradeDeal.setVolume(Integer.valueOf(v.getCjsl()));
+
+            sb.append(String.format("%s %s %s %s %s\n",
+                    v.getFormatDealTime(), v.getZqmc(), v.getMmlb(), v.getCjjg(), v.getCjsl()));
+
+            return tradeDeal;
+        }).collect(Collectors.toList());
+
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 1);
+            messageServicve.send(sb.toString());
+        }
+
+        tradeService.saveTradeDealList(needNotifyList);
     }
 
     @Override
