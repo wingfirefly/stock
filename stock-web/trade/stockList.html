@@ -134,7 +134,7 @@
 
       function setValue(data) {
         $('#submit-modal input[name="stockName"]').val(data.stockName);
-        $('#submit-modal input[name="amount"]').val(200);
+        $('#submit-modal input[name="amount"]').val(Math.floor(50 / data.price) * 100 + 100);
         $('#submit-modal input[name="price"]').val(data.price);
         $('#submit-modal input[name="stockCode"]').val(data.stockCode);
         $('#submit-modal input[name="tradeType"]').val(data.tradeType);
