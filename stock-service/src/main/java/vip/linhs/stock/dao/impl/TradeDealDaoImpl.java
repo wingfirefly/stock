@@ -25,8 +25,7 @@ public class TradeDealDaoImpl extends BaseDao implements TradeDealDao {
     @Override
     public List<TradeDeal> getByDate(Date date) {
         return jdbcTemplate.query(TradeDealDaoImpl.SELECT_SQL + " and date(trade_time) = date(?) order by trade_time desc",
-            new Object[] { date },
-            BeanPropertyRowMapper.newInstance(TradeDeal.class));
+            BeanPropertyRowMapper.newInstance(TradeDeal.class), date);
     }
 
 }

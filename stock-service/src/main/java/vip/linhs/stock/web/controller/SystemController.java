@@ -79,7 +79,7 @@ public class SystemController extends BaseController {
 
     @PostMapping("deleteCache")
     public CommonResponse deleteCache(String key) {
-        if (StringUtils.isEmpty(key)) {
+        if (!StringUtils.hasLength(key)) {
             FieldInputException e = new FieldInputException();
             e.addError("key", "key invalid");
             throw e;

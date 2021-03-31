@@ -17,7 +17,7 @@ public class StockSelectedDaoImpl extends BaseDao implements StockSelectedDao {
     @Override
     public List<StockSelected> getList() {
         List<StockSelected> list = jdbcTemplate.query(SQL_SELECT_BASE_COLUMNS,
-                new Object[] {}, BeanPropertyRowMapper.newInstance(StockSelected.class));
+                BeanPropertyRowMapper.newInstance(StockSelected.class));
         return list;
     }
 

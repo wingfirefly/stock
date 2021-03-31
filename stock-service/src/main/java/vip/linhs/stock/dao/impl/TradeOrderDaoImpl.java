@@ -38,10 +38,10 @@ public class TradeOrderDaoImpl extends BaseDao implements TradeOrderDao {
     @Override
     public List<TradeOrder> getLastListByRuleId(int ruleId) {
         return jdbcTemplate.query(TradeOrderDaoImpl.SELECT_SQL + " and rule_id = ? and state = ? and trade_state in (?, ?) and trade_time >= DATE_SUB(date(?), INTERVAL 60 day) order by trade_time desc limit 0, 60",
-            new Object[] {
-                    ruleId, StockConsts.TradeState.Valid.value(),
-                    GetOrdersDataResponse.YIBAO, GetOrdersDataResponse.YICHENG, new Date() },
-            BeanPropertyRowMapper.newInstance(TradeOrder.class));
+                BeanPropertyRowMapper.newInstance(TradeOrder.class),
+                ruleId, StockConsts.TradeState.Valid.value(),
+                GetOrdersDataResponse.YIBAO, GetOrdersDataResponse.YICHENG, new Date()
+            );
     }
 
     @Override

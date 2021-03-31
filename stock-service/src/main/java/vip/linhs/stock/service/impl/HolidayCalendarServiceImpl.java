@@ -43,7 +43,7 @@ public class HolidayCalendarServiceImpl implements HolidayCalendarService {
             try {
                 date = DateUtils.parseDate(year + entry.getKey(), "yyyyMMdd");
             } catch (ParseException e) {
-                throw new RuntimeException(e);
+                throw new IllegalArgumentException(e);
             }
             HolidayCalendar holidayCalendar = new HolidayCalendar();
             holidayCalendar.setDate(date);

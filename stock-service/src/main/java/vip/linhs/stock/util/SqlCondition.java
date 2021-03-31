@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.util.StringUtils;
 
@@ -28,9 +29,10 @@ public class SqlCondition {
      * 新增字符串查询条件(等价于 == )
      */
     public SqlCondition addString(String key, String column) {
-        if (!StringUtils.isEmpty(params.get(key))) {
+        String value = Objects.toString(params.get(key), null);
+        if (StringUtils.hasLength(value)) {
             sqlString.append(String.format(" and %s = ? ", column));
-            objList.add(params.get(key).toString());
+            objList.add(value);
         }
         return this;
     }
@@ -39,9 +41,10 @@ public class SqlCondition {
      * 新增字符串查询条件(等价于 != )
      */
     public SqlCondition addStringNotEquals(String key, String column) {
-        if (!StringUtils.isEmpty(params.get(key))) {
+        String value = Objects.toString(params.get(key), null);
+        if (StringUtils.hasLength(value)) {
             sqlString.append(String.format(" and %s <> ? ", column));
-            objList.add(params.get(key).toString());
+            objList.add(value);
         }
         return this;
     }
@@ -50,7 +53,7 @@ public class SqlCondition {
      * 新增SQL
      */
     public SqlCondition addSql(String sql, Object... args) {
-        if (!StringUtils.isEmpty(sql)) {
+        if (StringUtils.hasLength(sql)) {
             sqlString.append(sql);
             objList.addAll(Arrays.asList(args));
         }
@@ -61,9 +64,10 @@ public class SqlCondition {
      * 新增字符串查询条件(等价于 >= )
      */
     public SqlCondition addStringGE(String key, String column) {
-        if (!StringUtils.isEmpty(params.get(key))) {
+        String value = Objects.toString(params.get(key), null);
+        if (StringUtils.hasLength(value)) {
             sqlString.append(String.format(" and %s >= ? ", column));
-            objList.add(params.get(key).toString());
+            objList.add(value);
         }
         return this;
     }
@@ -72,9 +76,10 @@ public class SqlCondition {
      * 新增字符串查询条件(等价于 <= )
      */
     public SqlCondition addStringLE(String key, String column) {
-        if (!StringUtils.isEmpty(params.get(key))) {
+        String value = Objects.toString(params.get(key), null);
+        if (StringUtils.hasLength(value)) {
             sqlString.append(String.format(" and %s <= ? ", column));
-            objList.add(params.get(key).toString());
+            objList.add(value);
         }
         return this;
     }
@@ -83,9 +88,10 @@ public class SqlCondition {
      * 新增字符串查询条件(等价于 < )
      */
     public SqlCondition addStringLT(String key, String column) {
-        if (!StringUtils.isEmpty(params.get(key))) {
+        String value = Objects.toString(params.get(key), null);
+        if (StringUtils.hasLength(value)) {
             sqlString.append(String.format(" and %s < ? ", column));
-            objList.add(params.get(key).toString());
+            objList.add(value);
         }
         return this;
     }
@@ -94,9 +100,10 @@ public class SqlCondition {
      * 新增字符串查询条件(等价于 > )
      */
     public SqlCondition addStringGT(String key, String column) {
-        if (!StringUtils.isEmpty(params.get(key))) {
+        String value = Objects.toString(params.get(key), null);
+        if (StringUtils.hasLength(value)) {
             sqlString.append(String.format(" and %s > ? ", column));
-            objList.add(params.get(key).toString());
+            objList.add(value);
         }
         return this;
     }
@@ -105,9 +112,10 @@ public class SqlCondition {
      * 模糊查询
      */
     public SqlCondition addStringLike(String key, String column) {
-        if (!StringUtils.isEmpty(params.get(key))) {
+        String value = Objects.toString(params.get(key), null);
+        if (StringUtils.hasLength(value)) {
             sqlString.append(String.format(" and %s like ?", column));
-            objList.add("%" + params.get(key).toString() + "%");
+            objList.add("%" + value + "%");
         }
         return this;
     }

@@ -23,14 +23,14 @@ public class TradeRuleDaoImpl extends BaseDao implements TradeRuleDao {
                 TradeRuleDaoImpl.SELECT_SQL,
                 pageParam.getCondition());
 
-        int totalRecords = jdbcTemplate.queryForObject(dataSqlCondition.getCountSql(),
-                dataSqlCondition.toArgs(), Integer.class);
+        int totalRecords = jdbcTemplate.queryForObject(dataSqlCondition.getCountSql(), Integer.class,
+                dataSqlCondition.toArgs());
 
         dataSqlCondition.addSql(" limit ?, ?");
         dataSqlCondition.addPage(pageParam.getStart(), pageParam.getLength());
 
-        List<TradeRule> list = jdbcTemplate.query(dataSqlCondition.toSql(),
-                dataSqlCondition.toArgs(), BeanPropertyRowMapper.newInstance(TradeRule.class));
+        List<TradeRule> list = jdbcTemplate.query(dataSqlCondition.toSql(), BeanPropertyRowMapper.newInstance(TradeRule.class),
+                dataSqlCondition.toArgs());
         return new PageVo<>(list, totalRecords);
     }
 

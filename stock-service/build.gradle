@@ -1,6 +1,6 @@
 plugins {
-  id 'org.springframework.boot' version '2.3.0.RELEASE'
-  id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+  id 'org.springframework.boot' version '2.4.4'
+  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'java'
 }
 
@@ -11,11 +11,12 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-  maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+  maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
 }
 
 configurations {
   compile.exclude module: 'spring-boot-starter-tomcat'
+  compile.exclude group: 'org.apache.tomcat.embed'
   providedRuntime
 }
 
@@ -32,9 +33,7 @@ dependencies {
 
   runtimeOnly 'mysql:mysql-connector-java'
   developmentOnly 'org.springframework.boot:spring-boot-devtools'
-  testImplementation('org.springframework.boot:spring-boot-starter-test') {
-    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-  }
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 test {

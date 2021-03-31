@@ -92,13 +92,12 @@
             {
               title: '操作',
               render: function(row) {
-                var html = '';
+                var html = '<button class="btn btn-execute" data-id="' + row.id + '">执行</button>';
                 if (row.state === 0) {
                   html += ' <button class="btn btn-validate" data-id="' + row.id + '">生效</button>';
                 } else if (row.state === 2) {
                    html += ' <button class="btn btn-invalid" data-id="' + row.id + '">失效</button>';
                 }
-                html += ' <button class="btn btn-execute" data-id="' + row.id + '">执行</button>';
                 return html;
               }
             }

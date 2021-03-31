@@ -161,7 +161,7 @@ public class ScheduledTasks {
         if (!list.isEmpty()) {
             TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(new GetAssetsRequest(1));
             if (!tradeResultVo.isSuccess()) {
-                logger.error("heartbeat: " + tradeResultVo.getMessage());
+                logger.error("heartbeat: {}", tradeResultVo.getMessage());
             }
         }
     }

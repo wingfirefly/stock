@@ -39,7 +39,7 @@ public class DailyIndexParser {
         try {
             date = DateUtils.parseDate(strs[30], "yyyy-MM-dd" );
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
         DailyIndex dailyIndex = new DailyIndex();
         dailyIndex.setOpeningPrice(openingPrice);
@@ -116,7 +116,7 @@ public class DailyIndexParser {
         try {
             date = DateUtils.parseDate(dateStr, "MM/dd/yyyy");
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
         BigDecimal openingPrice = DecimalUtil.fromStr(values[1]);
         BigDecimal highestPrice = DecimalUtil.fromStr(values[2]);

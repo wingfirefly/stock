@@ -13,7 +13,7 @@ public class TradeMethodDaoImpl extends BaseDao implements TradeMethodDao {
     @Override
     public TradeMethod getByName(String name) {
         return jdbcTemplate.queryForObject("select id, name, url, state from trade_method where name = ?",
-                new String[] { name }, BeanPropertyRowMapper.newInstance(TradeMethod.class));
+                BeanPropertyRowMapper.newInstance(TradeMethod.class), name);
     }
 
 }

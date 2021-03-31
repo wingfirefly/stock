@@ -17,8 +17,8 @@ public class SystemConfigDaoImpl extends BaseDao implements SystemConfigDao {
 
     @Override
     public List<SystemConfig> getByName(String name) {
-        return jdbcTemplate.query(SQL_SELECT_BASE_COLUMNS + " and name = ? and state = ?", new Object[] { name, StockConsts.TradeState.Valid.value() },
-                BeanPropertyRowMapper.newInstance(SystemConfig.class));
+        return jdbcTemplate.query(SQL_SELECT_BASE_COLUMNS + " and name = ? and state = ?",
+                BeanPropertyRowMapper.newInstance(SystemConfig.class), name, StockConsts.TradeState.Valid.value());
     }
 
     @Override

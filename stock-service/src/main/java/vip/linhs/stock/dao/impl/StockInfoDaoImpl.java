@@ -71,21 +71,21 @@ public class StockInfoDaoImpl extends BaseDao implements StockInfoDao {
                 StockInfoDaoImpl.SELECT_SQL,
                 pageParam.getCondition());
 
-        int totalRecords = jdbcTemplate.queryForObject(dataSqlCondition.getCountSql(),
-                dataSqlCondition.toArgs(), Integer.class);
+        int totalRecords = jdbcTemplate.queryForObject(dataSqlCondition.getCountSql(), Integer.class,
+                dataSqlCondition.toArgs());
 
         dataSqlCondition.addSql(" limit ?, ?");
         dataSqlCondition.addPage(pageParam.getStart(), pageParam.getLength());
 
-        List<StockInfo> list = jdbcTemplate.query(dataSqlCondition.toSql(),
-                dataSqlCondition.toArgs(), BeanPropertyRowMapper.newInstance(StockInfo.class));
+        List<StockInfo> list = jdbcTemplate.query(dataSqlCondition.toSql(), BeanPropertyRowMapper.newInstance(StockInfo.class),
+                dataSqlCondition.toArgs());
         return new PageVo<>(list, totalRecords);
     }
 
     @Override
     public StockInfo getStockByFullCode(String code) {
         List<StockInfo> list = jdbcTemplate.query(StockInfoDaoImpl.SELECT_SQL + " and concat(exchange, code) = ?",
-                new String[] { code }, BeanPropertyRowMapper.newInstance(StockInfo.class));
+                BeanPropertyRowMapper.newInstance(StockInfo.class), code);
         return list.isEmpty() ? null : list.get(0);
     }
 

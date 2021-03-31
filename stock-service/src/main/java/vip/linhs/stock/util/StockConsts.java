@@ -67,7 +67,7 @@ public class StockConsts {
          */
         Suspended(1),
         /**
-         * 终止上市
+         * 退市
          */
         Terminated(2);
         private int value;

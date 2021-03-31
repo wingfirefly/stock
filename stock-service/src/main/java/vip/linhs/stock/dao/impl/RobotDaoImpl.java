@@ -17,13 +17,13 @@ public class RobotDaoImpl extends BaseDao implements RobotDao {
     @Override
     public Robot getById(int id) {
         String sql = RobotDaoImpl.SELECT_SQL + " and id = ?";
-        return jdbcTemplate.queryForObject(sql, new Integer[] { id }, BeanPropertyRowMapper.newInstance(Robot.class));
+        return jdbcTemplate.queryForObject(sql, BeanPropertyRowMapper.newInstance(Robot.class), id);
     }
 
     @Override
     public List<Robot> getListByType(int type) {
         String sql = RobotDaoImpl.SELECT_SQL + " and type = ?";
-        return jdbcTemplate.query(sql, new Integer[] { type }, BeanPropertyRowMapper.newInstance(Robot.class));
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Robot.class), type);
     }
 
 }

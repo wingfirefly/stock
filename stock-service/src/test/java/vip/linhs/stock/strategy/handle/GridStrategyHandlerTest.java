@@ -1,5 +1,8 @@
 package vip.linhs.stock.strategy.handle;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,10 +30,8 @@ public class GridStrategyHandlerTest {
         pageParam.setStart(0);
         pageParam.setLength(Integer.MAX_VALUE);
         PageVo<TradeRuleVo> pageVo = tradeService.getTradeRuleList(pageParam);
-        TradeRuleVo tradeRuleVo = pageVo.getData().stream().filter(v -> v.getStrategyId() == 1).findAny().get();
-        if (tradeRuleVo.isValid()) {
-            strategyHandler.handle(tradeRuleVo);
-        }
+        List<TradeRuleVo> list = pageVo.getData().stream().filter(v -> v.getStrategyId() == 1 && v.isValid()).collect(Collectors.toList());
+        list.forEach(strategyHandler::handle);
     }
 
 }

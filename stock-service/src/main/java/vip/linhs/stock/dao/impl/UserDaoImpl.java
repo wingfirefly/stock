@@ -18,7 +18,7 @@ public class UserDaoImpl extends BaseDao implements UserDao {
     public User get(String username, String password) {
         List<User> list = jdbcTemplate.query(
                 UserDaoImpl.SQL_SELECT + " and username = ? and password = ?",
-                new String[] { username, password }, BeanPropertyRowMapper.newInstance(User.class));
+                BeanPropertyRowMapper.newInstance(User.class), username, password);
         return list.isEmpty() ? null : list.get(0);
     }
 
@@ -26,7 +26,7 @@ public class UserDaoImpl extends BaseDao implements UserDao {
     public User get(int id) {
         List<User> list = jdbcTemplate.query(
                 UserDaoImpl.SQL_SELECT + " and id = ?",
-                new Integer[] { id }, BeanPropertyRowMapper.newInstance(User.class));
+                BeanPropertyRowMapper.newInstance(User.class), id);
         return list.isEmpty() ? null : list.get(0);
     }
 

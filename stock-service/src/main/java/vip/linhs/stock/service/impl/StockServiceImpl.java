@@ -164,7 +164,8 @@ public class StockServiceImpl implements StockService {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    logger.error(e.getMessage());
+                    logger.error(e.getMessage(), e);
+                    Thread.currentThread().interrupt();
                 }
                 handleStockDaily(root, stockInfo);
             }

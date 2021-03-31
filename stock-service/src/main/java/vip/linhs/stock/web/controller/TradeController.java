@@ -127,7 +127,7 @@ public class TradeController extends BaseController {
         GetHisDealDataRequest request = new GetHisDealDataRequest(getUserId());
         request.setEt(DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
         Date et = new Date();
-        et.setTime(et.getTime() - 7 * 24 * 3600 * 1000);
+        et.setTime(et.getTime() - 15 * 24 * 3600 * 1000);
         request.setSt(DateFormatUtils.format(et, "yyyy-MM-dd"));
 
         TradeResultVo<GetHisDealDataResponse> dealData = tradeApiService.getHisDealData(request);

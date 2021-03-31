@@ -14,7 +14,7 @@ public class TradeUserDaoImpl extends BaseDao implements TradeUserDao {
     public TradeUser getById(int id) {
         return jdbcTemplate.queryForObject(
                 "select id, name, account_id as accountId, cookie, validate_key as validateKey from trade_user where id = ?",
-                new Integer[] { id }, BeanPropertyRowMapper.newInstance(TradeUser.class));
+                BeanPropertyRowMapper.newInstance(TradeUser.class), id);
     }
 
     @Override

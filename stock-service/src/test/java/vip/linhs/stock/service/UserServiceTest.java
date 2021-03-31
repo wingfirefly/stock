@@ -22,14 +22,11 @@ public class UserServiceTest {
         System.out.println(token);
         User user = userService.getById(1);
         userService.putToSession(user, token);
-    }
 
-    @Test
-    public void testGetByToken() {
-        User user = userService.getByToken(token);
+        user = userService.getByToken(token);
         System.out.println(JSON.toJSONString(user));
         Assertions.assertNotNull(user);
-        Assertions.assertTrue(user.getId() == 1);
+        Assertions.assertEquals(1, user.getId());
     }
 
 }

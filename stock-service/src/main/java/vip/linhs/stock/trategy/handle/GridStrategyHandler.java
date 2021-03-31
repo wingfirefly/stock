@@ -75,7 +75,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
         // 30 day, yibao yicheng
         List<TradeOrder> tradeOrderList = tradeService.getLastTradeOrderListByRuleId(tradeRuleVo.getId());
 
-        udpateTradeState(tradeOrderList, dealDataList, orderData.getData());
+        updateTradeState(tradeOrderList, dealDataList, orderData.getData());
 
         GridStrategyInput input = new GridStrategyInput(tradeRuleVo);
         input.setDealDataList(dealDataList);
@@ -84,7 +84,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
         return input;
     }
 
-    private void udpateTradeState(List<TradeOrder> tradeOrderList, List<GetDealDataResponse> dealDataList, List<GetOrdersDataResponse> orderDataList) {
+    private void updateTradeState(List<TradeOrder> tradeOrderList, List<GetDealDataResponse> dealDataList, List<GetOrdersDataResponse> orderDataList) {
         long last5MinTime = DateUtils.addMinutes(new Date(), -1).getTime();
         for (TradeOrder tradeOrder : tradeOrderList) {
             GetDealDataResponse dealData = getByCondition(dealDataList, v -> tradeOrder.getEntrustCode().equals(v.getWtbh()));
@@ -126,7 +126,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
     @Override
     public GridStrategyResult handle(GridStrategyInput input) {
         List<TradeOrder> tradeOrderList = input.getTradeOrderList();
-        tradeOrderList = tradeOrderList.stream().filter(v -> v.isValid()).collect(Collectors.toList());
+        tradeOrderList = tradeOrderList.stream().filter(TradeOrder::isValid).collect(Collectors.toList());
 
         ArrayList<String> revokeList = new ArrayList<>();
         ArrayList<StrategySubmitResult> submitList = new ArrayList<>();
@@ -157,10 +157,10 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
 
         if (!isHandle) {
             String dealCode = "m" + System.currentTimeMillis();
-            if (!tradeOrderList.stream().anyMatch(v -> GetOrdersDataResponse.YIBAO.equals(v.getTradeState()) && v.isManual() && SubmitRequest.B.equals(v.getTradeType()))) {
+            if (tradeOrderList.stream().noneMatch(v -> GetOrdersDataResponse.YIBAO.equals(v.getTradeState()) && v.isManual() && SubmitRequest.B.equals(v.getTradeType()))) {
                 setNeedSubmit(tradeRuleVo.getOpenPrice().doubleValue(), dealCode, submitList, tradeRuleVo, SubmitRequest.B);
             }
-            if (!tradeOrderList.stream().anyMatch(v -> GetOrdersDataResponse.YIBAO.equals(v.getTradeState()) && v.isManual() && SubmitRequest.S.equals(v.getTradeType()))) {
+            if (tradeOrderList.stream().noneMatch(v -> GetOrdersDataResponse.YIBAO.equals(v.getTradeState()) && v.isManual() && SubmitRequest.S.equals(v.getTradeType()))) {
                 setNeedSubmit(tradeRuleVo.getOpenPrice().doubleValue(), dealCode, submitList, tradeRuleVo, SubmitRequest.S);
             }
         }

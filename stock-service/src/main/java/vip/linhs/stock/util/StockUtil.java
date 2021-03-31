@@ -29,7 +29,7 @@ public class StockUtil {
     }
 
     private static String getExchange(String code) {
-        if (StringUtils.isEmpty(code)) {
+        if (!StringUtils.hasLength(code)) {
             return null;
         }
         if (isCodeStart(code, CODES_SH_A, CODES_SH_ETF)) {
@@ -42,7 +42,7 @@ public class StockUtil {
     }
 
     public static String getFullCode(String code) {
-        if (StringUtils.isEmpty(code)) {
+        if (!StringUtils.hasLength(code)) {
             return null;
         }
         String exchange = StockUtil.getExchange(code);

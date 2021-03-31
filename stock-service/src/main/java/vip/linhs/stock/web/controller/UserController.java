@@ -24,7 +24,7 @@ public class UserController extends BaseController {
 
     @PostMapping("login")
     public UserVo login(String username, String password) {
-        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+        if (!StringUtils.hasLength(username) || !StringUtils.hasLength(password)) {
             FieldInputException e = new FieldInputException();
             e.addError("user", "username and password could not be null");
             throw e;
@@ -50,7 +50,7 @@ public class UserController extends BaseController {
 
     @PostMapping("updatePassword")
     public CommonResponse updatePassword(String oldPassword, String password, String password2) {
-        if (StringUtils.isEmpty(oldPassword) || StringUtils.isEmpty(password) || StringUtils.isEmpty(password2)) {
+        if (!StringUtils.hasLength(oldPassword) || !StringUtils.hasLength(password) || !StringUtils.hasLength(password2)) {
             FieldInputException e = new FieldInputException();
             e.addError("user", "old password and password could not be null");
             throw e;

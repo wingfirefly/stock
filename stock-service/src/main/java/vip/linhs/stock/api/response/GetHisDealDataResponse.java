@@ -2,7 +2,6 @@ package vip.linhs.stock.api.response;
 
 public class GetHisDealDataResponse extends GetDealDataResponse {
 
-    private String Zqmc;
     /**
      * 成交序号
      */
@@ -11,14 +10,6 @@ public class GetHisDealDataResponse extends GetDealDataResponse {
      * 成交日期
      */
     private String Cjrq;
-
-    public String getZqmc() {
-        return Zqmc;
-    }
-
-    public void setZqmc(String zqmc) {
-        Zqmc = zqmc;
-    }
 
     public String getCjxh() {
         return Cjxh;
@@ -38,7 +29,7 @@ public class GetHisDealDataResponse extends GetDealDataResponse {
 
     @Override
     public String toString() {
-        return "GetHisDealDataResponse [Zqmc=" + Zqmc + ", Cjxh=" + Cjxh + ", Cjrq=" + Cjrq + "]";
+        return "GetHisDealDataResponse [Zqmc=" + getZqmc() + ", Cjxh=" + Cjxh + ", Cjrq=" + Cjrq + "]";
     }
 
 }

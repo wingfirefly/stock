@@ -71,15 +71,14 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
         SqlCondition dataSqlCondition = new SqlCondition(sql, pageParam.getCondition());
         dataSqlCondition.addString("date", "date");
 
-        int totalRecords = jdbcTemplate.queryForObject(dataSqlCondition.getCountSql(),
-                dataSqlCondition.toArgs(), Integer.class);
+        int totalRecords = jdbcTemplate.queryForObject(dataSqlCondition.getCountSql(), Integer.class, dataSqlCondition.toArgs());
 
         dataSqlCondition.addSort("tradingValue", false, true);
         dataSqlCondition.addSql(" limit ?, ?");
         dataSqlCondition.addPage(pageParam.getStart(), pageParam.getLength());
 
         List<DailyIndexVo> list = jdbcTemplate.query(dataSqlCondition.toSql(),
-                dataSqlCondition.toArgs(), BeanPropertyRowMapper.newInstance(DailyIndexVo.class));
+                BeanPropertyRowMapper.newInstance(DailyIndexVo.class), dataSqlCondition.toArgs());
         return new PageVo<>(list, totalRecords);
     }
 
@@ -91,8 +90,8 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
             + " highest_price as highestPrice, opening_price as openingPrice,"
             + " trading_value as tradingValue, trading_volume as tradingVolume"
             + " from daily_index where date = ?";
-        List<DailyIndex> list = jdbcTemplate.query(sql,
-                new Object[] { new java.sql.Date(date.getTime()) }, BeanPropertyRowMapper.newInstance(DailyIndex.class));
+        List<DailyIndex> list = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(DailyIndex.class),
+                new java.sql.Date(date.getTime()));
         return list;
     }
 
