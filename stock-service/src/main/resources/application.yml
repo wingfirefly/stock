@@ -16,7 +16,9 @@ spring:
 logging:
   file:
     name: /logs/stock-service.log
-    max-history: 30
+  logback:
+    rollingpolicy:
+      max-history: 30
   level:
     root: info
     org.springfromework.web: info
