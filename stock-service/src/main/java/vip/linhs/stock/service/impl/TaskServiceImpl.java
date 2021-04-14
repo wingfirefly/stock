@@ -305,7 +305,7 @@ public class TaskServiceImpl implements TaskService {
             tradeDeal.setTradeType(v.getMmlb());
             tradeDeal.setVolume(Integer.valueOf(v.getCjsl()));
 
-            sb.append(String.format("%s %s %s %s %s\n",
+            sb.append(String.format("deal %s %s %s %s %s\n",
                     v.getFormatDealTime(), v.getZqmc(), v.getMmlb(), v.getCjjg(), v.getCjsl()));
 
             return tradeDeal;
