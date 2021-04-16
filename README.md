@@ -1,5 +1,10 @@
 # stock
 
+- 执行sql,根据deployment.docx
+- 修改application.yml
+- 修改config.js
+- 使用docker-compose up -d 一键部署
+
 ## 升级日志
 ### 升级只针对以前已经部署的朋友, 新来的朋友直接按最新步骤来就行
 
