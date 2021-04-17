@@ -8,10 +8,8 @@ COPY . .
 
 RUN gradle build -x test
 
-RUN gradle copyJar
+COPY build/libs/stock-service-0.0.1.jar /stock-service.jar
 
-COPY /stock-service-0.0.1.jar /stock-service.jar
-
-ENTRYPOINT ["java","-Dspring.profiles.active=prod","-jar","stock-service.jar"]
+ENTRYPOINT ["java","-Dspring.profiles.active=prod","-jar","/stock-service.jar"]
 
 EXPOSE 8998

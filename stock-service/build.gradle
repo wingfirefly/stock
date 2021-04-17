@@ -37,11 +37,6 @@ dependencies {
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-task copyJar(type: Copy) {
-  from 'build/libs'
-  into '/'
-}
-
 test {
   useJUnitPlatform()
 }
