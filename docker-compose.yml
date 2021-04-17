@@ -1,6 +1,6 @@
 version: '3'
 services:
-  stocl-service:
+  stock-service:
     container_name: stock-service
     build:
       context: ./stock-service
