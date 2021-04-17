@@ -8,7 +8,9 @@ COPY . .
 
 RUN gradle build -x test
 
-COPY ./stock-service/build/libs/stock-service-0.0.1.jar ./stock-service.jar
+RUN gradle copyJar
+
+COPY /stock-service-0.0.1.jar /stock-service.jar
 
 ENTRYPOINT ["java","-Dspring.profiles.active=prod","-jar","stock-service.jar"]
 
