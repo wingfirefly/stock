@@ -1,0 +1,18 @@
+version: '3'
+services:
+  stock-service:
+    container_name: stock-service
+    build:
+      context: ./stock-service
+      dockerfile: Dockerfile
+    ports:
+    - "8998:8998"
+    restart: always
+  stock_web:
+    container_name: stock-web
+    build:
+      context: ./stock-web
+      dockerfile: Dockerfile
+    ports:
+    - "8999:8999"
+    restart: always

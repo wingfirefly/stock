@@ -1,0 +1,26 @@
+server:
+  port: 8998
+
+spring:
+  datasource:
+    url: jdbc:mysql://172.31.240.1:3306/tools?useSSL=false&characterEncoding=utf-8&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: 172.31.240.1
+    port: 6379
+    timeout: 1000
+    database: 0
+    password: root
+
+logging:
+  file:
+    name: /logs/stock-service.log
+  logback:
+    rollingpolicy:
+      max-history: 30
+  level:
+    root: info
+    org.springfromework.web: info
+    org.springframework.jdbc: debug
