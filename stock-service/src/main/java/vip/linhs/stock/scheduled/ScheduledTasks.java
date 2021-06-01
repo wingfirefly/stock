@@ -152,7 +152,7 @@ public class ScheduledTasks {
     public void applyNewStock() {
         boolean isBusinessTime = holidayCalendarService.isBusinessTime(new Date());
         if (!isBusinessTime) {
-             // return;
+             return;
         }
 
         try {
