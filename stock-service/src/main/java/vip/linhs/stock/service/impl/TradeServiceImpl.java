@@ -24,6 +24,7 @@ import vip.linhs.stock.dao.TradeStrategyDao;
 import vip.linhs.stock.dao.TradeUserDao;
 import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.StockInfo;
+import vip.linhs.stock.model.po.StockSelected;
 import vip.linhs.stock.model.po.TradeDeal;
 import vip.linhs.stock.model.po.TradeMethod;
 import vip.linhs.stock.model.po.TradeOrder;
@@ -132,6 +133,34 @@ public class TradeServiceImpl implements TradeService {
             stockVo.setPrice(new BigDecimal(v.getZxjg()));
             stockVo.setCostPrice(new BigDecimal(v.getCbjg()));
             stockVo.setProfit(new BigDecimal(v.getLjyk()));
+            stockVo.setRate(rate);
+            return stockVo;
+        }).collect(Collectors.toList());
+        return list;
+    }
+
+    @Override
+    public List<StockVo> getTradeStockListBySelected(List<StockSelected> selectList) {
+        List<StockVo> list = selectList.stream().map(v -> {
+            StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(v.getCode()));
+            StockVo stockVo = new StockVo();
+            stockVo.setAbbreviation(stockInfo.getAbbreviation());
+            stockVo.setStockCode(stockInfo.getCode());
+            stockVo.setExchange(stockInfo.getExchange());
+            stockVo.setName(stockInfo.getName());
+            stockVo.setAvailableVolume(0);
+            stockVo.setTotalVolume(0);
+
+            DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(stockInfo.getCode());
+            stockVo.setPrice(dailyIndex.getClosingPrice());
+            BigDecimal rate = BigDecimal.ZERO;
+            if (DecimalUtil.bg(dailyIndex.getClosingPrice(), BigDecimal.ZERO)) {
+                rate = StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
+                        dailyIndex.getPreClosingPrice());
+            }
+
+            stockVo.setCostPrice(BigDecimal.ZERO);
+            stockVo.setProfit(BigDecimal.ZERO);
             stockVo.setRate(rate);
             return stockVo;
         }).collect(Collectors.toList());

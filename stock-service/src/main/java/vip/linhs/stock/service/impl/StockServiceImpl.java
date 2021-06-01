@@ -5,8 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -135,7 +134,7 @@ public class StockServiceImpl implements StockService {
                     }
                 }
             } catch (Exception e) {
-                logger.error("get daily index error {} {}", stockInfo.getExchange(), stockInfo.getCode(), e);
+                logger.error("get daily index error {} {}", stockInfo.getName(), stockInfo.getCode(), e);
             }
         });
     }
@@ -146,44 +145,29 @@ public class StockServiceImpl implements StockService {
 
         File root = new File(rootPath);
 
-        AtomicInteger atomicInteger = new AtomicInteger(0);
+        CountDownLatch countDownLatch = new CountDownLatch(list.size());
 
         list.forEach(stockInfo -> {
-            logger.info("start save {}: {}", stockInfo.getName(), stockInfo.getCode());
-            try {
-                threadPoolTaskExecutor.execute(() -> {
-                    try {
-                        atomicInteger.incrementAndGet();
-                        handleStockDaily(root, stockInfo);
-                    } finally {
-                        atomicInteger.decrementAndGet();
-                    }
-                });
-            } catch(RejectedExecutionException ex) {
-                logger.error("task rejected {} {}", stockInfo.getExchange(), stockInfo.getCode());
+            threadPoolTaskExecutor.execute(() -> {
                 try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    logger.error(e.getMessage(), e);
-                    Thread.currentThread().interrupt();
+                    handleStockDaily(root, stockInfo);
+                } finally {
+                    countDownLatch.countDown();
                 }
-                handleStockDaily(root, stockInfo);
-            }
+            });
         });
 
-        while (atomicInteger.get() > 0) {
-            logger.info("sub task is not completed");
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                logger.error(e.getMessage());
-                Thread.currentThread().interrupt();
-            }
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.error("countDownLatch await interrupt", e);
         }
-
+        logger.info("sub task is not completed");
     }
 
     private void handleStockDaily(File root, StockInfo stockInfo) {
+        logger.info("start save {}: {}", stockInfo.getName(), stockInfo.getCode());
         try {
             File file = new File(root, stockInfo.getExchange() + "/" + stockInfo.getCode() + ".txt");
             try (FileReader in = new FileReader(file)) {
@@ -193,7 +177,7 @@ public class StockServiceImpl implements StockService {
                 dailyIndexDao.save(dailyIndexList);
             }
         } catch (Exception e) {
-            logger.error("save daily index error {} {}", stockInfo.getExchange(), stockInfo.getCode(), e);
+            logger.error("save daily index error {}", stockInfo.getFullCode(), e);
         }
     }
 

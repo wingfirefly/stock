@@ -73,6 +73,10 @@ public class StockInfo extends BaseModel {
         return type == StockConsts.StockType.Index.value();
     }
 
+    public String getFullCode() {
+        return exchange + code;
+    }
+
     @Override
     public String toString() {
         return "StockInfo [code=" + code + ", name=" + name + ", exchange=" + exchange + ", abbreviation="

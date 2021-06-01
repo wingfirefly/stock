@@ -7,6 +7,7 @@ import vip.linhs.stock.api.response.GetDealDataResponse;
 import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
+import vip.linhs.stock.model.po.StockSelected;
 import vip.linhs.stock.model.po.TradeDeal;
 import vip.linhs.stock.model.po.TradeMethod;
 import vip.linhs.stock.model.po.TradeOrder;
@@ -29,6 +30,8 @@ public interface TradeService {
     List<DealVo> getTradeDealList(List<GetDealDataResponse> data);
 
     List<StockVo> getTradeStockList(List<GetStockListResponse> stockList);
+
+    List<StockVo> getTradeStockListBySelected(List<StockSelected> selectList);
 
     List<OrderVo> getTradeOrderList(List<GetOrdersDataResponse> orderList);
 

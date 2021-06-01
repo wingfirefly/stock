@@ -145,6 +145,24 @@ public class ScheduledTasks {
         }
     }
 
+    /**
+     * apply new stock
+     */
+    @Scheduled(cron = "0 1 10,14 ? * MON-FRI")
+    public void applyNewStock() {
+        boolean isBusinessTime = holidayCalendarService.isBusinessTime(new Date());
+        if (!isBusinessTime) {
+             // return;
+        }
+
+        try {
+            List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.ApplyNewStock.getId());
+            executeTask(list);
+        } catch (Exception e) {
+            logger.error("task applyNewStock error", e);
+        }
+    }
+
     private void executeTask(List<ExecuteInfo> list) {
         for (ExecuteInfo executeInfo : list) {
             taskService.executeTask(executeInfo);
@@ -157,12 +175,9 @@ public class ScheduledTasks {
         if (!isBusinessTime) {
             return;
         }
-        List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.TradeTicker.getId());
-        if (!list.isEmpty()) {
-            TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(new GetAssetsRequest(1));
-            if (!tradeResultVo.isSuccess()) {
-                logger.error("heartbeat: {}", tradeResultVo.getMessage());
-            }
+        TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(new GetAssetsRequest(1));
+        if (!tradeResultVo.isSuccess()) {
+            logger.error("heartbeat: {}", tradeResultVo.getMessage());
         }
     }
 

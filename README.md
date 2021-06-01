@@ -1,12 +1,12 @@
 # stock
 
-- 执行sql,根据deployment.docx
-- 修改application.yml
-- 修改config.js
-- 使用docker-compose up -d 一键部署
-
 ## 升级日志
 ### 升级只针对以前已经部署的朋友, 新来的朋友直接按最新步骤来就行
+
+2021-05-29
+- 添加自动申购新股新债功能
+- 持仓页面优化
+- 处理docker部署pull请求
 
 2021-03-27
 - 添加成交提醒功能
@@ -69,18 +69,25 @@
 
 ## 使用说明
 
-按照wiki里面的deployment文档准备好环境后
+按照wiki里面的deployment文档准备好环境和配置文件后, 可以常规运行或者容器运行
 
-### service
+### 常规运行
+
+#### service
 ```shell
 gradle build -x test
 java -jar stock-service.jar
 ```
 
-### web
+#### web
 ```shell
 npm install
 npm start
+```
+
+### docker容器启动
+```shell
+docker-compose up -d --build
 ```
 
 ------------

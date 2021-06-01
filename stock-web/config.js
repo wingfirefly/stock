@@ -1,5 +1,5 @@
-const port = 8999;
-const proxyUrl = 'http://172.17.176.183:8998';
+const port = 3000;
+const proxyUrl = 'http://127.0.0.1:8088';
 
 module.exports = {
   port, proxyUrl

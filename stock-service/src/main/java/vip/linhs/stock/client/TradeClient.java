@@ -1,6 +1,7 @@
 package vip.linhs.stock.client;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,14 @@ public class TradeClient {
 
     public String send(String url, Map<String, Object> params, Map<String, String> header) {
         String content = HttpUtil.sendPost(httpClient, url, params, header);
+        if (content.contains("Object moved")) {
+            throw new UnauthorizedException("unauthorized " + url);
+        }
+        return content;
+    }
+
+    public String sendListJson(String url, List<Map<String, Object>> list, Map<String, String> header) {
+        String content = HttpUtil.sendPostJson(httpClient, url, list, header);
         if (content.contains("Object moved")) {
             throw new UnauthorizedException("unauthorized " + url);
         }

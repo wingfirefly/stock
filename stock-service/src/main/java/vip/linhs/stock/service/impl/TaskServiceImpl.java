@@ -17,8 +17,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import vip.linhs.stock.api.TradeResultVo;
+import vip.linhs.stock.api.request.GetCanBuyNewStockListV3Request;
+import vip.linhs.stock.api.request.GetConvertibleBondListV2Request;
 import vip.linhs.stock.api.request.GetDealDataRequest;
+import vip.linhs.stock.api.request.GetOrdersDataRequest;
+import vip.linhs.stock.api.request.SubmitBatTradeV2Request;
+import vip.linhs.stock.api.request.SubmitBatTradeV2Request.SubmitData;
+import vip.linhs.stock.api.request.SubmitRequest;
+import vip.linhs.stock.api.response.GetCanBuyNewStockListV3Response;
+import vip.linhs.stock.api.response.GetCanBuyNewStockListV3Response.NewQuotaInfo;
+import vip.linhs.stock.api.response.GetConvertibleBondListV2Response;
 import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetOrdersDataResponse;
+import vip.linhs.stock.api.response.SubmitBatTradeV2Response;
 import vip.linhs.stock.config.SpringUtil;
 import vip.linhs.stock.dao.ExecuteInfoDao;
 import vip.linhs.stock.exception.ServiceException;
@@ -38,6 +49,7 @@ import vip.linhs.stock.service.MessageService;
 import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.service.StockSelectedService;
 import vip.linhs.stock.service.StockService;
+import vip.linhs.stock.service.SystemConfigService;
 import vip.linhs.stock.service.TaskService;
 import vip.linhs.stock.service.TradeApiService;
 import vip.linhs.stock.service.TradeService;
@@ -78,6 +90,9 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private TradeApiService tradeApiService;
 
+    @Autowired
+    private SystemConfigService systemConfigService;
+
     @Override
     public List<ExecuteInfo> getPendingTaskListById(int... id) {
         return executeInfoDao.getByTaskIdAndState(id, StockConsts.TaskState.Pending.value());
@@ -116,6 +131,8 @@ public class TaskServiceImpl implements TaskService {
             case TradeTicker:
                 runTradeTicker();
                 break;
+            case ApplyNewStock:
+                applyNewStock();
             default:
                 break;
             }
@@ -213,7 +230,7 @@ public class TaskServiceImpl implements TaskService {
             if (stockIdList.contains(stockInfo.getId())) {
                 continue;
             }
-            DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(stockInfo.getExchange() + stockInfo.getCode());
+            DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(stockInfo.getFullCode());
             if (dailyIndex != null
                     && DecimalUtil.bg(dailyIndex.getOpeningPrice(), BigDecimal.ZERO)
                     && dailyIndex.getTradingVolume() > 0
@@ -317,6 +334,71 @@ public class TaskServiceImpl implements TaskService {
         }
 
         tradeService.saveTradeDealList(needNotifyList);
+    }
+
+    private void applyNewStock() {
+        TradeResultVo<GetCanBuyNewStockListV3Response> getCanBuyResultVo = getCanBuyStockListV3ResultVo();
+
+        GetCanBuyNewStockListV3Response getCanBuyResponse = getCanBuyResultVo.getData().get(0);
+
+        List<SubmitData> newStockList = getCanBuyResponse.getNewStockList().stream().map(newStock -> {
+            NewQuotaInfo newQuotaInfo = getCanBuyResponse.getNewQuota().stream().filter(v -> v.getMarket().equals(newStock.getMarket())).findAny().orElseGet(null);
+            SubmitData submitData = new SubmitData();
+
+            submitData.setAmount(Integer.min(Integer.parseInt(newStock.getKsgsx()), Integer.parseInt(newQuotaInfo.getKsgsz())));
+            submitData.setMarket(newStock.getMarket());
+            submitData.setPrice(newStock.getFxj());
+            submitData.setStockCode(newStock.getSgdm());
+            submitData.setStockName(newStock.getZqmc());
+            submitData.setTradeType(SubmitRequest.B);
+            return submitData;
+       }).collect(Collectors.toList());
+
+        if (systemConfigService.isApplyNewConvertibleBond()) {
+            TradeResultVo<GetConvertibleBondListV2Response> getConvertibleBondResultVo = getGetConvertibleBondListV2ResultVo();
+            if (getConvertibleBondResultVo.isSuccess()) {
+                List<SubmitData> convertibleBondList = getConvertibleBondResultVo.getData().stream().filter(GetConvertibleBondListV2Response::getExIsToday).map(convertibleBond -> {
+                    SubmitData submitData = new SubmitData();
+                    submitData.setAmount(Integer.parseInt(convertibleBond.getLIMITBUYVOL()));
+                    submitData.setMarket(convertibleBond.getMarket());
+                    submitData.setPrice(convertibleBond.getPARVALUE());
+                    submitData.setStockCode(convertibleBond.getSUBCODE());
+                    submitData.setStockName(convertibleBond.getBONDNAME());
+                    submitData.setTradeType(SubmitRequest.B);
+                    return submitData;
+               }).collect(Collectors.toList());
+
+                newStockList.addAll(convertibleBondList);
+            } else {
+                messageServicve.send("apply new stock: " + getConvertibleBondResultVo.getMessage());
+            }
+        }
+
+        TradeResultVo<GetOrdersDataResponse> orderReponse = tradeApiService.getOrdersData(new GetOrdersDataRequest(1));
+        if (orderReponse.isSuccess()) {
+            List<GetOrdersDataResponse> orderList = orderReponse.getData().stream().filter(v -> v.getWtzt().equals(GetOrdersDataResponse.YIBAO)).collect(Collectors.toList());
+            newStockList = newStockList.stream().filter(v -> orderList.stream().noneMatch(order -> order.getZqdm().equals(v.getStockCode()))).collect(Collectors.toList());
+        }
+
+        if (newStockList.isEmpty()) {
+            return;
+        }
+
+        SubmitBatTradeV2Request request = new SubmitBatTradeV2Request(1);
+        request.setList(newStockList);
+
+        TradeResultVo<SubmitBatTradeV2Response> tradeResultVo = tradeApiService.submitBatTradeV2(request);
+        messageServicve.send("apply new stock: " + tradeResultVo.getMessage());
+    }
+
+    private TradeResultVo<GetCanBuyNewStockListV3Response> getCanBuyStockListV3ResultVo() {
+        GetCanBuyNewStockListV3Request request = new GetCanBuyNewStockListV3Request(1);
+        return tradeApiService.getCanBuyNewStockListV3(request);
+    }
+
+    private TradeResultVo<GetConvertibleBondListV2Response> getGetConvertibleBondListV2ResultVo() {
+        GetConvertibleBondListV2Request request = new GetConvertibleBondListV2Request(1);
+        return tradeApiService.getConvertibleBondListV2(request);
     }
 
     @Override

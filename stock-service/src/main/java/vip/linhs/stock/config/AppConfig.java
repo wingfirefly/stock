@@ -1,7 +1,7 @@
 package vip.linhs.stock.config;
 
 import java.time.Duration;
-import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
+import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -83,7 +83,7 @@ public class AppConfig implements WebMvcConfigurer {
         executor.setQueueCapacity(8);
         executor.setThreadNamePrefix("stock-");
         executor.setKeepAliveSeconds(60);
-        executor.setRejectedExecutionHandler(new AbortPolicy());
+        executor.setRejectedExecutionHandler(new CallerRunsPolicy());
         executor.initialize();
         return executor;
     }

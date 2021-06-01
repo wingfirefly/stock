@@ -1,6 +1,7 @@
 package vip.linhs.stock.web.controller;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +31,7 @@ import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.api.response.RevokeResponse;
 import vip.linhs.stock.api.response.SubmitResponse;
 import vip.linhs.stock.exception.FieldInputException;
+import vip.linhs.stock.model.po.StockSelected;
 import vip.linhs.stock.model.po.TradeUser;
 import vip.linhs.stock.model.vo.AccountVo;
 import vip.linhs.stock.model.vo.CommonResponse;
@@ -39,6 +41,7 @@ import vip.linhs.stock.model.vo.trade.DealVo;
 import vip.linhs.stock.model.vo.trade.OrderVo;
 import vip.linhs.stock.model.vo.trade.StockVo;
 import vip.linhs.stock.model.vo.trade.TradeRuleVo;
+import vip.linhs.stock.service.StockSelectedService;
 import vip.linhs.stock.service.TradeApiService;
 import vip.linhs.stock.service.TradeService;
 
@@ -51,6 +54,9 @@ public class TradeController extends BaseController {
 
     @Autowired
     private TradeService tradeService;
+
+    @Autowired
+    private StockSelectedService stockSelectedService;
 
     @PostMapping("login")
     public CommonResponse login(int userId, String password, String identifyCode) {
@@ -166,11 +172,16 @@ public class TradeController extends BaseController {
     public PageVo<StockVo> getStockList(PageParam pageParam) {
         GetStockListRequest request = new GetStockListRequest(getUserId());
         TradeResultVo<GetStockListResponse> response = tradeApiService.getStockList(request);
+        ArrayList<StockVo> list = new ArrayList<>();
         if (response.isSuccess()) {
-            List<StockVo> list = tradeService.getTradeStockList(response.getData());
-            return new PageVo<>(subList(list, pageParam), list.size());
+            list.addAll(tradeService.getTradeStockList(response.getData()));
         }
-        return new PageVo<>(Collections.emptyList(), 0);
+        List<StockSelected> selectList = stockSelectedService.getList();
+        selectList = selectList.stream().filter(v -> {
+            return list.stream().noneMatch(vo -> vo.getStockCode().equals(v.getCode()));
+        }).collect(Collectors.toList());
+        list.addAll(tradeService.getTradeStockListBySelected(selectList));
+        return new PageVo<>(subList(list, pageParam), list.size());
     }
 
     @RequestMapping("orderList")

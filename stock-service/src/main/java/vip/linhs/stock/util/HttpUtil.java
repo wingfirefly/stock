@@ -59,7 +59,19 @@ public class HttpUtil {
         return HttpUtil.sendPostJson(httpClient, url, params, null);
     }
 
+    public static String sendPostJson(CloseableHttpClient httpClient, String url, List<Map<String, Object>> params) {
+        return HttpUtil.sendPostJson(httpClient, url, params, null);
+    }
+
+    public static String sendPostJson(CloseableHttpClient httpClient, String url, List<Map<String, Object>> params, Map<String, String> header) {
+        return sendPostJsonIn(httpClient, url, params, header);
+    }
+
     public static String sendPostJson(CloseableHttpClient httpClient, String url, Map<String, Object> params, Map<String, String> header) {
+        return sendPostJsonIn(httpClient, url, params, header);
+    }
+
+    private static String sendPostJsonIn(CloseableHttpClient httpClient, String url, Object params, Map<String, String> header) {
         HttpPost httpPost = HttpUtil.getHttpPost(url, header);
         httpPost.addHeader("Content-type", "application/json; charset=utf-8");
         return HttpUtil.sendStringEntityRequest(httpClient, httpPost, params);
@@ -77,7 +89,7 @@ public class HttpUtil {
         return HttpUtil.sendRequest(httpClient, request, Consts.UTF_8.name());
     }
 
-    private static String sendStringEntityRequest(CloseableHttpClient httpClient, HttpEntityEnclosingRequestBase request, Map<String, Object> params) {
+    private static String sendStringEntityRequest(CloseableHttpClient httpClient, HttpEntityEnclosingRequestBase request, Object params) {
         if (params != null) {
             String json = JSON.toJSONString(params);
             StringEntity entity = new StringEntity(json, Consts.UTF_8);

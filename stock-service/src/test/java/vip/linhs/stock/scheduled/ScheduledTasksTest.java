@@ -30,4 +30,9 @@ public class ScheduledTasksTest {
         scheduledTasks.runTicker();
     }
 
+    @Test
+    public void testApplyNewStock() {
+        scheduledTasks.applyNewStock();
+    }
+
 }
