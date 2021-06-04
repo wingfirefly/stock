@@ -84,6 +84,7 @@ java -jar stock-service.jar
 npm install
 npm start
 ```
+也可以直接部署到 nginx tomcat 之类的服务器启动
 
 ### docker容器启动
 ```shell
