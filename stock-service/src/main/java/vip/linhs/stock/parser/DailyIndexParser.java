@@ -18,6 +18,19 @@ import vip.linhs.stock.util.DecimalUtil;
 @Component
 public class DailyIndexParser {
 
+    public List<DailyIndex> parseDailyIndexList(String content) {
+        String[] str = content.split("\n");
+        ArrayList<DailyIndex> list = new ArrayList<>();
+        for (String c : str) {
+            c = c.trim();
+            if (c.length() > 0) {
+                DailyIndex dailyIndex = parseDailyIndex(c);
+                list.add(dailyIndex);
+            }
+        }
+        return list;
+    }
+
     /*
      * 0：新晨科技, 股票名字; 1：27.55″, 今日开盘价; 2：27.25″, 昨日收盘价; 3：26.91″, 当前价格; 4：27.55″,
      * 今日最高价; 5：26.20″, 今日最低价; 6：26.91″, 竞买价, 即“买一报价; 7：26.92″, 竞卖价, 即“卖一报价;
@@ -28,6 +41,7 @@ public class DailyIndexParser {
         if (strs.length <= 1) {
             return null;
         }
+        String code = strs[0].substring(strs[0].indexOf('_') + 1);
         BigDecimal openingPrice = new BigDecimal(strs[1]);
         BigDecimal preClosingPrice = new BigDecimal(strs[2]);
         BigDecimal closingPrice = new BigDecimal(strs[3]);
@@ -42,6 +56,7 @@ public class DailyIndexParser {
             throw new IllegalArgumentException(e);
         }
         DailyIndex dailyIndex = new DailyIndex();
+        dailyIndex.setCode(code);
         dailyIndex.setOpeningPrice(openingPrice);
         dailyIndex.setPreClosingPrice(preClosingPrice);
         dailyIndex.setClosingPrice(closingPrice);

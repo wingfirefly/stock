@@ -8,6 +8,7 @@ public class DailyIndex extends BaseModel {
     private static final long serialVersionUID = 1L;
 
     private int stockInfoId;
+    private String code;
     private Date date;
     private BigDecimal preClosingPrice;
     private BigDecimal openingPrice;
@@ -23,6 +24,14 @@ public class DailyIndex extends BaseModel {
 
     public void setStockInfoId(int stockInfoId) {
         this.stockInfoId = stockInfoId;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Date getDate() {
@@ -91,7 +100,7 @@ public class DailyIndex extends BaseModel {
 
     @Override
     public String toString() {
-        return "DailyIndex [stockInfoId=" + stockInfoId + ", date=" + date + ", openingPrice=" + openingPrice
+        return "DailyIndex [stockInfoId=" + stockInfoId + ", code=" + code + ", date=" + date + ", openingPrice=" + openingPrice
                 + ", preClosingPrice=" + preClosingPrice + ", highestPrice=" + highestPrice + ", closingPrice="
                 + closingPrice + ", lowestPrice=" + lowestPrice + ", tradingVolume=" + tradingVolume + ", tradingValue="
                 + tradingValue + ", BaseModel=" + super.toString() + "]";

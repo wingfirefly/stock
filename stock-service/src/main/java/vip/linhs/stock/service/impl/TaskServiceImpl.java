@@ -243,10 +243,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void runTicker() {
-        List<StockSelected> configList = stockSelectedService.getList();
-        for (StockSelected stockSelected : configList) {
+        List<StockSelected> selectList = stockSelectedService.getList();
+        List<String> codeList = selectList.stream().map(v -> StockUtil.getFullCode(v.getCode())).collect(Collectors.toList());
+        List<DailyIndex> dailyIndexList = stockCrawlerService.getDailyIndex(codeList);
+
+        for (StockSelected stockSelected : selectList) {
             String code = stockSelected.getCode();
-            DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(code);
+            DailyIndex dailyIndex = dailyIndexList.stream().filter(d -> d.getCode().contains(stockSelected.getCode())).findAny().orElse(null);
             if (dailyIndex == null) {
                 continue;
             }

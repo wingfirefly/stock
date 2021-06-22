@@ -14,6 +14,8 @@ public interface StockCrawlerService {
 
     DailyIndex getDailyIndex(String code);
 
+    List<DailyIndex> getDailyIndex(List<String> codeList);
+
     List<DailyIndex> getHistoryDailyIndexs(String code);
 
     String getHistoryDailyIndexsString(String code);

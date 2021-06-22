@@ -141,6 +141,9 @@ public class TradeServiceImpl implements TradeService {
 
     @Override
     public List<StockVo> getTradeStockListBySelected(List<StockSelected> selectList) {
+        List<String> codeList = selectList.stream().map(v -> StockUtil.getFullCode(v.getCode())).collect(Collectors.toList());
+        List<DailyIndex> dailyIndexList = stockCrawlerService.getDailyIndex(codeList);
+
         List<StockVo> list = selectList.stream().map(v -> {
             StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(v.getCode()));
             StockVo stockVo = new StockVo();
@@ -151,7 +154,7 @@ public class TradeServiceImpl implements TradeService {
             stockVo.setAvailableVolume(0);
             stockVo.setTotalVolume(0);
 
-            DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(stockInfo.getCode());
+            DailyIndex dailyIndex = dailyIndexList.stream().filter(d -> d.getCode().contains(v.getCode())).findAny().orElse(null);
             stockVo.setPrice(dailyIndex.getClosingPrice());
             BigDecimal rate = BigDecimal.ZERO;
             if (DecimalUtil.bg(dailyIndex.getClosingPrice(), BigDecimal.ZERO)) {

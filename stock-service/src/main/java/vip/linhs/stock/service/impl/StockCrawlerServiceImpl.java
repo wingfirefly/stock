@@ -71,6 +71,16 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
     }
 
     @Override
+    public List<DailyIndex> getDailyIndex(List<String> codeList) {
+        String codes = codeList.stream().reduce((a, b) -> String.join(",", StockUtil.getFullCode(a), StockUtil.getFullCode(b))).get();
+        String content = HttpUtil.sendGet(httpClient, "http://hq.sinajs.cn/list=" + codes, "gbk");
+        if (content != null) {
+            return dailyIndexParser.parseDailyIndexList(content);
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
     public List<DailyIndex> getHistoryDailyIndexs(String code) {
         String content = getHistoryDailyIndexsString(code);
         if (content != null) {
