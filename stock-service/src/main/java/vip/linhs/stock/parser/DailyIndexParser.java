@@ -41,7 +41,7 @@ public class DailyIndexParser {
         if (strs.length <= 1) {
             return null;
         }
-        String code = strs[0].substring(strs[0].indexOf('_') + 1);
+        String code = strs[0].substring(strs[0].lastIndexOf('_') + 1, strs[0].lastIndexOf('='));
         BigDecimal openingPrice = new BigDecimal(strs[1]);
         BigDecimal preClosingPrice = new BigDecimal(strs[2]);
         BigDecimal closingPrice = new BigDecimal(strs[3]);

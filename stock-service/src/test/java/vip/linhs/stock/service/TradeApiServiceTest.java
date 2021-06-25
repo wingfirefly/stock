@@ -148,7 +148,7 @@ public class TradeApiServiceTest {
         GetCanBuyNewStockListV3Response getCanBuyResponse = getCanBuyResultVo.getData().get(0);
 
         List<SubmitData> newStockList = getCanBuyResponse.getNewStockList().stream().map(newStock -> {
-            NewQuotaInfo newQuotaInfo = getCanBuyResponse.getNewQuota().stream().filter(v -> v.getMarket().equals(newStock.getMarket())).findAny().orElseGet(null);
+            NewQuotaInfo newQuotaInfo = getCanBuyResponse.getNewQuota().stream().filter(v -> v.getMarket().equals(newStock.getMarket())).findAny().orElse(null);
             SubmitData submitData = new SubmitData();
             submitData.setAmount(Integer.max(Integer.parseInt(newStock.getKsgsx()), Integer.parseInt(newQuotaInfo.getKsgsz())));
             submitData.setMarket(newStock.getMarket());

@@ -225,21 +225,38 @@ public class TaskServiceImpl implements TaskService {
         List<DailyIndex> dailyIndexList = stockService.getDailyIndexListByDate(date);
         List<Integer> stockIdList = dailyIndexList.stream().map(DailyIndex::getStockInfoId).collect(Collectors.toList());
 
-        final String currentDateStr = DateFormatUtils.format(date, "yyyy-MM-dd");
+        list = list.stream().filter(v -> !stockIdList.contains(v.getId())).collect(Collectors.toList());
+
+        final int tCount = 500;
+        ArrayList<String> stockCodeList = new ArrayList<>(tCount);
         for (StockInfo stockInfo : list) {
-            if (stockIdList.contains(stockInfo.getId())) {
-                continue;
-            }
-            DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(stockInfo.getFullCode());
-            if (dailyIndex != null
-                    && DecimalUtil.bg(dailyIndex.getOpeningPrice(), BigDecimal.ZERO)
-                    && dailyIndex.getTradingVolume() > 0
-                    && DecimalUtil.bg(dailyIndex.getTradingValue(), BigDecimal.ZERO)
-                    && currentDateStr.equals(DateFormatUtils.format(dailyIndex.getDate(), "yyyy-MM-dd"))) {
-                dailyIndex.setStockInfoId(stockInfo.getId());
-                stockService.saveDailyIndex(dailyIndex);
+            stockCodeList.add(stockInfo.getFullCode());
+            if (stockCodeList.size() == tCount) {
+                saveDailyIndex(stockCodeList, list);
+                stockCodeList.clear();
             }
         }
+
+        if (!stockCodeList.isEmpty()) {
+            saveDailyIndex(stockCodeList, list);
+        }
+    }
+
+    private void saveDailyIndex(ArrayList<String> stockCodeList, List<StockInfo> stockList) {
+        final String currentDateStr = DateFormatUtils.format(new Date(), "yyyy-MM-dd");
+        List<DailyIndex> dailyIndexList = stockCrawlerService.getDailyIndex(stockCodeList);
+
+        dailyIndexList = dailyIndexList.stream().filter(dailyIndex ->
+            DecimalUtil.bg(dailyIndex.getOpeningPrice(), BigDecimal.ZERO)
+            && dailyIndex.getTradingVolume() > 0
+            && DecimalUtil.bg(dailyIndex.getTradingValue(), BigDecimal.ZERO)
+            && currentDateStr.equals(DateFormatUtils.format(dailyIndex.getDate(), "yyyy-MM-dd"))
+        ).peek(dailyIndex -> {
+            StockInfo stockInfo = stockList.stream().filter(s -> dailyIndex.getCode().equals(s.getFullCode())).findAny().orElse(null);
+            dailyIndex.setStockInfoId(stockInfo.getId());
+        }).collect(Collectors.toList());
+
+        stockService.saveDailyIndex(dailyIndexList);
     }
 
     private void runTicker() {
@@ -247,6 +264,7 @@ public class TaskServiceImpl implements TaskService {
         List<String> codeList = selectList.stream().map(v -> StockUtil.getFullCode(v.getCode())).collect(Collectors.toList());
         List<DailyIndex> dailyIndexList = stockCrawlerService.getDailyIndex(codeList);
 
+        StringBuilder sb = new StringBuilder();
         for (StockSelected stockSelected : selectList) {
             String code = stockSelected.getCode();
             DailyIndex dailyIndex = dailyIndexList.stream().filter(d -> d.getCode().contains(stockSelected.getCode())).findAny().orElse(null);
@@ -263,14 +281,19 @@ public class TaskServiceImpl implements TaskService {
                         dailyIndex.getClosingPrice().doubleValue(),
                         StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
                                 dailyIndex.getPreClosingPrice()).movePointRight(2).doubleValue());
-                    messageServicve.send(body);
+                    sb.append(body + "\n");
                 }
             } else {
                 lastPriceMap.put(code, dailyIndex.getPreClosingPrice());
                 String name = stockService.getStockByFullCode(StockUtil.getFullCode(code)).getName();
                 String body = String.format("%s:当前价格:%.02f", name, dailyIndex.getClosingPrice().doubleValue());
-                messageServicve.send(body);
+                sb.append(body + "\n");
             }
+        }
+
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 1);
+            messageServicve.send(sb.toString());
         }
     }
 
@@ -345,7 +368,7 @@ public class TaskServiceImpl implements TaskService {
         GetCanBuyNewStockListV3Response getCanBuyResponse = getCanBuyResultVo.getData().get(0);
 
         List<SubmitData> newStockList = getCanBuyResponse.getNewStockList().stream().map(newStock -> {
-            NewQuotaInfo newQuotaInfo = getCanBuyResponse.getNewQuota().stream().filter(v -> v.getMarket().equals(newStock.getMarket())).findAny().orElseGet(null);
+            NewQuotaInfo newQuotaInfo = getCanBuyResponse.getNewQuota().stream().filter(v -> v.getMarket().equals(newStock.getMarket())).findAny().orElse(null);
             SubmitData submitData = new SubmitData();
 
             submitData.setAmount(Integer.min(Integer.parseInt(newStock.getKsgsx()), Integer.parseInt(newQuotaInfo.getKsgsz())));
