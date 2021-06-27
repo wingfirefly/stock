@@ -59,10 +59,11 @@ public class TradeController extends BaseController {
     private StockSelectedService stockSelectedService;
 
     @PostMapping("login")
-    public CommonResponse login(int userId, String password, String identifyCode) {
+    public CommonResponse login(int userId, String password, String identifyCode, String randNum) {
         AuthenticationRequest request = new AuthenticationRequest(userId);
         request.setPassword(password);
         request.setIdentifyCode(identifyCode);
+        request.setRandNumber(randNum);
 
         TradeResultVo<AuthenticationResponse> resultVo = tradeApiService.authentication(request);
         if (resultVo.isSuccess()) {

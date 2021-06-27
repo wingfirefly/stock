@@ -23,9 +23,13 @@
   <script type="text/javascript">
     pageConfiguration.needAuth = true;
 
+    var randNum = '0.903' + new Date().getTime();
+
     function onload() {
       renderTradeMenu(1);
+
       var loginForm = $('#login-form');
+      $('input[name="randNum"]', loginForm).val(randNum)
       loginForm.on('submit', function() {
         $.ajax({
           url: GlobalConfig.serverUrl + '/api/trade/login',
@@ -55,7 +59,7 @@
 
     function reloadVerifiCode() {
         var img = $('#img-verifi-code');
-        img.attr('src', 'https://jywg.18.cn/Login/YZM?randNum=0.9033461201665647&_ra=' + Math.random());
+        img.attr('src', 'https://jywg.18.cn/Login/YZM?randNum=' + randNum + '&_ra=' + Math.random());
     }
 
   </script>
@@ -85,6 +89,7 @@
                 </div>
                 <div class="form-group">
                   <div class="label" data-key="phone_email">验证码</div>
+                  <input name="randNum" type="hidden" />
                   <input name="identifyCode" type="text" class="txt_input" required="required" pattern="[0-9_]{4}"  maxlength="4" placeholder="验证码" autocomplete="off" />
                 </div>
                 <div class="form-group">
