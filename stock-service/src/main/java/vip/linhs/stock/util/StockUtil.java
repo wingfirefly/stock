@@ -19,7 +19,7 @@ public class StockUtil {
 
     private static final List<String> CODES_SH_A = Arrays.asList("600", "601", "603", "605", "688", "689");
     private static final List<String> CODES_SH_INDEX = Arrays.asList("000001");
-    private static final List<String> CODES_SH_ETF = Arrays.asList("51", "58");
+    private static final List<String> CODES_SH_ETF = Arrays.asList("51", "56", "58");
 
     private static final List<String> CODES_SZ_A = Arrays.asList("000", "001", "002", "003", "004", "300", "301");
     private static final List<String> CODES_SZ_INDEX = Arrays.asList("399001", "399006");
