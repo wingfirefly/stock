@@ -25,7 +25,9 @@ public class DailyIndexParser {
             c = c.trim();
             if (c.length() > 0) {
                 DailyIndex dailyIndex = parseDailyIndex(c);
-                list.add(dailyIndex);
+                if (dailyIndex != null) {
+                    list.add(dailyIndex);
+                }
             }
         }
         return list;
