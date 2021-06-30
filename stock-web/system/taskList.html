@@ -77,7 +77,7 @@
                 if (!row.completeTime) {
                   return '';
                 }
-                return new Date(row.startTime).format('yyyy-MM-dd hh:mm');
+                return new Date(row.startTime).format('yyyy-MM-dd hh:mm:ss');
               }
             },
             {
@@ -86,7 +86,7 @@
                 if (!row.completeTime) {
                   return '';
                 }
-                return new Date(row.completeTime).format('yyyy-MM-dd hh:mm');
+                return new Date(row.completeTime).format('yyyy-MM-dd hh:mm:ss');
               }
             },
             {
