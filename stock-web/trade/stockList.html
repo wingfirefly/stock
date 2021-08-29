@@ -147,6 +147,9 @@
       }
 
       $('#btn-submit-trade').on('click', function() {
+        $('#btn-submit-trade').addClass('disabled');
+        $('#submit-modal .span-message').text('');
+
         var stockName = $('#submit-modal input[name="stockName"]').val();
         var amount = $('#submit-modal input[name="amount"]').val();
         var price = $('#submit-modal input[name="price"]').val();
@@ -157,9 +160,6 @@
         if (tradeType === 'S') {
           url = GlobalConfig.serverUrl + '/api/trade/sale';
         }
-
-        $('#btn-submit-trade').addClass('disabled');
-        $('#submit-modal .span-message').text('');
 
         $.ajax({
           url: url,

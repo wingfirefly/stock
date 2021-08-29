@@ -157,7 +157,7 @@ public class TradeApiServiceTest {
             submitData.setStockName(newStock.getZqmc());
             submitData.setTradeType(SubmitRequest.B);
             return submitData;
-       }).collect(Collectors.toList());
+        }).collect(Collectors.toList());
 
         TradeResultVo<GetConvertibleBondListV2Response> getConvertibleBondResultVo = getGetConvertibleBondListV2ResultVo();
         System.out.println(JSON.toJSONString(getConvertibleBondResultVo));
@@ -173,7 +173,7 @@ public class TradeApiServiceTest {
             submitData.setStockName(convertibleBond.getBONDNAME());
             submitData.setTradeType(SubmitRequest.B);
             return submitData;
-       }).collect(Collectors.toList());
+        }).collect(Collectors.toList());
 
         newStockList.addAll(convertibleBondList);
 

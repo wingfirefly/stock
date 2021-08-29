@@ -13,6 +13,14 @@ spring:
     timeout: 1000
     database: 0
 
+ocr:
+  service: chaojiyingOcrService
+  third:
+    chaojiying:
+      user: 
+      pass: 
+      softid: 
+
 logging:
   file:
     name: /logs/stock-service.log

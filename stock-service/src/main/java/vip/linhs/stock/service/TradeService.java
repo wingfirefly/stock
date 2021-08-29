@@ -1,17 +1,10 @@
 package vip.linhs.stock.service;
 
-import java.util.Date;
-import java.util.List;
-
 import vip.linhs.stock.api.response.GetDealDataResponse;
 import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
-import vip.linhs.stock.model.po.StockSelected;
-import vip.linhs.stock.model.po.TradeDeal;
-import vip.linhs.stock.model.po.TradeMethod;
-import vip.linhs.stock.model.po.TradeOrder;
-import vip.linhs.stock.model.po.TradeUser;
+import vip.linhs.stock.model.po.*;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.trade.DealVo;
@@ -19,11 +12,14 @@ import vip.linhs.stock.model.vo.trade.OrderVo;
 import vip.linhs.stock.model.vo.trade.StockVo;
 import vip.linhs.stock.model.vo.trade.TradeRuleVo;
 
+import java.util.Date;
+import java.util.List;
+
 public interface TradeService {
 
     TradeMethod getTradeMethodByName(String name);
 
-    TradeUser getTradeById(int id);
+    TradeUser getTradeUserById(int id);
 
     void updateTradeUser(TradeUser tradeUser);
 

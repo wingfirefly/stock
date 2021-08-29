@@ -1,29 +1,28 @@
 package vip.linhs.stock.util;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.alibaba.fastjson.JSON;
 import org.apache.http.Consts;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.web.client.ResourceAccessException;
 
-import com.alibaba.fastjson.JSON;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class HttpUtil {
 
     private HttpUtil() {
+    }
+
+    public static CloseableHttpResponse sendGetResponse(CloseableHttpClient httpClient, String url) throws IOException {
+        return httpClient.execute(new HttpGet(url));
     }
 
     public static String sendGet(CloseableHttpClient httpClient, String url) {

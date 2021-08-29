@@ -1,14 +1,10 @@
 package vip.linhs.stock.scheduled;
 
-import java.util.Date;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import vip.linhs.stock.api.TradeResultVo;
 import vip.linhs.stock.api.request.GetAssetsRequest;
 import vip.linhs.stock.api.response.GetAssetsResponse;
@@ -17,6 +13,10 @@ import vip.linhs.stock.model.po.Task;
 import vip.linhs.stock.service.HolidayCalendarService;
 import vip.linhs.stock.service.TaskService;
 import vip.linhs.stock.service.TradeApiService;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class ScheduledTasks {
@@ -46,19 +46,6 @@ public class ScheduledTasks {
     }
 
     /**
-     * end of year
-     */
-    @Scheduled(cron = "0 0 23 31 12 ?")
-    public void runEndOfYear() {
-        try {
-            List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.EndOfYear.getId());
-            executeTask(list);
-        } catch (Exception e) {
-            logger.error("task runEndOfYear error", e);
-        }
-    }
-
-    /**
      * begin of day
      */
     @Scheduled(cron = "0 0 6 ? * MON-FRI")
@@ -76,23 +63,6 @@ public class ScheduledTasks {
     }
 
     /**
-     * end of day
-     */
-    @Scheduled(cron = "0 0 22 ? * MON-FRI")
-    public void runEndOfDay() {
-        boolean isBusinessTime = holidayCalendarService.isBusinessDate(new Date());
-        if (!isBusinessTime) {
-            return;
-        }
-        try {
-            List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.EndOfDay.getId());
-            executeTask(list);
-        } catch (Exception e) {
-            logger.error("task runEndOfDay error", e);
-        }
-    }
-
-    /**
      * update of stock
      */
     @Scheduled(cron = "0 0 9 ? * MON-FRI")
@@ -102,8 +72,7 @@ public class ScheduledTasks {
             return;
         }
         try {
-            List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.UpdateOfStock.getId(),
-                    Task.UpdateOfStockState.getId());
+            List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.UpdateOfStock.getId());
             executeTask(list);
         } catch (Exception e) {
             logger.error("task runUpdateOfStock error", e);
@@ -171,13 +140,25 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 0,20,40 * ? * MON-FRI")
     public void heartbeat() {
-        boolean isBusinessTime = holidayCalendarService.isBusinessDate(new Date());
-        if (!isBusinessTime) {
+        boolean isBusinessDate = holidayCalendarService.isBusinessDate(new Date());
+        if (!isBusinessDate) {
             return;
         }
         TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(new GetAssetsRequest(1));
         if (!tradeResultVo.isSuccess()) {
             logger.error("heartbeat: {}", tradeResultVo.getMessage());
+            Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            if (hour == 8 || hour == 12) {
+                try {
+                    List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.AutoLogin.getId());
+                    executeTask(list);
+                    logger.info("aotu login");
+                } catch (Exception e) {
+                    logger.error("task AutoLogin error", e);
+                }
+            }
+
         }
     }
 

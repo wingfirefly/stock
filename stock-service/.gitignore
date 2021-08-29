@@ -7,3 +7,6 @@
 /.settings/
 /*.iml
 /out/
+/gradle/
+/gradlew
+/gradlew.bat

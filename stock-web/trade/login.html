@@ -23,10 +23,25 @@
   <script type="text/javascript">
     pageConfiguration.needAuth = true;
 
+    var verifyUrl;
     var randNum = '0.903' + new Date().getTime();
 
     function onload() {
       renderTradeMenu(1);
+
+      $.ajax({
+        url: GlobalConfig.serverUrl + '/api/trade/queryVerifyCodeUrl',
+        type: 'GET',
+        headers: getRequestHeaders(),
+        error: function(xhr) {
+          var message = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'error';
+          $('.error-message', loginForm).text(message);
+        },
+        success: function(result) {
+          verifyUrl = result.message;
+          reloadVerifyCode();
+        }
+      });
 
       var loginForm = $('#login-form');
       $('input[name="randNum"]', loginForm).val(randNum)
@@ -43,23 +58,22 @@
           success: function(result) {
             $('.error-message', loginForm).text(result.message);
             if (result.message !== 'success') {
-              reloadVerifiCode();
+              reloadVerifyCode();
             }
           }
         });
         return false;
       });
 
-      $('#img-verifi-code').on('click', function() {
-        reloadVerifiCode();
+      $('#img-verify-code').on('click', function() {
+        reloadVerifyCode();
       });
 
-      reloadVerifiCode();
     }
 
-    function reloadVerifiCode() {
-        var img = $('#img-verifi-code');
-        img.attr('src', 'https://jywg.18.cn/Login/YZM?randNum=' + randNum + '&_ra=' + Math.random());
+    function reloadVerifyCode() {
+        var img = $('#img-verify-code');
+        img.attr('src', verifyUrl + randNum + '&_ra=' + Math.random());
     }
 
   </script>
@@ -93,8 +107,8 @@
                   <input name="identifyCode" type="text" class="txt_input" required="required" pattern="[0-9_]{4}"  maxlength="4" placeholder="验证码" autocomplete="off" />
                 </div>
                 <div class="form-group">
-                  <div class="g-verifi-code">
-                    <img id="img-verifi-code" />
+                  <div class="g-verify-code">
+                    <img id="img-verify-code" />
                     <span>点击图片刷新验证码</span>
                   </div>
                 </div>
