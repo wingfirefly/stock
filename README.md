@@ -3,6 +3,10 @@
 ## 升级日志
 ### 升级只针对以前已经部署的朋友, 新来的朋友直接按最新步骤来就行
 
+2021-08-29
+- 任务优化
+- 自动登录
+
 2021-06-25
 - 优化请求行情方法
 
@@ -97,5 +101,5 @@ docker-compose up -d --build
 ------------
 
 ## 有什么问题和建议或者好的交易策略欢迎进群交流, 币的交易也可以,
-[点击查看微信群二维码](http://qy9qjznkq.hn-bkt.clouddn.com/wechat.jpg)
+[点击查看微信群二维码](http://qylmezjpg.hn-bkt.clouddn.com/wechat.jpg)
 二维码过期可以在issue里通知我更新

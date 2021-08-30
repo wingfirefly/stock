@@ -1,19 +1,14 @@
 package vip.linhs.stock.parser.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-
 import com.alibaba.fastjson.JSON;
-
-import vip.linhs.stock.exception.ServiceException;
+import org.springframework.stereotype.Component;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.parser.StockInfoParser;
 import vip.linhs.stock.util.StockConsts;
-import vip.linhs.stock.util.StockConsts.StockState;
 import vip.linhs.stock.util.StockUtil;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component("eastmoneyStockInfoParser")
 public class EastmoneyStockInfoParserImpl implements StockInfoParser {
@@ -51,12 +46,6 @@ public class EastmoneyStockInfoParserImpl implements StockInfoParser {
             stockInfo.setType(type);
             return stockInfo;
         }).collect(Collectors.toList());
-    }
-
-    @Override
-    public StockState parseStockState(String content) {
-        Assert.notNull("'content' must not be null", content);
-        throw new ServiceException("Not yet implemented");
     }
 
     public static class StockResultVo {

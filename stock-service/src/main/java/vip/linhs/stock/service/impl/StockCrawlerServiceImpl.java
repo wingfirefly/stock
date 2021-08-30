@@ -1,23 +1,21 @@
 package vip.linhs.stock.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
 import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.parser.DailyIndexParser;
 import vip.linhs.stock.parser.StockInfoParser;
 import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.util.HttpUtil;
-import vip.linhs.stock.util.StockConsts.StockState;
 import vip.linhs.stock.util.StockUtil;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StockCrawlerServiceImpl implements StockCrawlerService {
@@ -48,17 +46,6 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
             return list;
         }
         return Collections.emptyList();
-    }
-
-    @Override
-    public StockState getStockState(String code) {
-        String content = HttpUtil.sendGet(httpClient,
-                "http://quote.eastmoney.com/" + StockUtil.getFullCode(code) + ".html", "gb2312");
-        if (content != null) {
-            return stockInfoParser.parseStockState(content);
-        }
-
-        return null;
     }
 
     @Override

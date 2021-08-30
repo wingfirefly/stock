@@ -1,36 +1,16 @@
 package vip.linhs.stock.service.impl;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
 import vip.linhs.stock.api.response.GetDealDataResponse;
 import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
-import vip.linhs.stock.dao.TradeDealDao;
-import vip.linhs.stock.dao.TradeMethodDao;
-import vip.linhs.stock.dao.TradeOrderDao;
-import vip.linhs.stock.dao.TradeRuleDao;
-import vip.linhs.stock.dao.TradeStrategyDao;
-import vip.linhs.stock.dao.TradeUserDao;
-import vip.linhs.stock.model.po.DailyIndex;
-import vip.linhs.stock.model.po.StockInfo;
-import vip.linhs.stock.model.po.StockSelected;
-import vip.linhs.stock.model.po.TradeDeal;
-import vip.linhs.stock.model.po.TradeMethod;
-import vip.linhs.stock.model.po.TradeOrder;
-import vip.linhs.stock.model.po.TradeRule;
-import vip.linhs.stock.model.po.TradeStrategy;
-import vip.linhs.stock.model.po.TradeUser;
+import vip.linhs.stock.dao.*;
+import vip.linhs.stock.model.po.*;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.trade.DealVo;
@@ -43,6 +23,12 @@ import vip.linhs.stock.service.TradeService;
 import vip.linhs.stock.util.DecimalUtil;
 import vip.linhs.stock.util.StockConsts;
 import vip.linhs.stock.util.StockUtil;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TradeServiceImpl implements TradeService {
@@ -71,7 +57,7 @@ public class TradeServiceImpl implements TradeService {
     @Autowired
     private StockCrawlerService stockCrawlerService;
 
-    @Cacheable(value = StockConsts.CACHE_KEY_TRADE_METHOD, key = "#name")
+    @Cacheable(value = StockConsts.CACHE_KEY_TRADE_METHOD, key = "#name", unless="#result == null")
     @Override
     public TradeMethod getTradeMethodByName(String name) {
         return tradeMethodDao.getByName(name);
@@ -79,8 +65,11 @@ public class TradeServiceImpl implements TradeService {
 
     @Cacheable(value = StockConsts.CACHE_KEY_TRADE_USER, key = "#id", unless="#result == null")
     @Override
-    public TradeUser getTradeById(int id) {
-        return tradeUserDao.getById(id);
+    public TradeUser getTradeUserById(int id) {
+        TradeUser tradeUser = tradeUserDao.getById(id);
+        if (tradeUser != null && "资金账号".equals(tradeUser.getAccountId()))
+            return null;
+        return tradeUser;
     }
 
     @CacheEvict(value = StockConsts.CACHE_KEY_TRADE_USER, key = "#tradeUser.id")

@@ -17,6 +17,8 @@ public class TradeRule extends BaseModel {
     private BigDecimal openPrice;
     private BigDecimal highestPrice;
     private BigDecimal lowestPrice;
+    private BigDecimal highestVolume;
+    private BigDecimal lowestVolume;
     private int state;
     private String description;
 
@@ -90,6 +92,22 @@ public class TradeRule extends BaseModel {
 
     public void setLowestPrice(BigDecimal lowestPrice) {
         this.lowestPrice = lowestPrice;
+    }
+
+    public BigDecimal getHighestVolume() {
+        return highestVolume;
+    }
+
+    public void setHighestVolume(BigDecimal highestVolume) {
+        this.highestVolume = highestVolume;
+    }
+
+    public BigDecimal getLowestVolume() {
+        return lowestVolume;
+    }
+
+    public void setLowestVolume(BigDecimal lowestVolume) {
+        this.lowestVolume = lowestVolume;
     }
 
     public int getState() {

@@ -1,63 +1,34 @@
 package vip.linhs.stock.service.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import vip.linhs.stock.api.TradeResultVo;
-import vip.linhs.stock.api.request.GetCanBuyNewStockListV3Request;
-import vip.linhs.stock.api.request.GetConvertibleBondListV2Request;
-import vip.linhs.stock.api.request.GetDealDataRequest;
-import vip.linhs.stock.api.request.GetOrdersDataRequest;
-import vip.linhs.stock.api.request.SubmitBatTradeV2Request;
+import vip.linhs.stock.api.request.*;
 import vip.linhs.stock.api.request.SubmitBatTradeV2Request.SubmitData;
-import vip.linhs.stock.api.request.SubmitRequest;
-import vip.linhs.stock.api.response.GetCanBuyNewStockListV3Response;
+import vip.linhs.stock.api.response.*;
 import vip.linhs.stock.api.response.GetCanBuyNewStockListV3Response.NewQuotaInfo;
-import vip.linhs.stock.api.response.GetConvertibleBondListV2Response;
-import vip.linhs.stock.api.response.GetDealDataResponse;
-import vip.linhs.stock.api.response.GetOrdersDataResponse;
-import vip.linhs.stock.api.response.SubmitBatTradeV2Response;
 import vip.linhs.stock.config.SpringUtil;
 import vip.linhs.stock.dao.ExecuteInfoDao;
-import vip.linhs.stock.exception.ServiceException;
-import vip.linhs.stock.model.po.DailyIndex;
-import vip.linhs.stock.model.po.ExecuteInfo;
-import vip.linhs.stock.model.po.StockInfo;
-import vip.linhs.stock.model.po.StockLog;
-import vip.linhs.stock.model.po.StockSelected;
-import vip.linhs.stock.model.po.Task;
-import vip.linhs.stock.model.po.TradeDeal;
+import vip.linhs.stock.model.po.*;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.TaskVo;
 import vip.linhs.stock.model.vo.trade.TradeRuleVo;
-import vip.linhs.stock.service.HolidayCalendarService;
-import vip.linhs.stock.service.MessageService;
-import vip.linhs.stock.service.StockCrawlerService;
-import vip.linhs.stock.service.StockSelectedService;
-import vip.linhs.stock.service.StockService;
-import vip.linhs.stock.service.SystemConfigService;
-import vip.linhs.stock.service.TaskService;
-import vip.linhs.stock.service.TradeApiService;
-import vip.linhs.stock.service.TradeService;
+import vip.linhs.stock.service.*;
 import vip.linhs.stock.trategy.handle.StrategyHandler;
 import vip.linhs.stock.util.DecimalUtil;
 import vip.linhs.stock.util.StockConsts;
 import vip.linhs.stock.util.StockUtil;
 import vip.linhs.stock.util.TradeUtil;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -65,6 +36,9 @@ public class TaskServiceImpl implements TaskService {
     private final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
 
     private Map<String, BigDecimal> lastPriceMap = new HashMap<>();
+
+    @Value("${ocr.service}")
+    private String ocrServiceName;
 
     @Autowired
     private HolidayCalendarService holidayCalendarService;
@@ -109,18 +83,11 @@ public class TaskServiceImpl implements TaskService {
             case BeginOfYear:
                 holidayCalendarService.updateCurrentYear();
                 break;
-            case EndOfYear:
-                break;
             case BeginOfDay:
                 lastPriceMap.clear();
                 break;
-            case EndOfDay:
-                break;
             case UpdateOfStock:
                 runUpdateOfStock();
-                break;
-            case UpdateOfStockState:
-                runUpdateOfStockState();
                 break;
             case UpdateOfDailyIndex:
                 runUpdateOfDailyIndex();
@@ -133,6 +100,10 @@ public class TaskServiceImpl implements TaskService {
                 break;
             case ApplyNewStock:
                 applyNewStock();
+                break;
+            case AutoLogin:
+                autoLogin();
+                break;
             default:
                 break;
             }
@@ -146,6 +117,35 @@ public class TaskServiceImpl implements TaskService {
 
         executeInfo.setCompleteTime(new Date());
         executeInfoDao.update(executeInfo);
+    }
+
+    private void autoLogin() {
+        final int userId = 1;
+        TradeUser tradeUser = tradeService.getTradeUserById(userId);
+        TradeMethod tradeMethod = tradeService.getTradeMethodByName(BaseTradeRequest.TradeRequestMethod.YZM.value());
+
+        String randNum = "0.903" + new Date().getTime();
+        String yzmUrl = tradeMethod.getUrl() + randNum;
+
+        OcrService ocrService = SpringUtil.getBean(ocrServiceName, OcrService.class);
+        String identifyCode = ocrService.process(yzmUrl);
+
+        AuthenticationRequest request = new AuthenticationRequest(tradeUser.getId());
+        request.setIdentifyCode(identifyCode);
+        request.setRandNumber(randNum);
+        request.setPassword(tradeUser.getPassword());
+
+        TradeResultVo<AuthenticationResponse> resultVo = tradeApiService.authentication(request);
+        if (resultVo.isSuccess()) {
+            AuthenticationResponse response = resultVo.getData().get(0);
+            tradeUser.setCookie(response.getCookie());
+            tradeUser.setValidateKey(response.getValidateKey());
+            tradeService.updateTradeUser(tradeUser);
+        } else {
+            logger.error("auto login {} {}", request, resultVo.getMessage());
+            throw new RuntimeException("auto login failed");
+        }
+
     }
 
     private void runUpdateOfStock() {
@@ -191,28 +191,6 @@ public class TaskServiceImpl implements TaskService {
         }
 
         stockService.update(needAddedList, needUpdatedList, stockLogList);
-    }
-
-    private void runUpdateOfStockState() {
-        List<StockInfo> list = stockService.getAllListed();
-
-        for (StockInfo stockInfo : list) {
-            StockConsts.StockState state = stockCrawlerService.getStockState(stockInfo.getCode());
-            if (stockInfo.getState() != state.value()) {
-                StockConsts.StockLogType stockLogType = null;
-                switch (state) {
-                case Terminated:
-                    stockLogType = StockConsts.StockLogType.Terminated;
-                    break;
-                default:
-                    throw new ServiceException("未找到状态" + state);
-                }
-                StockLog stockLog = new StockLog(stockInfo.getId(), new Date(), stockLogType.value(),
-                        String.valueOf(stockInfo.getState()), String.valueOf(state.value()));
-                stockInfo.setState(state.value());
-                stockService.update(null, Arrays.asList(stockInfo), Arrays.asList(stockLog));
-            }
-        }
     }
 
     private void runUpdateOfDailyIndex() {
@@ -378,7 +356,7 @@ public class TaskServiceImpl implements TaskService {
             submitData.setStockName(newStock.getZqmc());
             submitData.setTradeType(SubmitRequest.B);
             return submitData;
-       }).collect(Collectors.toList());
+        }).collect(Collectors.toList());
 
         if (systemConfigService.isApplyNewConvertibleBond()) {
             TradeResultVo<GetConvertibleBondListV2Response> getConvertibleBondResultVo = getGetConvertibleBondListV2ResultVo();
@@ -392,7 +370,7 @@ public class TaskServiceImpl implements TaskService {
                     submitData.setStockName(convertibleBond.getBONDNAME());
                     submitData.setTradeType(SubmitRequest.B);
                     return submitData;
-               }).collect(Collectors.toList());
+                }).collect(Collectors.toList());
 
                 newStockList.addAll(convertibleBondList);
             } else {

@@ -162,7 +162,7 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
     @Override
     public TradeResultVo<AuthenticationResponse> authentication(AuthenticationRequest request) {
         TradeMethod tradeMethod = tradeService.getTradeMethodByName(request.getMethod());
-        TradeUser tradeUser = tradeService.getTradeById(request.getUserId());
+        TradeUser tradeUser = tradeService.getTradeUserById(request.getUserId());
 
         Map<String, Object> params = getParams(request);
         params.put("userId", tradeUser.getAccountId());
@@ -216,13 +216,13 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
 
     private String getUrl(BaseTradeRequest request) {
         TradeMethod tradeMethod = tradeService.getTradeMethodByName(request.getMethod());
-        TradeUser tradeUser = tradeService.getTradeById(request.getUserId());
+        TradeUser tradeUser = tradeService.getTradeUserById(request.getUserId());
         String url = tradeMethod.getUrl();
         return url.replace("${validatekey}", tradeUser.getValidateKey()) ;
     }
 
     private Map<String, String> getHeader(BaseTradeRequest request) {
-        TradeUser tradeUser = tradeService.getTradeById(request.getUserId());
+        TradeUser tradeUser = tradeService.getTradeUserById(request.getUserId());
 
         HashMap<String, String> header = new HashMap<>();
         header.put("cookie", tradeUser.getCookie());

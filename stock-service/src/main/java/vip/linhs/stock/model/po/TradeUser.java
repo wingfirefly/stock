@@ -4,18 +4,10 @@ public class TradeUser extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 
-    private String name;
     private String accountId;
+    private String password;
     private String validateKey;
     private String cookie;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getAccountId() {
         return accountId;
@@ -23,6 +15,14 @@ public class TradeUser extends BaseModel {
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getValidateKey() {
@@ -43,7 +43,7 @@ public class TradeUser extends BaseModel {
 
     @Override
     public String toString() {
-        return "TradeUser [name=" + name + ", accountId=" + accountId + ", validateKey="
+        return "TradeUser [accountId=" + accountId + ", password=" + password + ", validateKey="
                 + validateKey + ", cookie=" + cookie + ", toString()=" + super.toString() + "]";
     }
 

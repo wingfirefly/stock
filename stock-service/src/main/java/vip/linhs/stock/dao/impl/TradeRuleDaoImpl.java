@@ -15,7 +15,7 @@ import vip.linhs.stock.util.SqlCondition;
 @Repository
 public class TradeRuleDaoImpl extends BaseDao implements TradeRuleDao {
 
-    private static final String SELECT_SQL = "select id, stock_code as stockCode, strategy_id as strategyId, user_id as userId, type, value, volume, open_price as openPrice, highest_price as highestPrice, lowest_price as lowestPrice, state, description, create_time as createTime, update_time as updateTime from trade_rule where 1 = 1";
+    private static final String SELECT_SQL = "select id, stock_code as stockCode, strategy_id as strategyId, user_id as userId, type, value, volume, open_price as openPrice, highest_price as highestPrice, lowest_price as lowestPrice, highest_volume as highestVolume, lowest_volume as lowestVolume, state, description, create_time as createTime, update_time as updateTime from trade_rule where 1 = 1";
 
     @Override
     public PageVo<TradeRule> get(PageParam pageParam) {
