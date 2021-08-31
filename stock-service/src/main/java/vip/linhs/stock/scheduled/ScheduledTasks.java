@@ -149,7 +149,7 @@ public class ScheduledTasks {
             logger.error("heartbeat: {}", tradeResultVo.getMessage());
             Calendar c = Calendar.getInstance();
             int hour = c.get(Calendar.HOUR_OF_DAY);
-            if (hour == 8 || hour == 12) {
+            if (hour == 9 || hour == 13) {
                 try {
                     List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.AutoLogin.getId());
                     executeTask(list);
