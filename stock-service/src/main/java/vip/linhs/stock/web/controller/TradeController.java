@@ -164,7 +164,12 @@ public class TradeController extends BaseController {
         request.setZqmc(stockName);
         request.setTradeType(SubmitRequest.S);
         TradeResultVo<SubmitResponse> response = tradeApiService.submit(request);
-        return CommonResponse.buildResponse(response.getMessage());
+        String message = response.getMessage();
+        if (response.isSuccess()) {
+            message = response.getData().get(0).getWtbh();
+        }
+
+        return CommonResponse.buildResponse(message);
     }
 
     @RequestMapping("stockList")
