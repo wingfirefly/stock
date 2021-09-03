@@ -15,7 +15,6 @@ public class SubmitRequest extends BaseTradeRequest {
     private double price;
     private int amount;
     private String zqmc = "unknow";
-    private String market;
 
     /**
      * 买卖类别

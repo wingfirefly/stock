@@ -1,10 +1,14 @@
 package vip.linhs.stock.scheduled;
 
+import java.util.Date;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
 import vip.linhs.stock.api.TradeResultVo;
 import vip.linhs.stock.api.request.GetAssetsRequest;
 import vip.linhs.stock.api.response.GetAssetsResponse;
@@ -13,10 +17,6 @@ import vip.linhs.stock.model.po.Task;
 import vip.linhs.stock.service.HolidayCalendarService;
 import vip.linhs.stock.service.TaskService;
 import vip.linhs.stock.service.TradeApiService;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 @Component
 public class ScheduledTasks {
@@ -147,9 +147,8 @@ public class ScheduledTasks {
         TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(new GetAssetsRequest(1));
         if (!tradeResultVo.isSuccess()) {
             logger.error("heartbeat: {}", tradeResultVo.getMessage());
-            Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            if (hour == 9 || hour == 13) {
+            boolean isBusinessTime = holidayCalendarService.isBusinessTime(new Date());
+            if (isBusinessTime) {
                 try {
                     List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.AutoLogin.getId());
                     executeTask(list);
