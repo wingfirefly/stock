@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import vip.linhs.stock.api.TradeResultVo;
 import vip.linhs.stock.api.request.GetAssetsRequest;
 import vip.linhs.stock.api.response.GetAssetsResponse;
+import vip.linhs.stock.exception.UnauthorizedException;
 import vip.linhs.stock.model.po.ExecuteInfo;
 import vip.linhs.stock.model.po.Task;
 import vip.linhs.stock.service.HolidayCalendarService;
@@ -144,8 +145,13 @@ public class ScheduledTasks {
         if (!isBusinessDate) {
             return;
         }
-        TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(new GetAssetsRequest(1));
-        if (!tradeResultVo.isSuccess()) {
+        TradeResultVo<GetAssetsResponse> tradeResultVo = null;
+        try {
+            tradeResultVo = tradeApiService.getAsserts(new GetAssetsRequest(1));
+        } catch (UnauthorizedException e) {
+            logger.error("Unauthorized", e);
+        }
+        if (tradeResultVo == null || !tradeResultVo.isSuccess()) {
             logger.error("heartbeat: {}", tradeResultVo.getMessage());
             boolean isBusinessTime = holidayCalendarService.isBusinessTime(new Date());
             if (isBusinessTime) {
