@@ -152,13 +152,15 @@ public class ScheduledTasks {
             logger.error("Unauthorized", e);
         }
         if (tradeResultVo == null || !tradeResultVo.isSuccess()) {
-            logger.error("heartbeat: {}", tradeResultVo.getMessage());
+            if (tradeResultVo != null) {
+                logger.error("heartbeat: {}", tradeResultVo.getMessage());
+            }
             boolean isBusinessTime = holidayCalendarService.isBusinessTime(new Date());
             if (isBusinessTime) {
                 try {
                     List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.AutoLogin.getId());
                     executeTask(list);
-                    logger.info("aotu login");
+                    logger.info("auto login");
                 } catch (Exception e) {
                     logger.error("task AutoLogin error", e);
                 }
