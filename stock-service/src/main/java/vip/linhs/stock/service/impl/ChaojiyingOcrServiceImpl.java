@@ -29,7 +29,7 @@ public class ChaojiyingOcrServiceImpl extends AbstractOcrService {
 
     @Override
     protected String processBase64(String base64) {
-        Map<String, Object> params = new HashMap<>();
+        HashMap<String, Object> params = new HashMap<>();
         params.put("user", user);
         params.put("pass", pass);
         params.put("softid", softid);

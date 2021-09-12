@@ -14,12 +14,14 @@ spring:
     database: 0
 
 ocr:
-  service: chaojiyingOcrService
+  service: aliyunOcrService
   third:
+    aliyun:
+      appcode:
     chaojiying:
-      user: 
-      pass: 
-      softid: 0
+      user:
+      pass:
+      softid: 000000
 
 logging:
   file:
