@@ -103,5 +103,5 @@ docker-compose up -d --build
 ------------
 
 ## 有什么问题和建议或者好的交易策略欢迎进群交流
-[点击查看微信群二维码](http://r06eb4ksw.hd-bkt.clouddn.com/wechat.jpg)
+[点击查看微信群二维码](http://r1o0kp8tr.hd-bkt.clouddn.com/wechat.jpg)
 二维码过期可以在issue里通知我更新, 或者晚点再来
