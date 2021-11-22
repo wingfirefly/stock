@@ -25,10 +25,14 @@ public class StockUtil {
     private static final List<String> CODES_SZ_INDEX = Arrays.asList("399001", "399006");
     private static final List<String> CODES_SZ_ETF = Arrays.asList("15");
 
+    private static final List<String> CODES_BJ_A = Arrays.asList("83", "87", "43");
+    private static final List<String> CODES_BJ_INDEX = Arrays.asList();
+    private static final List<String> CODES_BJ_ETF = Arrays.asList();
+
     private StockUtil() {
     }
 
-    private static String getExchange(String code) {
+    public static String getExchange(String code) {
         if (!StringUtils.hasLength(code)) {
             return null;
         }
@@ -37,6 +41,9 @@ public class StockUtil {
         }
         if (isCodeStart(code, CODES_SZ_A, CODES_SZ_ETF)) {
             return Exchange.SZ.getName();
+        }
+        if (isCodeStart(code, CODES_BJ_A, CODES_BJ_ETF)) {
+            return Exchange.BJ.getName();
         }
         return null;
     }
@@ -60,15 +67,20 @@ public class StockUtil {
             if (CODES_SH_INDEX.contains(code)) {
                 return StockType.Index.value();
             }
-        } else {
+        } else if (StockConsts.Exchange.valueOfName(exchange).isSz()) {
             if (CODES_SZ_INDEX.contains(code)) {
                 return StockType.Index.value();
             }
+        } else {
+            if (CODES_BJ_INDEX.contains(code)) {
+                return StockType.Index.value();
+            }
         }
-        if (isCodeStart(code, CODES_SH_A, CODES_SZ_A)) {
+
+        if (isCodeStart(code, CODES_SH_A, CODES_SZ_A, CODES_BJ_A)) {
             return StockType.A.value();
         }
-        if (isCodeStart(code, CODES_SH_ETF, CODES_SZ_ETF)) {
+        if (isCodeStart(code, CODES_SH_ETF, CODES_SZ_ETF, CODES_BJ_ETF)) {
             return StockType.ETF.value();
         }
         throw new NoSuchElementException("no stock type exchange " + exchange + ", code " + code);
@@ -121,6 +133,10 @@ public class StockUtil {
 
     private static boolean isCodeStart(String code, List<String> list01, List<String> list02) {
         return isCodeStart(code, list01) || isCodeStart(code, list02);
+    }
+
+    private static boolean isCodeStart(String code, List<String> list01, List<String> list02, List<String> list03) {
+        return isCodeStart(code, list01, list02) || isCodeStart(code, list03);
     }
 
 }

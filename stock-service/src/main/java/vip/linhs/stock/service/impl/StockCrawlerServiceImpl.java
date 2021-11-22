@@ -33,7 +33,7 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
     @Override
     public List<StockInfo> getStockList() {
         ArrayList<StockInfo> list = new ArrayList<>();
-        list.addAll(getStockList("m:0+t:6,m:0+t:13,m:0+t:80,m:1+t:2,m:1+t:23,b:MK0021,b:MK0022,b:MK0023,b:MK0024"));
+        list.addAll(getStockList("m:0+t:6,m:0+t:13,m:0+t:81+s:2048,m:1+t:2,m:1+t:23,b:MK0021,b:MK0022,b:MK0023,b:MK0024"));
         return list;
     }
 

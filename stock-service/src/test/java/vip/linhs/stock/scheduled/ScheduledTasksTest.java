@@ -35,4 +35,9 @@ public class ScheduledTasksTest {
         scheduledTasks.applyNewStock();
     }
 
+    @Test
+    public void testHeartbeat() {
+        scheduledTasks.heartbeat();
+    }
+
 }

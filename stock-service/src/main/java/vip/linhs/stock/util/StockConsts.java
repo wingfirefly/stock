@@ -27,7 +27,7 @@ public class StockConsts {
     public static final long DURATION_REDIS_DEFAULT = 3600 * 24 * 2;
 
     public enum Exchange {
-        SH("sh"), SZ("sz");
+        SH("sh"), SZ("sz"), BJ("bj");
         private String name;
 
         private Exchange(String name) {
@@ -39,11 +39,15 @@ public class StockConsts {
         }
 
         public boolean isSh() {
-            return name.equals("sh");
+            return name.equals(Exchange.SH.name);
         }
 
         public boolean isSz() {
-            return name.equals("sh");
+            return name.equals(Exchange.SZ.name);
+        }
+
+        public boolean isBj() {
+            return name.equals(Exchange.BJ.name);
         }
 
         public static Exchange valueOfName(String name) {

@@ -36,12 +36,14 @@ public class EastmoneyStockInfoParserImpl implements StockInfoParser {
 
         // {"f12":"000718","f13":0,"f14":"苏宁环球"}
         return stockResultVo.getData().getDiff().stream().map(v -> {
+            String code = v.getF12();
+
             StockInfo stockInfo = new StockInfo();
-            String exchange = v.getF13() == 0 ? StockConsts.Exchange.SZ.getName() : StockConsts.Exchange.SH.getName();
-            int type = StockUtil.getStockType(exchange, v.getF12());
+            String exchange = v.getF13() == 0 ? StockUtil.getExchange(code) : StockConsts.Exchange.SH.getName();
+            int type = StockUtil.getStockType(exchange, code);
             stockInfo.setExchange(exchange);
             stockInfo.setName(v.getF14());
-            stockInfo.setCode(v.getF12());
+            stockInfo.setCode(code);
             stockInfo.setExchange(exchange);
             stockInfo.setType(type);
             return stockInfo;
