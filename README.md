@@ -1,4 +1,7 @@
 # stock
+github: [https://github.com/bosspen1/stock](https://github.com/bosspen1/stock)
+
+码云: [https://gitee.com/bosspen1_admin/stock](https://gitee.com/bosspen1_admin/stock)
 
 ## 升级日志
 ### 升级只针对以前已经部署的朋友, 新来的朋友直接按最新步骤来就行
