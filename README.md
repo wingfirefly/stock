@@ -39,7 +39,7 @@ github: [https://github.com/bosspen1/stock](https://github.com/bosspen1/stock)
 
 
 ## 项目介绍
-本项目偏向交易, 分析和策略这块相对不足, 大部分都是拿了然后修改, 所以没打docker镜像
+本项目偏向交易, 分析和策略这块相对不足, 大部分都是拿了然后修改, 所以没制作docker镜像
 - 自动交易
  1. 股票交易接口(封装东方财富网交易, 支持a股, etf, 债券交易)
  2. 交易策略
@@ -107,5 +107,5 @@ docker-compose up -d --build
 ------------
 
 ## 有什么问题和建议或者好的交易策略欢迎进群交流
-[点击查看微信群二维码](http://r3ac77iiv.hd-bkt.clouddn.com/wechat.jpg)
+[点击查看微信群二维码](http://r4t6bgq0o.hd-bkt.clouddn.com/wechat.jpg)
 二维码过期可以在issue里通知我更新, 或者晚点再来
