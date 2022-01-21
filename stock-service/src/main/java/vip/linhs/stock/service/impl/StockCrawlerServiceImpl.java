@@ -4,6 +4,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
 import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.parser.DailyIndexParser;
@@ -13,7 +14,9 @@ import vip.linhs.stock.util.HttpUtil;
 import vip.linhs.stock.util.StockUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,17 +53,16 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
 
     @Override
     public DailyIndex getDailyIndex(String code) {
-        String content = HttpUtil.sendGet(httpClient, "http://hq.sinajs.cn/list=" + StockUtil.getFullCode(code), "gbk");
-        if (content != null) {
-            return dailyIndexParser.parseDailyIndex(content);
-        }
-        return null;
+        List<DailyIndex> dailyIndexList = getDailyIndex(Arrays.asList(code));
+        return dailyIndexList.isEmpty() ? null : dailyIndexList.get(0);
     }
 
     @Override
     public List<DailyIndex> getDailyIndex(List<String> codeList) {
-        String codes = codeList.stream().reduce((a, b) -> String.join(",", StockUtil.getFullCode(a), StockUtil.getFullCode(b))).get();
-        String content = HttpUtil.sendGet(httpClient, "http://hq.sinajs.cn/list=" + codes, "gbk");
+        String codes = codeList.stream().map(StockUtil::getFullCode).collect(Collectors.joining(","));
+        HashMap<String, String> header = new HashMap<>();
+        header.put("Referer", "https://finance.sina.com.cn/");
+        String content = HttpUtil.sendGet(httpClient, "https://hq.sinajs.cn/list=" + codes, header, "gbk");
         if (content != null) {
             return dailyIndexParser.parseDailyIndexList(content);
         }

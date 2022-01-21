@@ -1,13 +1,36 @@
 package vip.linhs.stock.web.controller;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import vip.linhs.stock.api.TradeResultVo;
-import vip.linhs.stock.api.request.*;
-import vip.linhs.stock.api.response.*;
+import vip.linhs.stock.api.request.AuthenticationRequest;
+import vip.linhs.stock.api.request.BaseTradeRequest;
+import vip.linhs.stock.api.request.GetAssetsRequest;
+import vip.linhs.stock.api.request.GetDealDataRequest;
+import vip.linhs.stock.api.request.GetHisDealDataRequest;
+import vip.linhs.stock.api.request.GetOrdersDataRequest;
+import vip.linhs.stock.api.request.GetStockListRequest;
+import vip.linhs.stock.api.request.RevokeRequest;
+import vip.linhs.stock.api.request.SubmitRequest;
+import vip.linhs.stock.api.response.AuthenticationResponse;
+import vip.linhs.stock.api.response.GetAssetsResponse;
+import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetHisDealDataResponse;
+import vip.linhs.stock.api.response.GetOrdersDataResponse;
+import vip.linhs.stock.api.response.GetStockListResponse;
+import vip.linhs.stock.api.response.RevokeResponse;
+import vip.linhs.stock.api.response.SubmitResponse;
 import vip.linhs.stock.exception.FieldInputException;
 import vip.linhs.stock.model.po.StockSelected;
 import vip.linhs.stock.model.po.TradeMethod;
@@ -23,13 +46,6 @@ import vip.linhs.stock.model.vo.trade.TradeRuleVo;
 import vip.linhs.stock.service.StockSelectedService;
 import vip.linhs.stock.service.TradeApiService;
 import vip.linhs.stock.service.TradeService;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("trade")
@@ -185,6 +201,7 @@ public class TradeController extends BaseController {
             return list.stream().noneMatch(vo -> vo.getStockCode().equals(v.getCode()));
         }).collect(Collectors.toList());
         list.addAll(tradeService.getTradeStockListBySelected(selectList));
+        list.sort((a, b) -> Integer.compare(b.getTotalVolume(), a.getTotalVolume()));
         return new PageVo<>(subList(list, pageParam), list.size());
     }
 
