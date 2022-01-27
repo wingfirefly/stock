@@ -106,7 +106,7 @@ public class TradeServiceImpl implements TradeService {
             BigDecimal rate = BigDecimal.ZERO;
             if (stockInfo.isValid()) {
                 DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(stockInfo.getCode());
-                if (DecimalUtil.bg(dailyIndex.getClosingPrice(), BigDecimal.ZERO)) {
+                if (dailyIndex != null && DecimalUtil.bg(dailyIndex.getClosingPrice(), BigDecimal.ZERO)) {
                     rate = StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
                             dailyIndex.getPreClosingPrice());
                 }

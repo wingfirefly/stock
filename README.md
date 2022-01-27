@@ -6,9 +6,6 @@ github: [https://github.com/bosspen1/stock](https://github.com/bosspen1/stock)
 ## 升级日志
 ### 升级只针对以前已经部署的朋友, 新来的朋友直接按最新步骤来就行
 
-2022-01-21
-- 修复新浪行情接口获取失败问题
-
 2021-11-24
 - 支持北交所
 
@@ -75,6 +72,8 @@ github: [https://github.com/bosspen1/stock](https://github.com/bosspen1/stock)
 <font color="red" size=8>文档和数据库表见[wiki](https://github.com/bosspen1/stock/wiki)</font>
 
 <font color="red" size=10>**注意: 把wiki clone到本地就可以看到数据库表结构和部署和升级文档!!!**</font>
+<font color="red" size=10>**注意: 把wiki clone到本地就可以看到数据库表结构和部署和升级文档!!!**</font>
+<font color="red" size=10>**注意: 把wiki clone到本地就可以看到数据库表结构和部署和升级文档!!!**</font>
 
 <font color="red" size=8>如需和github集成自动构建可以引入[deployment](https://github.com/bosspen1/deployment)</font>
 
@@ -110,5 +109,5 @@ docker-compose up -d --build
 ------------
 
 ## 有什么问题和建议或者好的交易策略欢迎进群交流
-[点击查看微信群二维码](http://r4t6bgq0o.hd-bkt.clouddn.com/wechat.jpg)
+[点击查看微信群二维码](http://r6chwr7lv.hn-bkt.clouddn.com/wechat.jpg)
 二维码过期可以在issue里通知我更新, 或者晚点再来
