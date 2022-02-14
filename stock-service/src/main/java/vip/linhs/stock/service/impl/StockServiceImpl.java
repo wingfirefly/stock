@@ -173,7 +173,7 @@ public class StockServiceImpl implements StockService {
             try (FileReader in = new FileReader(file)) {
                 String content = FileCopyUtils.copyToString(in);
                 List<DailyIndex> dailyIndexList = dailyIndexParser.parseHistoryDailyIndexList(content);
-                dailyIndexList.forEach(dailyIndex -> dailyIndex.setStockInfoId(stockInfo.getId()));
+                dailyIndexList.forEach(dailyIndex -> dailyIndex.setCode(stockInfo.getFullCode()));
                 dailyIndexDao.save(dailyIndexList);
             }
         } catch (Exception e) {

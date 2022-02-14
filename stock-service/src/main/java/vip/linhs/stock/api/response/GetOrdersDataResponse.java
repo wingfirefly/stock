@@ -2,6 +2,7 @@ package vip.linhs.stock.api.response;
 
 public class GetOrdersDataResponse {
 
+    public static final String WEIBAO = "未报";
     public static final String YIBAO = "已报";
     public static final String YICHENG = "已成";
     public static final String YICHE = "已撤";

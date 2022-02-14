@@ -24,7 +24,7 @@ import vip.linhs.stock.util.SqlCondition;
 @Repository
 public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
 
-    private static final String INSERT_SQL = "insert into daily_index(stock_info_id, date, opening_price, pre_closing_price, highest_price, closing_price, lowest_price, trading_volume, trading_value) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String INSERT_SQL = "insert into daily_index(code, date, opening_price, pre_closing_price, highest_price, closing_price, lowest_price, trading_volume, trading_value) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     @Override
     public int save(DailyIndex dailyIndex) {
@@ -47,7 +47,7 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
 
     private static void setArgument(PreparedStatement ps, DailyIndex dailyIndex)
             throws SQLException {
-        ps.setInt(1, dailyIndex.getStockInfoId());
+        ps.setString(1, dailyIndex.getCode());
         StatementCreatorUtils.setParameterValue(ps, 2, Types.DATE,
                 dailyIndex.getDate());
         ps.setBigDecimal(3, dailyIndex.getOpeningPrice());
@@ -62,11 +62,11 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
     @Override
     public PageVo<DailyIndexVo> getDailyIndexList(PageParam pageParam) {
         String sql = "select"
-            + " s.name, s.abbreviation, s.code, d.date, d.pre_closing_price as preClosingPrice,"
+            + " s.name, s.abbreviation, d.code, d.date, d.pre_closing_price as preClosingPrice,"
             + " d.closing_price as closingPrice, d.lowest_price as lowestPrice,"
             + " d.highest_price as highestPrice, d.opening_price as openingPrice,"
             + " d.trading_value as tradingValue, d.trading_volume as tradingVolume"
-            + " from daily_index d, stock_info s where d.stock_info_id = s.id";
+            + " from daily_index d, stock_info s where d.code = concat(s.exchange, s.code)";
 
         SqlCondition dataSqlCondition = new SqlCondition(sql, pageParam.getCondition());
         dataSqlCondition.addString("date", "date");
@@ -85,7 +85,7 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
     @Override
     public List<DailyIndex> getDailyIndexListByDate(Date date) {
         String sql = "select"
-            + " id, stock_info_id as stockInfoId, date, pre_closing_price as preClosingPrice,"
+            + " id, code, date, pre_closing_price as preClosingPrice,"
             + " closing_price as closingPrice, lowest_price as lowestPrice,"
             + " highest_price as highestPrice, opening_price as openingPrice,"
             + " trading_value as tradingValue, trading_volume as tradingVolume"

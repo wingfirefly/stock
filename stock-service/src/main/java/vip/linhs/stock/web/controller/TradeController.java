@@ -211,7 +211,7 @@ public class TradeController extends BaseController {
         TradeResultVo<GetOrdersDataResponse> response = tradeApiService.getOrdersData(request);
         if (response.isSuccess()) {
             List<OrderVo> list = tradeService.getTradeOrderList(response.getData());
-            list = list.stream().filter(v -> v.getState().equals(GetOrdersDataResponse.YIBAO)).collect(Collectors.toList());
+            list = list.stream().filter(v -> v.getState().equals(GetOrdersDataResponse.WEIBAO) || v.getState().equals(GetOrdersDataResponse.YIBAO)).collect(Collectors.toList());
             return new PageVo<>(subList(list, pageParam), list.size());
         }
         return new PageVo<>(Collections.emptyList(), 0);

@@ -201,9 +201,9 @@ public class TaskServiceImpl implements TaskService {
         Date date = new Date();
 
         List<DailyIndex> dailyIndexList = stockService.getDailyIndexListByDate(date);
-        List<Integer> stockIdList = dailyIndexList.stream().map(DailyIndex::getStockInfoId).collect(Collectors.toList());
+        List<String> codeList = dailyIndexList.stream().map(DailyIndex::getCode).collect(Collectors.toList());
 
-        list = list.stream().filter(v -> !stockIdList.contains(v.getId())).collect(Collectors.toList());
+        list = list.stream().filter(v -> !codeList.contains(v.getFullCode())).collect(Collectors.toList());
 
         final int tCount = 500;
         ArrayList<String> stockCodeList = new ArrayList<>(tCount);
@@ -229,10 +229,7 @@ public class TaskServiceImpl implements TaskService {
             && dailyIndex.getTradingVolume() > 0
             && DecimalUtil.bg(dailyIndex.getTradingValue(), BigDecimal.ZERO)
             && currentDateStr.equals(DateFormatUtils.format(dailyIndex.getDate(), "yyyy-MM-dd"))
-        ).peek(dailyIndex -> {
-            StockInfo stockInfo = stockList.stream().filter(s -> dailyIndex.getCode().equals(s.getFullCode())).findAny().orElse(null);
-            dailyIndex.setStockInfoId(stockInfo.getId());
-        }).collect(Collectors.toList());
+        ).collect(Collectors.toList());
 
         stockService.saveDailyIndex(dailyIndexList);
     }

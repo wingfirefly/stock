@@ -116,7 +116,7 @@
             ExceptionHandler.handleCommonError(xhr);
           },
           success: function(res) {
-            setInterval(function() {
+            setTimeout(function() {
               dataTable.fnDraw(1);
             }, 500);
           }

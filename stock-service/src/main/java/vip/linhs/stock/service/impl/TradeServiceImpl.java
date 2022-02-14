@@ -143,17 +143,22 @@ public class TradeServiceImpl implements TradeService {
             stockVo.setAvailableVolume(0);
             stockVo.setTotalVolume(0);
 
-            DailyIndex dailyIndex = dailyIndexList.stream().filter(d -> d.getCode().contains(v.getCode())).findAny().orElse(null);
-            stockVo.setPrice(dailyIndex.getClosingPrice());
             BigDecimal rate = BigDecimal.ZERO;
-            if (DecimalUtil.bg(dailyIndex.getClosingPrice(), BigDecimal.ZERO)) {
-                rate = StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
-                        dailyIndex.getPreClosingPrice());
+            BigDecimal closingPrice = BigDecimal.ZERO;
+
+            DailyIndex dailyIndex = dailyIndexList.stream().filter(d -> d.getCode().contains(v.getCode())).findAny().orElse(null);
+            if (dailyIndex != null) {
+                closingPrice = dailyIndex.getClosingPrice();
+                if (DecimalUtil.bg(dailyIndex.getClosingPrice(), BigDecimal.ZERO)) {
+                    rate = StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
+                            dailyIndex.getPreClosingPrice());
+                }
             }
 
             stockVo.setCostPrice(BigDecimal.ZERO);
             stockVo.setProfit(BigDecimal.ZERO);
             stockVo.setRate(rate);
+            stockVo.setPrice(closingPrice);
             return stockVo;
         }).collect(Collectors.toList());
         return list;

@@ -38,7 +38,7 @@ public class DailyIndexParser {
      * 今日最高价; 5：26.20″, 今日最低价; 6：26.91″, 竞买价, 即“买一报价; 7：26.92″, 竞卖价, 即“卖一报价;
      * 8：22114263″ 成交金额
      */
-    public DailyIndex parseDailyIndex(String content) {
+    private DailyIndex parseDailyIndex(String content) {
         String[] strs = content.split(",");
         if (strs.length <= 1) {
             return null;

@@ -114,7 +114,7 @@ public class TradeOrder extends BaseModel {
     }
 
     public boolean isValid() {
-        return isDealed() || GetOrdersDataResponse.YIBAO.equals(tradeState);
+        return isDealed() || GetOrdersDataResponse.WEIBAO.equals(tradeState) ||  GetOrdersDataResponse.YIBAO.equals(tradeState);
     }
 
     public boolean isManual() {
