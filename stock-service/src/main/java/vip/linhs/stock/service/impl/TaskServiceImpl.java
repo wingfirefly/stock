@@ -342,7 +342,9 @@ public class TaskServiceImpl implements TaskService {
 
         GetCanBuyNewStockListV3Response getCanBuyResponse = getCanBuyResultVo.getData().get(0);
 
-        List<SubmitData> newStockList = getCanBuyResponse.getNewStockList().stream().map(newStock -> {
+        List<SubmitData> newStockList = getCanBuyResponse.getNewStockList().stream()
+                .filter(newStock -> getCanBuyResponse.getNewQuota().stream().anyMatch(v -> v.getMarket().equals(newStock.getMarket())))
+                .map(newStock -> {
             NewQuotaInfo newQuotaInfo = getCanBuyResponse.getNewQuota().stream().filter(v -> v.getMarket().equals(newStock.getMarket())).findAny().orElse(null);
             SubmitData submitData = new SubmitData();
 

@@ -62,6 +62,7 @@ public class AppConfig implements WebMvcConfigurer {
         cm.setMaxTotal(100);
 
         RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(1000 * 5)
                 .setConnectTimeout(1000 * 5)
                 .setSocketTimeout(1000 * 5).build();
         return HttpClients.custom().setDefaultRequestConfig(requestConfig).setConnectionManager(cm).build();
