@@ -9,11 +9,11 @@ import vip.linhs.stock.model.po.DailyIndex;
 import vip.linhs.stock.model.po.StockInfo;
 import vip.linhs.stock.parser.DailyIndexParser;
 import vip.linhs.stock.parser.StockInfoParser;
+import vip.linhs.stock.parser.StockInfoParser.EmStock;
 import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.util.HttpUtil;
 import vip.linhs.stock.util.StockUtil;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,17 +35,16 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
 
     @Override
     public List<StockInfo> getStockList() {
-        ArrayList<StockInfo> list = new ArrayList<>();
-        list.addAll(getStockList("m:0+t:6,m:0+t:13,m:0+t:81+s:2048,m:1+t:2,m:1+t:23,b:MK0021,b:MK0022,b:MK0023,b:MK0024"));
-        return list;
+        List<EmStock> list = getStockList("f12,f13,f14");
+        list.forEach(v -> v.getStockInfo().setAbbreviation(StockUtil.getPinyin(v.getStockInfo().getName())));
+        return list.stream().map(EmStock::getStockInfo).collect(Collectors.toList());
     }
 
-    private List<StockInfo> getStockList(String fs) {
-        String content = HttpUtil.sendGet(httpClient, "http://20.push2.eastmoney.com/api/qt/clist/get?pn=1&pz=10000000&np=1&fid=f3&fields=f12,f13,f14&fs=" + fs);
+    private List<EmStock> getStockList(String fields) {
+        String content = HttpUtil.sendGet(httpClient, "http://20.push2.eastmoney.com/api/qt/clist/get?pn=1&pz=10000000&np=1&fid=f3&fields=" + fields + "&fs=m:0+t:6,m:0+t:13,m:0+t:80,m:0+t:81+s:2048,m:1+t:2,m:1+t:23,b:MK0021,b:MK0022,b:MK0023,b:MK0024");
         if (content != null) {
-            List<StockInfo> list = stockInfoParser.parseStockInfoList(content);
-            list = list.stream().filter(v -> v.getExchange() != null).collect(Collectors.toList());
-            list.forEach(stockInfo -> stockInfo.setAbbreviation(StockUtil.getPinyin(stockInfo.getName())));
+            List<EmStock> list = stockInfoParser.parseStockInfoList(content);
+            list = list.stream().filter(v -> v.getStockInfo().getExchange() != null).collect(Collectors.toList());
             return list;
         }
         return Collections.emptyList();
@@ -68,6 +67,13 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
         }
         return Collections.emptyList();
     }
+
+    @Override
+    public List<DailyIndex> getDailyIndexFromEastMoney() {
+        List<EmStock> list = getStockList("f2,f5,f6,f8,f12,f13,f15,f16,f17,f18");
+        return list.stream().map(EmStock::getDailyIndex).collect(Collectors.toList());
+    }
+
 
     @Override
     public List<DailyIndex> getHistoryDailyIndexs(String code) {

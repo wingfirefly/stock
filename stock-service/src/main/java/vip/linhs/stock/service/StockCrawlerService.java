@@ -13,6 +13,8 @@ public interface StockCrawlerService {
 
     List<DailyIndex> getDailyIndex(List<String> codeList);
 
+    List<DailyIndex> getDailyIndexFromEastMoney();
+
     List<DailyIndex> getHistoryDailyIndexs(String code);
 
     String getHistoryDailyIndexsString(String code);

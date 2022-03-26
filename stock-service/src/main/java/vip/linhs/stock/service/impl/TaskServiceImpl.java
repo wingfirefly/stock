@@ -67,6 +67,8 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private SystemConfigService systemConfigService;
 
+    private static final boolean CrawIndexFromSina = false;
+
     @Override
     public List<ExecuteInfo> getPendingTaskListById(int... id) {
         return executeInfoDao.getByTaskIdAndState(id, StockConsts.TaskState.Pending.value());
@@ -202,36 +204,51 @@ public class TaskServiceImpl implements TaskService {
 
         List<DailyIndex> dailyIndexList = stockService.getDailyIndexListByDate(date);
         List<String> codeList = dailyIndexList.stream().map(DailyIndex::getCode).collect(Collectors.toList());
-
         list = list.stream().filter(v -> !codeList.contains(v.getFullCode())).collect(Collectors.toList());
 
+        if (CrawIndexFromSina) {
+            crawDailyIndexFromSina(list);
+        } else {
+            crawDailyIndexFromSina(list.stream().filter(StockInfo::isIndex).collect(Collectors.toList()));
+            crawDailyIndexFromEastMoney(list);
+        }
+    }
+
+    private void crawDailyIndexFromEastMoney(List<StockInfo> list) {
+        List<DailyIndex> dailyIndexList = stockCrawlerService.getDailyIndexFromEastMoney();
+        dailyIndexList = dailyIndexList.stream().filter(d -> list.stream().anyMatch(s -> d.getCode().equals(s.getFullCode()))).collect(Collectors.toList());
+        stockService.saveDailyIndex(filterInvalid(dailyIndexList));
+    }
+
+    private void crawDailyIndexFromSina(List<StockInfo> list) {
         final int tCount = 500;
         ArrayList<String> stockCodeList = new ArrayList<>(tCount);
         for (StockInfo stockInfo : list) {
             stockCodeList.add(stockInfo.getFullCode());
             if (stockCodeList.size() == tCount) {
-                saveDailyIndex(stockCodeList, list);
+                saveDailyIndex(stockCodeList);
                 stockCodeList.clear();
             }
         }
 
         if (!stockCodeList.isEmpty()) {
-            saveDailyIndex(stockCodeList, list);
+            saveDailyIndex(stockCodeList);
         }
     }
 
-    private void saveDailyIndex(ArrayList<String> stockCodeList, List<StockInfo> stockList) {
-        final String currentDateStr = DateFormatUtils.format(new Date(), "yyyy-MM-dd");
+    private void saveDailyIndex(ArrayList<String> stockCodeList) {
         List<DailyIndex> dailyIndexList = stockCrawlerService.getDailyIndex(stockCodeList);
+        stockService.saveDailyIndex(filterInvalid(dailyIndexList));
+    }
 
-        dailyIndexList = dailyIndexList.stream().filter(dailyIndex ->
+    private List<DailyIndex> filterInvalid(List<DailyIndex> dailyIndexList) {
+        final String currentDateStr = DateFormatUtils.format(new Date(), "yyyy-MM-dd");
+        return dailyIndexList.stream().filter(dailyIndex ->
             DecimalUtil.bg(dailyIndex.getOpeningPrice(), BigDecimal.ZERO)
             && dailyIndex.getTradingVolume() > 0
             && DecimalUtil.bg(dailyIndex.getTradingValue(), BigDecimal.ZERO)
             && currentDateStr.equals(DateFormatUtils.format(dailyIndex.getDate(), "yyyy-MM-dd"))
         ).collect(Collectors.toList());
-
-        stockService.saveDailyIndex(dailyIndexList);
     }
 
     private void runTicker() {
