@@ -16,6 +16,7 @@ public class DailyIndex extends BaseModel {
     private BigDecimal closingPrice;
     private long tradingVolume;
     private BigDecimal tradingValue;
+    private BigDecimal rurnoverRate;
 
     public String getCode() {
         return code;
@@ -87,6 +88,14 @@ public class DailyIndex extends BaseModel {
 
     public void setTradingValue(BigDecimal tradingValue) {
         this.tradingValue = tradingValue;
+    }
+
+    public BigDecimal getRurnoverRate() {
+        return rurnoverRate;
+    }
+
+    public void setRurnoverRate(BigDecimal rurnoverRate) {
+        this.rurnoverRate = rurnoverRate;
     }
 
 }

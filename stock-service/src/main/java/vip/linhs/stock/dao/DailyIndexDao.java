@@ -10,8 +10,6 @@ import vip.linhs.stock.model.vo.PageVo;
 
 public interface DailyIndexDao {
 
-    int save(DailyIndex dailyIndex);
-
     void save(List<DailyIndex> list);
 
     PageVo<DailyIndexVo> getDailyIndexList(PageParam pageParam);

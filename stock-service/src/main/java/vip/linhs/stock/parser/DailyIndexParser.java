@@ -66,6 +66,7 @@ public class DailyIndexParser {
         dailyIndex.setLowestPrice(lowestPrice);
         dailyIndex.setTradingVolume(tradingVolume);
         dailyIndex.setTradingValue(tradingValue);
+        dailyIndex.setRurnoverRate(BigDecimal.ZERO);
         dailyIndex.setDate(date);
 
         return dailyIndex;
@@ -149,6 +150,7 @@ public class DailyIndexParser {
         dailyIndex.setLowestPrice(lowestPrice);
         dailyIndex.setTradingVolume(tradingVolume);
         dailyIndex.setTradingValue(tradingValue);
+        dailyIndex.setRurnoverRate(BigDecimal.ZERO);
         dailyIndex.setDate(date);
 
         return dailyIndex;

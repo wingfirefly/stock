@@ -24,8 +24,6 @@ public interface StockService {
 
     void saveDailyIndexFromFile(String rootPath);
 
-    void saveDailyIndex(DailyIndex dailyIndex);
-
     void saveDailyIndex(List<DailyIndex> list);
 
     PageVo<StockInfo> getStockList(PageParam pageParam);

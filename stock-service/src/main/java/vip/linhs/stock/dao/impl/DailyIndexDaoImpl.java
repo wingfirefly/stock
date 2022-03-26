@@ -2,15 +2,12 @@ package vip.linhs.stock.dao.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.StatementCreatorUtils;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import vip.linhs.stock.dao.BaseDao;
@@ -24,20 +21,7 @@ import vip.linhs.stock.util.SqlCondition;
 @Repository
 public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
 
-    private static final String INSERT_SQL = "insert into daily_index(code, date, opening_price, pre_closing_price, highest_price, closing_price, lowest_price, trading_volume, trading_value) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    @Override
-    public int save(DailyIndex dailyIndex) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(conn -> {
-            PreparedStatement ps = conn.prepareStatement(DailyIndexDaoImpl.INSERT_SQL,
-                    Statement.RETURN_GENERATED_KEYS);
-            DailyIndexDaoImpl.setArgument(ps, dailyIndex);
-            return ps;
-        }, keyHolder);
-        return keyHolder.getKey().intValue();
-    }
+    private static final String INSERT_SQL = "insert into daily_index(code, date, opening_price, pre_closing_price, highest_price, closing_price, lowest_price, trading_volume, trading_value, rurnover_rate) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     @Override
     public void save(List<DailyIndex> list) {
@@ -57,6 +41,7 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
         ps.setBigDecimal(7, dailyIndex.getLowestPrice());
         ps.setLong(8, dailyIndex.getTradingVolume());
         ps.setBigDecimal(9, dailyIndex.getTradingValue());
+        ps.setBigDecimal(10, dailyIndex.getRurnoverRate());
     }
 
     @Override
@@ -65,7 +50,8 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
             + " s.name, s.abbreviation, d.code, d.date, d.pre_closing_price as preClosingPrice,"
             + " d.closing_price as closingPrice, d.lowest_price as lowestPrice,"
             + " d.highest_price as highestPrice, d.opening_price as openingPrice,"
-            + " d.trading_value as tradingValue, d.trading_volume as tradingVolume"
+            + " d.trading_value as tradingValue, d.trading_volume as tradingVolume,"
+            + " d.rurnover_rate as rurnoverRate"
             + " from daily_index d, stock_info s where d.code = concat(s.exchange, s.code)";
 
         SqlCondition dataSqlCondition = new SqlCondition(sql, pageParam.getCondition());
@@ -88,7 +74,8 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
             + " id, code, date, pre_closing_price as preClosingPrice,"
             + " closing_price as closingPrice, lowest_price as lowestPrice,"
             + " highest_price as highestPrice, opening_price as openingPrice,"
-            + " trading_value as tradingValue, trading_volume as tradingVolume"
+            + " trading_value as tradingValue, trading_volume as tradingVolume,"
+            + " rurnover_rate as rurnoverRate"
             + " from daily_index where date = ?";
         List<DailyIndex> list = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(DailyIndex.class),
                 new java.sql.Date(date.getTime()));

@@ -181,11 +181,6 @@ public class StockServiceImpl implements StockService {
         }
     }
 
-    @Override
-    public void saveDailyIndex(DailyIndex dailyIndex) {
-        dailyIndexDao.save(dailyIndex);
-    }
-
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     @Override
     public void saveDailyIndex(List<DailyIndex> list) {
