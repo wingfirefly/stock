@@ -19,4 +19,6 @@ public interface StockCrawlerService {
 
     String getHistoryDailyIndexsString(String code);
 
+    String getHistoryDailyIndexsStringFrom163(String code, int year, int season);
+
 }

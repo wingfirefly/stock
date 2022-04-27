@@ -89,4 +89,9 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
         return HttpUtil.sendGet(httpClient, "http://www.aigaogao.com/tools/history.html?s=" + code, "gbk");
     }
 
+    @Override
+    public String getHistoryDailyIndexsStringFrom163(String code, int year, int season) {
+        return HttpUtil.sendGet(httpClient, String.format("https://quotes.money.163.com/trade/lsjysj_%s.html?year=%d&season=%d", code, year, season));
+    }
+
 }

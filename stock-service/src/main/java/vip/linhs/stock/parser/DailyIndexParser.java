@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -154,6 +155,60 @@ public class DailyIndexParser {
         dailyIndex.setDate(date);
 
         return dailyIndex;
+    }
+
+    public List<DailyIndex> parse163HistoryDailyIndexList(String content) {
+        int beginIndex = content.indexOf("<table class=\"table_bg001 border_box limit_sale\">");
+        int endIndex = content.indexOf("</table>", beginIndex);
+        content = content.substring(beginIndex, endIndex);
+
+        beginIndex = content.indexOf("<tr class=''");
+
+        if (beginIndex == -1) {
+            return Collections.emptyList();
+        }
+
+        content = content.substring(beginIndex);
+        // 日期   开盘价 最高价 最低价 收盘价 涨跌额 涨跌幅(%)  成交量(手)  成交金额(万元)    振幅(%)   换手率(%)
+
+        Pattern trPattern = Pattern.compile("<tr class='[a-zA-Z]{0,8}'>(<td( class='[a-zA-Z]{0,8}'){0,1}>([\\S]{0,12})</td>)+</tr>");
+        Pattern tdPattern = Pattern.compile("<td( class='[a-zA-Z]{0,8}'){0,1}>([\\S]{0,12})</td>");
+
+        List<DailyIndex> list = new ArrayList<>();
+        Matcher matcher = trPattern.matcher(content);
+        while (matcher.find()) {
+            String tr = matcher.group(0);
+            Matcher trMatcher = tdPattern.matcher(tr);
+
+            String[] values = new String[11];
+            int i = 0;
+            while (trMatcher.find()) {
+               values[i++] = trMatcher.group(2).replace(",", "");
+            }
+
+            DailyIndex dailyIndex = new DailyIndex();
+            i = 0;
+            try {
+                dailyIndex.setDate(DateUtils.parseDate(values[i++], "yyyy-MM-dd"));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            dailyIndex.setOpeningPrice(new BigDecimal(values[i++]));
+            dailyIndex.setHighestPrice(new BigDecimal(values[i++]));
+            dailyIndex.setLowestPrice(new BigDecimal(values[i++]));
+            dailyIndex.setClosingPrice(new BigDecimal(values[i++]));
+            dailyIndex.setPreClosingPrice(dailyIndex.getClosingPrice().subtract(new BigDecimal(values[i++])));
+            i++;
+            dailyIndex.setTradingVolume(Long.parseLong(values[i++]) * 100);
+            dailyIndex.setTradingValue(new BigDecimal(values[i++]).movePointRight(4));
+            i++;
+            dailyIndex.setRurnoverRate(new BigDecimal(values[i++]));
+
+            list.add(dailyIndex);
+        }
+
+        list.sort(Comparator.comparing(DailyIndex::getDate));
+        return list;
     }
 
 }

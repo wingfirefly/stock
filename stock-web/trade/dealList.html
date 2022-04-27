@@ -97,36 +97,9 @@
           fnDrawCallback: function(result) {
             index = 0;
           }
-        },
-      });
-
-      table.on('click', '.btn-add', function() {
-        var data = $(this).data('options');
-        var url = GlobalConfig.serverUrl + '/api/trade/addTradeCode';
-        handelTradeCode(url, data);
-      });
-
-      table.on('click', '.btn-delete', function() {
-        var data = $(this).data('options');
-        var url = GlobalConfig.serverUrl + '/api/trade/deleteTradeCode';
-        handelTradeCode(url, data);
-      });
-
-    }
-
-    function handelTradeCode(url, data) {
-      $.ajax({
-        url: url,
-        type: 'POST',
-        data: data,
-        headers: getRequestHeaders(),
-        error: function(xhr, status, errorThrown) {
-          ExceptionHandler.handleCommonError(xhr);
-        },
-        success: function(res) {
-          dataTable.fnDraw(1);
         }
       });
+
     }
 
   </script>

@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -217,6 +218,28 @@ public class StockServiceImpl implements StockService {
     @Override
     public List<DailyIndex> getDailyIndexListByDate(Date date) {
         return dailyIndexDao.getDailyIndexListByDate(date);
+    }
+
+    @Override
+    public void fixDailyIndex(int date, List<String> code) {
+        List<StockInfo> list = getAll().stream().filter(StockInfo::isA).collect(Collectors.toList());
+        if (code != null && !code.isEmpty()) {
+            list = getAll().stream().filter(v -> code.contains(v.getCode())).collect(Collectors.toList());
+        }
+        list.forEach(stockInfo -> {
+            logger.info("start fixDailyIndex {}: {}", stockInfo.getName(), stockInfo.getCode());
+            try {
+                int year = date / 100;
+                int season = (date % 100 - 1) / 3 + 1;
+                String content = stockCrawlerService.getHistoryDailyIndexsStringFrom163(stockInfo.getCode(), year, season);
+                List<DailyIndex> dailyIndexList = dailyIndexParser.parse163HistoryDailyIndexList(content);
+                dailyIndexList.forEach(d -> d.setCode(stockInfo.getFullCode()));
+                dailyIndexDao.save(dailyIndexList);
+                TimeUnit.SECONDS.sleep(1);
+            } catch (Exception e) {
+                logger.error("fixDailyIndex error {} {}", stockInfo.getName(), stockInfo.getCode(), e);
+            }
+        });
     }
 
 }

@@ -22,4 +22,10 @@ public class StockServiceTest {
         stockService.saveDailyIndexFromFile(rootPath);
     }
 
+    @Test
+    public void testFixDailyIndex() {
+        stockService.fixDailyIndex(202201, null);
+//        stockService.fixDailyIndex(202201, Arrays.asList("300059"));
+    }
+
 }

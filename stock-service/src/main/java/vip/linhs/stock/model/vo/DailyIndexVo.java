@@ -5,6 +5,7 @@ import vip.linhs.stock.model.po.DailyIndex;
 public class DailyIndexVo extends DailyIndex {
 
     private static final long serialVersionUID = 1L;
+
     private String name;
     private String abbreviation;
 
