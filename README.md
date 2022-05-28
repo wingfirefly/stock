@@ -6,12 +6,6 @@ github: [https://github.com/bosspen1/stock](https://github.com/bosspen1/stock)
 ## 升级日志
 ### 升级只针对以前已经部署的朋友, 新来的朋友直接按最新步骤来就行
 
-2022-02-16
-- 每日行情优化
-
-2021-11-24
-- 支持北交所
-
 ------------
 
 
@@ -88,5 +82,5 @@ docker-compose up -d --build
 ------------
 
 ## 有什么问题和建议或者好的交易策略欢迎进群交流
-[点击查看微信群二维码](http://razji3120.hd-bkt.clouddn.com/wechat.jpg)
+[点击查看微信群二维码](http://rcky5e5ws.hd-bkt.clouddn.com/wechat.jpg)
 二维码过期可以在issue里通知我更新, 或者晚点再来
