@@ -2,7 +2,7 @@ package vip.linhs.stock.api.response;
 
 import java.util.List;
 
-public class GetCanBuyNewStockListV3Response {
+public class GetCanBuyNewStockListV3Response extends BaseTradeResponse {
 
     private List<NewQuotaInfo> NewQuota;
     private List<NewStock> NewStockList;

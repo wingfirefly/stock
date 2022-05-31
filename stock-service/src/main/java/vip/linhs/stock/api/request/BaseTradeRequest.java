@@ -2,6 +2,16 @@ package vip.linhs.stock.api.request;
 
 public abstract class BaseTradeRequest {
 
+    // 返回格式类型
+    // { Data: [] }
+    public static final int VERSION_DATA_LIST = 0;
+    // { Data: {} }
+    public static final int VERSION_DATA_OBJ = 1;
+    // msg...
+    public static final int VERSION_MSG = 2;
+    // { }
+    public static final int VERSION_OBJ = 3;
+
     private int userId;
 
     public BaseTradeRequest(int userId) {
@@ -18,17 +28,27 @@ public abstract class BaseTradeRequest {
 
     public abstract String getMethod();
 
-    @Override
-    public String toString() {
-        return "BaseTradeRequest [userId=" + userId + ", method=" + getMethod() + "]";
-    }
-
     public enum TradeRequestMethod {
-        GetAssertsRequest("get_asserts"), SubmitRequest("submit"), RevokeRequest("revoke"), GetStockList("get_stock_list"),
-        GetOrdersDataRequest("get_orders_data"), GetDealDataRequest("get_deal_data"), AuthenticationRequest("authentication"),
-        AuthenticationCheckRequest("authentication_check"), GetHisDealDataRequest("get_his_deal_data"), GetHisOrdersDataRequest("get_his_orders_data"),
-        GetCanBuyNewStockListV3("get_can_buy_new_stock_list_v3"), GetConvertibleBondListV2("get_convertible_bond_list_v2"), SubmitBatTradeV2("submit_bat_trade_v2"),
-        YZM("yzm");
+        GetAsserts("get_asserts"), Submit("submit"), Revoke("revoke"), GetStockList("get_stock_list"),
+        GetOrdersData("get_orders_data"), GetDealData("get_deal_data"), Authentication("authentication"),
+        AuthenticationCheck("authentication_check"), GetHisDealData("get_his_deal_data"),
+        GetHisOrdersData("get_his_orders_data"),
+        GetCanBuyNewStockListV3("get_can_buy_new_stock_list_v3"),
+        GetConvertibleBondListV2("get_convertible_bond_list_v2"),
+        SubmitBatTradeV2("submit_bat_trade_v2"),
+        YZM("yzm"),
+        CrGetRzrqAsserts("cr_get_rzrq_asserts"),
+        CrQueryCollateral("cr_query_collateral"),
+        CrSubmit("cr_submit"),
+        CrGetOrdersData("cr_get_orders_data"),
+        CrGetDealData("cr_get_deal_data"),
+        CrGetHisDealData("cr_get_his_deal_data"),
+        CrGetHisOrdersData("cr_get_his_orders_data"),
+        CrRevoke("cr_revoke"),
+        CrGetCanBuyNewStockListV3("cr_get_can_buy_new_stock_list_v3"),
+        CrGetConvertibleBondListV2("cr_get_convertible_bond_list_v2"),
+        CrSubmitBatTradeV2("cr_submit_bat_trade_v2"),
+        ;
         private String value;
 
         TradeRequestMethod(String value) {
@@ -39,6 +59,10 @@ public abstract class BaseTradeRequest {
             return value;
         }
 
+    }
+
+    public int responseVersion() {
+        return VERSION_DATA_LIST;
     }
 
 }

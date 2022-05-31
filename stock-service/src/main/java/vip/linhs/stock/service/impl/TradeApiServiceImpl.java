@@ -21,14 +21,12 @@ import vip.linhs.stock.api.TradeResultVo;
 import vip.linhs.stock.api.request.AuthenticationRequest;
 import vip.linhs.stock.api.request.BaseTradeListRequest;
 import vip.linhs.stock.api.request.BaseTradeRequest;
-import vip.linhs.stock.api.request.GetAssetsRequest;
-import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.AuthenticationResponse;
+import vip.linhs.stock.api.response.BaseTradeResponse;
 import vip.linhs.stock.client.TradeClient;
 import vip.linhs.stock.model.po.TradeMethod;
 import vip.linhs.stock.model.po.TradeUser;
 import vip.linhs.stock.service.AbstractTradeApiService;
-import vip.linhs.stock.service.SystemConfigService;
 import vip.linhs.stock.service.TradeService;
 
 @Service
@@ -38,7 +36,65 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
 
     private static final List<String> IgnoreList = Arrays.asList("class", "userId", "method");
 
-    private final ResponseParser revokeResponseParser = new ResponseParser() {
+    public static class TradeResult<T> {
+        private String Message;
+        private int Status;
+        private T Data;
+
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
+
+        public int getStatus() {
+            return Status;
+        }
+
+        public void setStatus(int status) {
+            Status = status;
+        }
+
+        public T getData() {
+            return Data;
+        }
+
+        public void setData(T data) {
+            Data = data;
+        }
+    }
+
+    private final ResponseParser dataObjReponseParser = new ResponseParser() {
+        @Override
+        public <T> TradeResultVo<T> parse(String content, TypeReference<T> responseType) {
+            TradeResultVo<T> resultVo = new TradeResultVo<>();
+            ArrayList<T> newList = new ArrayList<>();
+
+            TradeResult<T> result = JSON.parseObject(content, new TypeReference<TradeResult<T>>() {});
+            if (TradeResultVo.success(result.getStatus())) {
+                String text = JSON.toJSONString(result.Data);
+                T t = JSON.parseObject(text, responseType);
+                newList.add(t);
+            } else {
+                resultVo.setData(Collections.emptyList());
+            }
+
+            resultVo.setMessage(result.getMessage());
+            resultVo.setStatus(result.getStatus());
+            resultVo.setData(newList);
+            return resultVo;
+        }
+
+        @Override
+        public int version() {
+            return BaseTradeRequest.VERSION_DATA_OBJ;
+        }
+
+    };
+
+    private final ResponseParser msgResponseParser = new ResponseParser() {
         @Override
         public <T> TradeResultVo<T> parse(String content, TypeReference<T> responseType) {
             TradeResultVo<T> resultVo = new TradeResultVo<>();
@@ -49,12 +105,12 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         }
 
         @Override
-        public String name() {
-            return "revokeResponseParser";
+        public int version() {
+            return BaseTradeRequest.VERSION_MSG;
         }
     };
 
-    private final ResponseParser v3ReponseParser = new ResponseParser() {
+    private final ResponseParser objReponseParser = new ResponseParser() {
         @Override
         public <T> TradeResultVo<T> parse(String content, TypeReference<T> responseType) {
             T t = JSON.parseObject(content, responseType);
@@ -68,16 +124,16 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         }
 
         @Override
-        public String name() {
-            return "v3ReponseParser";
+        public int version() {
+            return BaseTradeRequest.VERSION_OBJ;
         }
     };
 
-    private final ResponseParser defaultReponseParser = new ResponseParser() {
+    private final ResponseParser dataListReponseParser = new ResponseParser() {
         @Override
         public <T> TradeResultVo<T> parse(String content, TypeReference<T> responseType) {
             TradeResultVo<T> resultVo = JSON.parseObject(content, new TypeReference<TradeResultVo<T>>() {});
-            if (resultVo.isSuccess()) {
+            if (resultVo.success()) {
                 List<T> list = resultVo.getData();
                 ArrayList<T> newList = new ArrayList<>();
                 if (list != null) {
@@ -95,8 +151,8 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         }
 
         @Override
-        public String name() {
-            return "defaultReponseParser";
+        public int version() {
+            return BaseTradeRequest.VERSION_DATA_LIST;
         }
     };
 
@@ -106,36 +162,18 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
     @Autowired
     private TradeClient tradeClient;
 
-    @Autowired
-    private SystemConfigService systemConfigService;
-
     @Override
-    public <T> TradeResultVo<T> send(BaseTradeRequest request, TypeReference<T> responseType) {
-        return send(request, responseType, false);
-    }
-
-    @Override
-    public <T> TradeResultVo<T> sendList(BaseTradeListRequest request, TypeReference<T> responseType) {
-        return send(request, responseType, true);
-    }
-
-    private String getMockData(BaseTradeRequest request) {
-        if (request instanceof SubmitRequest) {
-            return "{\"Message\":null,\"Status\":0,\"Data\":[{\"Wtbh\": \"" + System.currentTimeMillis() + "\"}]}";
-        } else if (request instanceof GetAssetsRequest) {
-            return "{\"Message\":null,\"Status\":0,\"Data\":[{\"Zzc\": \"100000\", \"Kyzj\": \"50000\", \"Kqzj\": \"80000\", \"Djzj\": \"20000\" }]}";
-        }
-        return "{\"Message\":null,\"Status\":0,\"Data\":[]}";
-    }
-
-    private <T> TradeResultVo<T> send(BaseTradeRequest request, TypeReference<T> responseType, boolean isSendList) {
+    public <T extends BaseTradeResponse> TradeResultVo<T> send(BaseTradeRequest request, TypeReference<T> responseType) {
         ResponseParser responseParse = getResponseParser(request);
 
         String url = getUrl(request);
+        logger.debug("trade {} url: {}", request.getMethod(), url);
         Map<String, String> header = getHeader(request);
 
         List<Map<String, Object>> paramList = null;
         Map<String, Object> params = null;
+
+        boolean isSendList = request instanceof BaseTradeListRequest;
         if (isSendList) {
             paramList = ((BaseTradeListRequest) request).getList().stream().map(this::getParams).collect(Collectors.toList());
             logger.debug("trade {} request: {}", request.getMethod(), paramList);
@@ -145,17 +183,12 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         }
 
         String content;
-        if (systemConfigService.isMock()) {
-            content = getMockData(request);
+        if (isSendList) {
+            content = tradeClient.sendListJson(url, paramList, header);
         } else {
-            if (isSendList) {
-                content = tradeClient.sendListJson(url, paramList, header);
-            } else {
-                content = tradeClient.send(url, params, header);
-            }
+            content = tradeClient.send(url, params, header);
         }
         logger.debug("trade {} response: {}", request.getMethod(), content);
-
         return responseParse.parse(content, responseType);
     }
 
@@ -164,21 +197,23 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         TradeMethod tradeMethod = tradeService.getTradeMethodByName(request.getMethod());
         TradeUser tradeUser = tradeService.getTradeUserById(request.getUserId());
 
+        Map<String, String> header = getHeader(request);
         Map<String, Object> params = getParams(request);
         params.put("userId", tradeUser.getAccountId());
         try {
             tradeClient.openSession();
-            String content = tradeClient.sendNewInstance(tradeMethod.getUrl(), params);
-            ResponseParser responseParse = defaultReponseParser;
+            String content = tradeClient.sendNewInstance(tradeMethod.getUrl(), params, header);
+            ResponseParser responseParse = dataListReponseParser;
             TradeResultVo<AuthenticationResponse> resultVo = responseParse.parse(content, new TypeReference<AuthenticationResponse>() {});
-            if (resultVo.isSuccess()) {
-                TradeMethod authCheckTradeMethod = tradeService.getTradeMethodByName(BaseTradeRequest.TradeRequestMethod.AuthenticationCheckRequest.value());
+            if (resultVo.success()) {
+                TradeMethod authCheckTradeMethod = tradeService.getTradeMethodByName(BaseTradeRequest.TradeRequestMethod.AuthenticationCheck.value());
+                AuthenticationResponse response = new AuthenticationResponse();
+                String cookie = tradeClient.getCurrentCookie();
+                response.setCookie(cookie);
 
-                String content2 = tradeClient.sendNewInstance(authCheckTradeMethod.getUrl(), new HashMap<>());
+                String content2 = tradeClient.sendNewInstance(authCheckTradeMethod.getUrl(), new HashMap<>(), header);
                 String validateKey = getValidateKey(content2);
 
-                AuthenticationResponse response = new AuthenticationResponse();
-                response.setCookie(tradeClient.getCurrentCookie());
                 response.setValidateKey(validateKey);
                 resultVo.setData(Arrays.asList(response));
             }
@@ -197,13 +232,16 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
     }
 
     private ResponseParser getResponseParser(BaseTradeRequest request) {
-        if (BaseTradeRequest.TradeRequestMethod.RevokeRequest.value().equals(request.getMethod())) {
-            return revokeResponseParser;
+        if (request.responseVersion() == dataObjReponseParser.version()) {
+            return dataObjReponseParser;
         }
-        if (BaseTradeRequest.TradeRequestMethod.GetCanBuyNewStockListV3.value().equals(request.getMethod())) {
-            return v3ReponseParser;
+        if (request.responseVersion() == msgResponseParser.version()) {
+            return msgResponseParser;
         }
-        return defaultReponseParser ;
+        if (request.responseVersion() == objReponseParser.version()) {
+            return objReponseParser;
+        }
+        return dataListReponseParser ;
     }
 
     private Map<String, Object> getParams(Object request) {
@@ -223,15 +261,18 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
 
     private Map<String, String> getHeader(BaseTradeRequest request) {
         TradeUser tradeUser = tradeService.getTradeUserById(request.getUserId());
-
         HashMap<String, String> header = new HashMap<>();
-        header.put("cookie", tradeUser.getCookie());
+        if (!(request instanceof AuthenticationRequest)) {
+            header.put("cookie", tradeUser.getCookie());
+        }
+        header.put("gw_reqtimestamp", System.currentTimeMillis() + "");
+        header.put("X-Requested-With", "XMLHttpRequest");
         return header;
     }
 
     private static interface ResponseParser {
         <T> TradeResultVo<T> parse(String content, TypeReference<T> responseType);
-        String name();
+        int version();
     }
 
 }

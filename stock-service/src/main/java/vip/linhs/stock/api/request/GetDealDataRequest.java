@@ -1,6 +1,6 @@
 package vip.linhs.stock.api.request;
 
-public class GetDealDataRequest extends BaseTradeRequest {
+public class GetDealDataRequest extends BaseQueryRequest {
 
     public GetDealDataRequest(int userId) {
         super(userId);
@@ -8,12 +8,7 @@ public class GetDealDataRequest extends BaseTradeRequest {
 
     @Override
     public String getMethod() {
-        return BaseTradeRequest.TradeRequestMethod.GetDealDataRequest.value();
-    }
-
-    @Override
-    public String toString() {
-        return "GetDealDataRequest [" + super.toString() + "]";
+        return BaseTradeRequest.TradeRequestMethod.GetDealData.value();
     }
 
 }

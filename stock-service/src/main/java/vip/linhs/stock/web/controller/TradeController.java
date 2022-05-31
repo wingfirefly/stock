@@ -70,12 +70,13 @@ public class TradeController extends BaseController {
     @PostMapping("login")
     public CommonResponse login(int userId, String password, String identifyCode, String randNum) {
         AuthenticationRequest request = new AuthenticationRequest(userId);
+        // password = "UxvVPgyg3CPqWfeDWKkPUEcuWVcNZYXCGXsKcMdOxccJ294Mr0ATkxAnnCONS24+4l2+dclRcSzR3dLXz2H/oSzXQ0PG6Sxaa0zAw1jNR2oiSH+ORbQhK76LStdeYdxwV5gsZd0KuwC+ugqXmEM9lN7ODw7kW3Bjc8ybRoV5hQI=";
         request.setPassword(password);
         request.setIdentifyCode(identifyCode);
         request.setRandNumber(randNum);
 
         TradeResultVo<AuthenticationResponse> resultVo = tradeApiService.authentication(request);
-        if (resultVo.isSuccess()) {
+        if (resultVo.success()) {
             AuthenticationResponse response = resultVo.getData().get(0);
             TradeUser tradeUser = new TradeUser();
             tradeUser.setId(request.getUserId());
@@ -131,7 +132,7 @@ public class TradeController extends BaseController {
     public PageVo<DealVo> getDealList(PageParam pageParam) {
         GetDealDataRequest request = new GetDealDataRequest(getUserId());
         TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(request);
-        if (dealData.isSuccess()) {
+        if (dealData.success()) {
             List<DealVo> list = tradeService.getTradeDealList(dealData.getData());
             return new PageVo<>(subList(list, pageParam), list.size());
         }
@@ -147,7 +148,7 @@ public class TradeController extends BaseController {
         request.setSt(DateFormatUtils.format(et, "yyyy-MM-dd"));
 
         TradeResultVo<GetHisDealDataResponse> dealData = tradeApiService.getHisDealData(request);
-        if (dealData.isSuccess()) {
+        if (dealData.success()) {
             List<DealVo> list = tradeService.getTradeHisDealList(dealData.getData());
             return new PageVo<>(subList(list, pageParam), list.size());
         }
@@ -164,7 +165,7 @@ public class TradeController extends BaseController {
         request.setTradeType(SubmitRequest.B);
         TradeResultVo<SubmitResponse> response = tradeApiService.submit(request);
         String message = response.getMessage();
-        if (response.isSuccess()) {
+        if (response.success()) {
             message = response.getData().get(0).getWtbh();
         }
 
@@ -181,7 +182,7 @@ public class TradeController extends BaseController {
         request.setTradeType(SubmitRequest.S);
         TradeResultVo<SubmitResponse> response = tradeApiService.submit(request);
         String message = response.getMessage();
-        if (response.isSuccess()) {
+        if (response.success()) {
             message = response.getData().get(0).getWtbh();
         }
 
@@ -193,7 +194,7 @@ public class TradeController extends BaseController {
         GetStockListRequest request = new GetStockListRequest(getUserId());
         TradeResultVo<GetStockListResponse> response = tradeApiService.getStockList(request);
         ArrayList<StockVo> list = new ArrayList<>();
-        if (response.isSuccess()) {
+        if (response.success()) {
             list.addAll(tradeService.getTradeStockList(response.getData()));
         }
         List<StockSelected> selectList = stockSelectedService.getList();
@@ -209,7 +210,7 @@ public class TradeController extends BaseController {
     public PageVo<OrderVo> getOrderList(PageParam pageParam) {
         GetOrdersDataRequest request = new GetOrdersDataRequest(getUserId());
         TradeResultVo<GetOrdersDataResponse> response = tradeApiService.getOrdersData(request);
-        if (response.isSuccess()) {
+        if (response.success()) {
             List<OrderVo> list = tradeService.getTradeOrderList(response.getData());
             list = list.stream().filter(v -> v.getState().equals(GetOrdersDataResponse.WEIBAO) || v.getState().equals(GetOrdersDataResponse.YIBAO)).collect(Collectors.toList());
             return new PageVo<>(subList(list, pageParam), list.size());
@@ -231,7 +232,7 @@ public class TradeController extends BaseController {
         GetAssetsRequest request = new GetAssetsRequest(getUserId());
         TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(request);
         AccountVo accountVo = new AccountVo();
-        if (tradeResultVo.isSuccess()) {
+        if (tradeResultVo.success()) {
             List<GetAssetsResponse> data = tradeResultVo.getData();
             GetAssetsResponse response = data.get(0);
             accountVo.setAvailableAmount(new BigDecimal(response.getKyzj()));

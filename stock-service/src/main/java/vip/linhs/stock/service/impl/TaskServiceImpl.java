@@ -138,7 +138,7 @@ public class TaskServiceImpl implements TaskService {
         request.setPassword(tradeUser.getPassword());
 
         TradeResultVo<AuthenticationResponse> resultVo = tradeApiService.authentication(request);
-        if (resultVo.isSuccess()) {
+        if (resultVo.success()) {
             AuthenticationResponse response = resultVo.getData().get(0);
             tradeUser.setCookie(response.getCookie());
             tradeUser.setValidateKey(response.getValidateKey());
@@ -315,7 +315,7 @@ public class TaskServiceImpl implements TaskService {
 
     private void runDealNotice() {
         TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(new GetDealDataRequest(1));
-        if (!dealData.isSuccess()) {
+        if (!dealData.success()) {
             logger.error("runDealNotice error {}", dealData.getMessage());
         }
         List<GetDealDataResponse> list = TradeUtil.mergeDealList(dealData.getData());
@@ -376,7 +376,7 @@ public class TaskServiceImpl implements TaskService {
 
         if (systemConfigService.isApplyNewConvertibleBond()) {
             TradeResultVo<GetConvertibleBondListV2Response> getConvertibleBondResultVo = getGetConvertibleBondListV2ResultVo();
-            if (getConvertibleBondResultVo.isSuccess()) {
+            if (getConvertibleBondResultVo.success()) {
                 List<SubmitData> convertibleBondList = getConvertibleBondResultVo.getData().stream().filter(GetConvertibleBondListV2Response::getExIsToday).map(convertibleBond -> {
                     SubmitData submitData = new SubmitData();
                     submitData.setAmount(Integer.parseInt(convertibleBond.getLIMITBUYVOL()));
@@ -395,7 +395,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
         TradeResultVo<GetOrdersDataResponse> orderReponse = tradeApiService.getOrdersData(new GetOrdersDataRequest(1));
-        if (orderReponse.isSuccess()) {
+        if (orderReponse.success()) {
             List<GetOrdersDataResponse> orderList = orderReponse.getData().stream().filter(v -> v.getWtzt().equals(GetOrdersDataResponse.YIBAO)).collect(Collectors.toList());
             newStockList = newStockList.stream().filter(v -> orderList.stream().noneMatch(order -> order.getZqdm().equals(v.getStockCode()))).collect(Collectors.toList());
         }

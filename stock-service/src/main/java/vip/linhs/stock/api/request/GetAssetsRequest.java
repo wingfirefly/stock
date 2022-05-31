@@ -2,18 +2,23 @@ package vip.linhs.stock.api.request;
 
 public class GetAssetsRequest extends BaseTradeRequest {
 
+    private String hblx = "RMB";
+
     public GetAssetsRequest(int userId) {
         super(userId);
     }
 
     @Override
     public String getMethod() {
-        return BaseTradeRequest.TradeRequestMethod.GetAssertsRequest.value();
+        return BaseTradeRequest.TradeRequestMethod.GetAsserts.value();
     }
 
-    @Override
-    public String toString() {
-        return "GetAssetsRequest [" + super.toString() + "]";
+    public String getHblx() {
+        return hblx;
+    }
+
+    public void setHblx(String hblx) {
+        this.hblx = hblx;
     }
 
 }

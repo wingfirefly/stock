@@ -3,9 +3,10 @@ package vip.linhs.stock.api.request;
 public class AuthenticationRequest extends BaseTradeRequest {
 
     private String password;
-    private String randNumber = "0.9033461201665647";
+    private String randNumber;
     private String identifyCode;
     private String duration = "1800";
+    private String authCode;
     private String type = "Z";
 
     public AuthenticationRequest(int userId) {
@@ -44,6 +45,14 @@ public class AuthenticationRequest extends BaseTradeRequest {
         this.duration = duration;
     }
 
+    public String getAuthCode() {
+        return authCode;
+    }
+
+    public void setAuthCode(String authCode) {
+        this.authCode = authCode;
+    }
+
     public String getType() {
         return type;
     }
@@ -54,13 +63,7 @@ public class AuthenticationRequest extends BaseTradeRequest {
 
     @Override
     public String getMethod() {
-        return BaseTradeRequest.TradeRequestMethod.AuthenticationRequest.value();
-    }
-
-    @Override
-    public String toString() {
-        return "AuthenticationRequest [password=" + password + ", randNumber=" + randNumber + ", identifyCode="
-                + identifyCode + ", duration=" + duration + ", type=" + type + ", " + super.toString() + "]";
+        return BaseTradeRequest.TradeRequestMethod.Authentication.value();
     }
 
 }

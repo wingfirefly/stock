@@ -27,12 +27,7 @@ public class GetHisDealDataRequest extends BaseTradeRequest {
 
     @Override
     public String getMethod() {
-        return BaseTradeRequest.TradeRequestMethod.GetHisDealDataRequest.value();
-    }
-
-    @Override
-    public String toString() {
-        return "GetHisDealDataRequest [st=" + st + ", et=" + et + "]";
+        return BaseTradeRequest.TradeRequestMethod.GetHisDealData.value();
     }
 
 }

@@ -1,6 +1,6 @@
 package vip.linhs.stock.api.response;
 
-public class GetDealDataResponse {
+public class GetDealDataResponse extends BaseTradeResponse {
 
     /**
      * 买卖类别-买
@@ -48,6 +48,8 @@ public class GetDealDataResponse {
      * @see #S
      */
     private String Mmlb;
+
+    private String Market;
 
     public String getZqmc() {
         return Zqmc;
@@ -121,14 +123,16 @@ public class GetDealDataResponse {
         Wtsl = wtsl;
     }
 
-    public String getFormatDealTime() {
-        return new StringBuilder(Cjsj).insert(4, ':').insert(2, ':').toString();
+    public String getMarket() {
+        return Market;
     }
 
-    @Override
-    public String toString() {
-        return "GetDealDataResponse [Zqmc=" + Zqmc + ", Wtbh=" + Wtbh + ", Cjbh=" + Cjbh + ", Cjjg=" + Cjjg + ", Cjsl="
-                + Cjsl + ", Zqdm=" + Zqdm + ", Cjsj=" + Cjsj + ", Wtsl=" + Wtsl + ", Mmlb=" + Mmlb + "]";
+    public void setMarket(String market) {
+        Market = market;
+    }
+
+    public String getFormatDealTime() {
+        return new StringBuilder(Cjsj).insert(4, ':').insert(2, ':').toString();
     }
 
 }

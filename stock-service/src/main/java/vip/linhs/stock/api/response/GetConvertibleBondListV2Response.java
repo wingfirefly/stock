@@ -1,6 +1,6 @@
 package vip.linhs.stock.api.response;
 
-public class GetConvertibleBondListV2Response {
+public class GetConvertibleBondListV2Response extends BaseTradeResponse {
 
     private int ExStatus;
     private boolean ExIsToday;

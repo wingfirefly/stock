@@ -1,6 +1,6 @@
 package vip.linhs.stock.api.response;
 
-public class AuthenticationResponse {
+public class AuthenticationResponse extends BaseTradeResponse {
 
     private String cookie;
     private String validateKey;
@@ -19,11 +19,6 @@ public class AuthenticationResponse {
 
     public void setValidateKey(String validateKey) {
         this.validateKey = validateKey;
-    }
-
-    @Override
-    public String toString() {
-        return "AuthenticationResponse [cookie=" + cookie + ", validateKey=" + validateKey + "]";
     }
 
 }

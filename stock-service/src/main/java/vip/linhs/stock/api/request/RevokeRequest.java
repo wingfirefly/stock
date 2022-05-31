@@ -18,12 +18,12 @@ public class RevokeRequest extends BaseTradeRequest {
 
     @Override
     public String getMethod() {
-        return BaseTradeRequest.TradeRequestMethod.RevokeRequest.value();
+        return BaseTradeRequest.TradeRequestMethod.Revoke.value();
     }
 
     @Override
-    public String toString() {
-        return "RevokeRequest [revokes=" + revokes + ", " + super.toString() + "]";
+    public int responseVersion() {
+        return VERSION_MSG;
     }
 
 }

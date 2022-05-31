@@ -1,6 +1,6 @@
 package vip.linhs.stock.api.response;
 
-public class SubmitResponse {
+public class SubmitResponse extends BaseTradeResponse {
 
     private String Wtbh;
 
@@ -10,11 +10,6 @@ public class SubmitResponse {
 
     public void setWtbh(String wtbh) {
         Wtbh = wtbh;
-    }
-
-    @Override
-    public String toString() {
-        return "SubmitResponse [Wtbh=" + Wtbh + "]";
     }
 
 }

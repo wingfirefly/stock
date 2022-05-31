@@ -86,6 +86,22 @@ public class StockUtil {
         throw new NoSuchElementException("no stock type exchange " + exchange + ", code " + code);
     }
 
+    public static String getStockMarket(String code) {
+        String exchange = StockUtil.getExchange(code);
+        if (exchange == null) {
+            return null;
+        }
+
+        if (StockConsts.Exchange.valueOfName(exchange).isSh()) {
+            return "HA";
+        } else if (StockConsts.Exchange.valueOfName(exchange).isSz()) {
+            return "SA";
+        } else if (StockConsts.Exchange.valueOfName(exchange).isBj()) {
+            return "BA";
+        }
+        return null;
+    }
+
     public static String getPinyin(String name) {
         HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
         defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);

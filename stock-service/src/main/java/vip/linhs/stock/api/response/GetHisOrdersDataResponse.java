@@ -15,9 +15,4 @@ public class GetHisOrdersDataResponse extends GetOrdersDataResponse {
         Wtrq = wtrq;
     }
 
-    @Override
-    public String toString() {
-        return "GetHisOrdersDataResponse [Wtrq=" + Wtrq + ", super=" + super.toString() + "]";
-    }
-
 }

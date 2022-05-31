@@ -42,9 +42,4 @@ public class BaseModel implements Serializable {
         }
     }
 
-    @Override
-    public String toString() {
-        return "BaseModel [id=" + id + ", createTime=" + createTime + ", updateTime=" + updateTime + "]";
-    }
-
 }

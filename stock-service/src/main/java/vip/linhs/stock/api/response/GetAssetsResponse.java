@@ -1,6 +1,6 @@
 package vip.linhs.stock.api.response;
 
-public class GetAssetsResponse {
+public class GetAssetsResponse extends BaseTradeResponse {
 
     /**
      * 总资产
@@ -49,11 +49,6 @@ public class GetAssetsResponse {
 
     public void setDjzj(String djzj) {
         Djzj = djzj;
-    }
-
-    @Override
-    public String toString() {
-        return "GetAssetsResponse [Zzc=" + Zzc + ", Kyzj=" + Kyzj + ", Kqzj=" + Kqzj + ", Djzj=" + Djzj + "]";
     }
 
 }

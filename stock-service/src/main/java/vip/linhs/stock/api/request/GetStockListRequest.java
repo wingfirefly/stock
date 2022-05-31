@@ -11,9 +11,4 @@ public class GetStockListRequest extends BaseTradeRequest {
         return BaseTradeRequest.TradeRequestMethod.GetStockList.value();
     }
 
-    @Override
-    public String toString() {
-        return "GetStockListRequest [" + super.toString() + "]";
-    }
-
 }

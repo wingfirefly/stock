@@ -193,7 +193,11 @@ public class TradeServiceImpl implements TradeService {
             dealVo.setTradeCode(v.getCjbh());
             dealVo.setPrice(v.getCjjg());
             dealVo.setTradeDate(new StringBuilder(v.getCjrq()).insert(6, '-').insert(4, '-').toString());
-            dealVo.setTradeTime(new StringBuilder(v.getCjsj()).insert(4, ':').insert(2, ':').toString());
+            if (v.getCjsj().length() == 6) {
+                dealVo.setTradeTime(new StringBuilder(v.getCjsj()).insert(4, ':').insert(2, ':').toString());
+            } else {
+                dealVo.setTradeTime("00:00:00");
+            }
             dealVo.setTradeType(v.getMmlb());
             dealVo.setVolume(v.getCjsl());
             dealVo.setEntrustCode(v.getWtbh());

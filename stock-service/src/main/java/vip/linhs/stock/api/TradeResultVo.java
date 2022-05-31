@@ -8,6 +8,8 @@ public class TradeResultVo<T> {
 
     private String Message;
     private int Status;
+    private int Count;
+    private int Errcode;
     private List<T> Data;
 
     public String getMessage() {
@@ -26,6 +28,22 @@ public class TradeResultVo<T> {
         Status = status;
     }
 
+    public int getCount() {
+        return Count;
+    }
+
+    public void setCount(int count) {
+        Count = count;
+    }
+
+    public int getErrcode() {
+        return Errcode;
+    }
+
+    public void setErrcode(int errcode) {
+        Errcode = errcode;
+    }
+
     public List<T> getData() {
         return Data;
     }
@@ -34,17 +52,12 @@ public class TradeResultVo<T> {
         Data = data;
     }
 
-    @Override
-    public String toString() {
-        return "TradeResultVo [Message=" + Message + ", Status=" + Status + ", Data=" + Data + "]";
+    public boolean success() {
+        return TradeResultVo.success(Status);
     }
 
-    public boolean isSuccess() {
-        return TradeResultVo.isSuccess(Status);
-    }
-
-    public static boolean isSuccess(int status) {
-        return status == TradeResultVo.STATUS_SUCCESS;
+    public static boolean success(int Status) {
+        return Status == TradeResultVo.STATUS_SUCCESS;
     }
 
 }

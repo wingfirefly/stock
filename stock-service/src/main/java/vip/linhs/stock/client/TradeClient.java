@@ -47,10 +47,10 @@ public class TradeClient {
         threadLocal.set(wrapper);
     }
 
-    public String sendNewInstance(String url, Map<String, Object> params) {
+    public String sendNewInstance(String url, Map<String, Object> params, Map<String, String> header) {
         ClientWrapper clientWrapper = threadLocal.get();
         assertOpened(clientWrapper);
-        return HttpUtil.sendPost(clientWrapper.httpClient, url, params);
+        return HttpUtil.sendPost(clientWrapper.httpClient, url, params, header);
     }
 
     public String getCurrentCookie() {

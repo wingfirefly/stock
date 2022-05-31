@@ -1,6 +1,6 @@
 package vip.linhs.stock.api.response;
 
-public class GetStockListResponse {
+public class GetStockListResponse extends BaseTradeResponse {
 
     private String Zqmc;
     private String Zqdm;
@@ -64,12 +64,6 @@ public class GetStockListResponse {
 
     public void setLjyk(String ljyk) {
         Ljyk = ljyk;
-    }
-
-    @Override
-    public String toString() {
-        return "GetStockListResponse [Zqmc=" + Zqmc + ", Zqdm=" + Zqdm + ", Zqsl=" + Zqsl + ", Zxjg=" + Zxjg + ", Kysl="
-                + Kysl + ", Cbjg=" + Cbjg + ", Ljyk=" + Ljyk + "]";
     }
 
 }

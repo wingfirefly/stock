@@ -18,13 +18,13 @@
   <script type="text/javascript" src="/static/js/util/config.js"></script>
   <script type="text/javascript" src="/static/js/util/common.js"></script>
   <script type="text/javascript" src="/static/js/util/frame.js"></script>
-  <script type="text/javascript" src="/static/js/modules/trade.js"></script>
+  <script type="text/javascript" src="/static/js/modules/tradeConfig.js"></script>
 
   <script type="text/javascript">
     pageConfiguration.needAuth = true;
 
     var verifyUrl;
-    var randNum = '0.903' + new Date().getTime();
+    var randNum = '0.346' + new Date().getTime();
 
     function onload() {
       renderTradeMenu(1);
@@ -46,6 +46,7 @@
       var loginForm = $('#login-form');
       $('input[name="randNum"]', loginForm).val(randNum)
       loginForm.on('submit', function() {
+        $('.error-message', loginForm).text('');
         $.ajax({
           url: GlobalConfig.serverUrl + '/api/trade/login',
           type: 'POST',

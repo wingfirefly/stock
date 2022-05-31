@@ -82,3 +82,15 @@ var ExceptionHandler = {
     }
   }
 };
+
+function isBusinessTime(date) {
+  if (!date) {
+    date = new Date();
+  }
+  var hours = date.getHours();
+  if (hours < 9 || hours >= 15 || hours === 12) {
+    return false;
+  }
+  var minutes = date.getMinutes();
+  return !(hours === 9 && minutes < 30 || hours === 11 && minutes > 30);
+}

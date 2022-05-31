@@ -151,7 +151,7 @@ public class ScheduledTasks {
         } catch (UnauthorizedException e) {
             logger.error("Unauthorized", e);
         }
-        if (tradeResultVo == null || !tradeResultVo.isSuccess()) {
+        if (tradeResultVo == null || !tradeResultVo.success()) {
             if (tradeResultVo != null) {
                 logger.error("heartbeat: {}", tradeResultVo.getMessage());
             }

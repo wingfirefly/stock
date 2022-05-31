@@ -1,6 +1,6 @@
 package vip.linhs.stock.api.response;
 
-public class GetOrdersDataResponse {
+public class GetOrdersDataResponse extends BaseTradeResponse {
 
     public static final String WEIBAO = "未报";
     public static final String YIBAO = "已报";
@@ -56,6 +56,8 @@ public class GetOrdersDataResponse {
      * @see #S
      */
     private String Mmlb;
+
+    private String Market;
 
     public String getZqmc() {
         return Zqmc;
@@ -121,10 +123,12 @@ public class GetOrdersDataResponse {
         Mmlb = mmlb;
     }
 
-    @Override
-    public String toString() {
-        return "GetOrdersDataResponse [Zqmc=" + Zqmc + ", Wtbh=" + Wtbh + ", Wtsj=" + Wtsj + ", Zqdm=" + Zqdm
-                + ", Wtsl=" + Wtsl + ", Wtjg=" + Wtjg + ", Wtzt=" + Wtzt + ", Mmlb=" + Mmlb + "]";
+    public String getMarket() {
+        return Market;
+    }
+
+    public void setMarket(String market) {
+        Market = market;
     }
 
 }

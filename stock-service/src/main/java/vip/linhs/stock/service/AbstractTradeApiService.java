@@ -3,8 +3,18 @@ package vip.linhs.stock.service;
 import com.alibaba.fastjson.TypeReference;
 
 import vip.linhs.stock.api.TradeResultVo;
-import vip.linhs.stock.api.request.BaseTradeListRequest;
 import vip.linhs.stock.api.request.BaseTradeRequest;
+import vip.linhs.stock.api.request.CrGetCanBuyNewStockListV3Request;
+import vip.linhs.stock.api.request.CrGetConvertibleBondListV2Request;
+import vip.linhs.stock.api.request.CrGetDealDataRequest;
+import vip.linhs.stock.api.request.CrGetHisDealDataRequest;
+import vip.linhs.stock.api.request.CrGetHisOrdersDataRequest;
+import vip.linhs.stock.api.request.CrGetOrdersDataRequest;
+import vip.linhs.stock.api.request.CrGetRzrqAssertsRequest;
+import vip.linhs.stock.api.request.CrQueryCollateralRequest;
+import vip.linhs.stock.api.request.CrRevokeRequest;
+import vip.linhs.stock.api.request.CrSubmitBatTradeV2Request;
+import vip.linhs.stock.api.request.CrSubmitRequest;
 import vip.linhs.stock.api.request.GetAssetsRequest;
 import vip.linhs.stock.api.request.GetCanBuyNewStockListV3Request;
 import vip.linhs.stock.api.request.GetConvertibleBondListV2Request;
@@ -16,6 +26,18 @@ import vip.linhs.stock.api.request.GetStockListRequest;
 import vip.linhs.stock.api.request.RevokeRequest;
 import vip.linhs.stock.api.request.SubmitBatTradeV2Request;
 import vip.linhs.stock.api.request.SubmitRequest;
+import vip.linhs.stock.api.response.BaseTradeResponse;
+import vip.linhs.stock.api.response.CrGetCanBuyNewStockListV3Response;
+import vip.linhs.stock.api.response.CrGetConvertibleBondListV2Response;
+import vip.linhs.stock.api.response.CrGetDealDataResponse;
+import vip.linhs.stock.api.response.CrGetHisDealDataResponse;
+import vip.linhs.stock.api.response.CrGetHisOrdersDataResponse;
+import vip.linhs.stock.api.response.CrGetOrdersDataResponse;
+import vip.linhs.stock.api.response.CrGetRzrqAssertsResponse;
+import vip.linhs.stock.api.response.CrQueryCollateralResponse;
+import vip.linhs.stock.api.response.CrRevokeResponse;
+import vip.linhs.stock.api.response.CrSubmitBatTradeV2Response;
+import vip.linhs.stock.api.response.CrSubmitResponse;
 import vip.linhs.stock.api.response.GetAssetsResponse;
 import vip.linhs.stock.api.response.GetCanBuyNewStockListV3Response;
 import vip.linhs.stock.api.response.GetConvertibleBondListV2Response;
@@ -82,11 +104,65 @@ public abstract class AbstractTradeApiService implements TradeApiService {
 
     @Override
     public TradeResultVo<SubmitBatTradeV2Response> submitBatTradeV2(SubmitBatTradeV2Request request) {
-        return sendList(request, new TypeReference<SubmitBatTradeV2Response>() {});
+        return send(request, new TypeReference<SubmitBatTradeV2Response>() {});
     }
 
-    public abstract <T> TradeResultVo<T> send(BaseTradeRequest request, TypeReference<T> responseType);
+    @Override
+    public TradeResultVo<CrGetRzrqAssertsResponse> crGetRzrqAsserts(CrGetRzrqAssertsRequest request) {
+        return send(request, new TypeReference<CrGetRzrqAssertsResponse>() {});
+    }
 
-    public abstract <T> TradeResultVo<T> sendList(BaseTradeListRequest request, TypeReference<T> responseType);
+    @Override
+    public TradeResultVo<CrQueryCollateralResponse> crQueryCollateral(CrQueryCollateralRequest request) {
+        return send(request, new TypeReference<CrQueryCollateralResponse>() {});
+    }
+
+    @Override
+    public TradeResultVo<CrSubmitResponse> crSubmit(CrSubmitRequest request) {
+        return send(request, new TypeReference<CrSubmitResponse>() {});
+    }
+
+    @Override
+    public TradeResultVo<CrRevokeResponse> crRevoke(CrRevokeRequest request) {
+        return send(request, new TypeReference<CrRevokeResponse>() {});
+    }
+
+    @Override
+    public TradeResultVo<CrGetOrdersDataResponse> crGetOrdersData(CrGetOrdersDataRequest request) {
+        return send(request, new TypeReference<CrGetOrdersDataResponse>() {});
+    }
+
+
+    @Override
+    public TradeResultVo<CrGetDealDataResponse> crCrGetDealData(CrGetDealDataRequest request) {
+        return send(request, new TypeReference<CrGetDealDataResponse>() {});
+    }
+
+    @Override
+    public TradeResultVo<CrGetHisDealDataResponse> crGetHisDealData(CrGetHisDealDataRequest request) {
+        return send(request, new TypeReference<CrGetHisDealDataResponse>() {});
+    }
+
+    @Override
+    public TradeResultVo<CrGetHisOrdersDataResponse> crGetHisOrdersData(CrGetHisOrdersDataRequest request) {
+        return send(request, new TypeReference<CrGetHisOrdersDataResponse>() {});
+    }
+
+    @Override
+    public TradeResultVo<CrGetCanBuyNewStockListV3Response> crGetCanBuyNewStockListV3(CrGetCanBuyNewStockListV3Request request) {
+        return send(request, new TypeReference<CrGetCanBuyNewStockListV3Response>() {});
+    }
+
+    @Override
+    public TradeResultVo<CrGetConvertibleBondListV2Response> crGetConvertibleBondListV2(CrGetConvertibleBondListV2Request request) {
+        return send(request, new TypeReference<CrGetConvertibleBondListV2Response>() {});
+    }
+
+    @Override
+    public TradeResultVo<CrSubmitBatTradeV2Response> crSubmitBatTradeV2(CrSubmitBatTradeV2Request request) {
+        return send(request, new TypeReference<CrSubmitBatTradeV2Response>() {});
+    }
+
+    public abstract <T extends BaseTradeResponse> TradeResultVo<T> send(BaseTradeRequest request, TypeReference<T> responseType);
 
 }

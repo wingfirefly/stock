@@ -27,9 +27,4 @@ public class GetHisDealDataResponse extends GetDealDataResponse {
         Cjrq = cjrq;
     }
 
-    @Override
-    public String toString() {
-        return "GetHisDealDataResponse [Zqmc=" + getZqmc() + ", Cjxh=" + Cjxh + ", Cjrq=" + Cjrq + "]";
-    }
-
 }

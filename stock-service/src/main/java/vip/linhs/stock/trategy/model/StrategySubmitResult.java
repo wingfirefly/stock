@@ -1,8 +1,8 @@
 package vip.linhs.stock.trategy.model;
 
-import vip.linhs.stock.api.request.SubmitRequest;
+import vip.linhs.stock.api.request.CrSubmitRequest;
 
-public class StrategySubmitResult extends SubmitRequest {
+public class StrategySubmitResult extends CrSubmitRequest {
 
     private String relatedDealCode;
 

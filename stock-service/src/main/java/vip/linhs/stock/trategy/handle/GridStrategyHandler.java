@@ -60,12 +60,12 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
     @Override
     public GridStrategyInput queryInput(TradeRuleVo tradeRuleVo) {
         TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(new GetDealDataRequest(tradeRuleVo.getUserId()));
-        if (!dealData.isSuccess()) {
+        if (!dealData.success()) {
             throw new ServiceException("execute GridStrategyHandler get deal error: " + dealData.getMessage());
         }
 
         TradeResultVo<GetOrdersDataResponse> orderData = tradeApiService.getOrdersData(new GetOrdersDataRequest(tradeRuleVo.getUserId()));
-        if (!orderData.isSuccess()) {
+        if (!orderData.success()) {
             throw new ServiceException("execute GridStrategyHandler get order error: " + dealData.getMessage());
         }
 
@@ -206,10 +206,10 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
             String revokes = String.format("%s_%s", DateFormatUtils.format(new Date(), "yyyyMMdd"), entrustCode);
             RevokeRequest request = new RevokeRequest(input.getUserId());
             request.setRevokes(revokes);
-            logger.info("revoek request: {}", request);
+            logger.info("revoke request: {}", request);
             TradeResultVo<RevokeResponse> resultVo = tradeApiService.revoke(request);
-            logger.info("revoek response: {}", resultVo);
-            if (resultVo.isSuccess()) {
+            logger.info("revoke response: {}", resultVo);
+            if (resultVo.success()) {
                 input.getTradeOrderList().forEach(v -> {
                     if (v.getEntrustCode().equals(entrustCode)) {
                         v.setTradeState(GetOrdersDataResponse.YICHE);
@@ -238,7 +238,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
             }
 
             TradeResultVo<SubmitResponse> saleResultVo = trade(request);
-            if (saleResultVo.isSuccess()) {
+            if (saleResultVo.success()) {
                 TradeOrder tradeOrder = new TradeOrder();
                 tradeOrder.setRuleId(input.getTradeRuleVo().getId());
                 tradeOrder.setDealCode("");
@@ -264,7 +264,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
         TradeResultVo<SubmitResponse> tradeResultVo = tradeApiService.submit(request);
         logger.info("submit response: {}", tradeResultVo);
         String name = stockService.getStockByFullCode(StockUtil.getFullCode(request.getStockCode())).getName();
-        if (!tradeResultVo.isSuccess()) {
+        if (!tradeResultVo.success()) {
             logger.error(tradeResultVo.getMessage());
         }
         String body = String.format("submit %s %s %d %.02f %s", request.getTradeType(), name, request.getAmount(), request.getPrice(), tradeResultVo.getMessage() == null ? "" : tradeResultVo.getMessage());

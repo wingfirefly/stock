@@ -80,7 +80,7 @@ public class SubmitBatTradeV2Request extends BaseTradeListRequest {
 
     @Override
     public String getMethod() {
-        return BaseTradeRequest.TradeRequestMethod.SubmitBatTradeV2.value();
+        return BaseTradeRequest.TradeRequestMethod.CrSubmitBatTradeV2.value();
     }
 
 }
