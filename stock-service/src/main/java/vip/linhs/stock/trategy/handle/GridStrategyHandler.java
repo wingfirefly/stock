@@ -194,6 +194,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
         result.setStockCode(stockCode);
         result.setRelatedDealCode(dealCode);
         result.setZqmc(tradeRuleVo.getStockName());
+        result.setMarket(StockUtil.getStockMarket(result.getStockCode()));
         submitList.add(result);
     }
 
