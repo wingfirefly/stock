@@ -71,7 +71,6 @@ public class TradeController extends BaseController {
     @PostMapping("login")
     public CommonResponse login(int userId, String password, String identifyCode, String randNum) {
         AuthenticationRequest request = new AuthenticationRequest(userId);
-        // password = "UxvVPgyg3CPqWfeDWKkPUEcuWVcNZYXCGXsKcMdOxccJ294Mr0ATkxAnnCONS24+4l2+dclRcSzR3dLXz2H/oSzXQ0PG6Sxaa0zAw1jNR2oiSH+ORbQhK76LStdeYdxwV5gsZd0KuwC+ugqXmEM9lN7ODw7kW3Bjc8ybRoV5hQI=";
         request.setPassword(password);
         request.setIdentifyCode(identifyCode);
         request.setRandNumber(randNum);

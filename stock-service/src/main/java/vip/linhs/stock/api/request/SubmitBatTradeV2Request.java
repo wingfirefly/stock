@@ -18,6 +18,7 @@ public class SubmitBatTradeV2Request extends BaseTradeListRequest {
         private int Amount;
         private String TradeType;
         private String Market;
+        private String Xyjylx = "6";
 
         public String getStockCode() {
             return StockCode;
@@ -65,6 +66,14 @@ public class SubmitBatTradeV2Request extends BaseTradeListRequest {
 
         public void setMarket(String market) {
             Market = market;
+        }
+
+        public String getXyjylx() {
+            return Xyjylx;
+        }
+
+        public void setXyjylx(String xyjylx) {
+            Xyjylx = xyjylx;
         }
 
     }
