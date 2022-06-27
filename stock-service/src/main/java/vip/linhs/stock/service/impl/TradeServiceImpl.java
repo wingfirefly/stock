@@ -5,6 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import vip.linhs.stock.api.response.CrGetDealDataResponse;
+import vip.linhs.stock.api.response.CrGetHisDealDataResponse;
+import vip.linhs.stock.api.response.CrGetOrdersDataResponse;
+import vip.linhs.stock.api.response.CrQueryCollateralResponse;
 import vip.linhs.stock.api.response.GetDealDataResponse;
 import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
@@ -79,7 +84,7 @@ public class TradeServiceImpl implements TradeService {
     }
 
     @Override
-    public List<DealVo> getTradeDealList(List<GetDealDataResponse> data) {
+    public <T extends GetDealDataResponse> List<DealVo> getTradeDealList(List<T> data) {
         if (data.isEmpty()) {
             return Collections.emptyList();
         }
@@ -95,6 +100,12 @@ public class TradeServiceImpl implements TradeService {
             StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(v.getZqdm()));
             dealVo.setStockName(v.getZqmc());
             dealVo.setAbbreviation(stockInfo.getAbbreviation());
+            if (v instanceof CrGetDealDataResponse) {
+                CrGetDealDataResponse crV = (CrGetDealDataResponse) v;
+                dealVo.setCrTradeType(crV.getXyjylx());
+                dealVo.setTradeType(crV.getMmsm());
+                dealVo.setEntrustCode(crV.getWtxh());
+            }
             return dealVo;
         }).collect(Collectors.toList());
     }
@@ -102,27 +113,28 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public List<StockVo> getTradeStockList(List<GetStockListResponse> stockList) {
         List<StockVo> list = stockList.stream().map(v -> {
-            StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(v.getZqdm()));
-            BigDecimal rate = BigDecimal.ZERO;
-            if (stockInfo.isValid()) {
-                DailyIndex dailyIndex = stockCrawlerService.getDailyIndex(stockInfo.getCode());
-                if (dailyIndex != null && DecimalUtil.bg(dailyIndex.getClosingPrice(), BigDecimal.ZERO)) {
-                    rate = StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
-                            dailyIndex.getPreClosingPrice());
-                }
-            }
-
-            StockVo stockVo = new StockVo();
-            stockVo.setAbbreviation(stockInfo.getAbbreviation());
-            stockVo.setStockCode(stockInfo.getCode());
-            stockVo.setExchange(stockInfo.getExchange());
+            StockVo stockVo = getStockVo(v.getZqdm(), null);
             stockVo.setName(v.getZqmc());
             stockVo.setAvailableVolume(Integer.parseInt(v.getKysl()));
             stockVo.setTotalVolume(Integer.parseInt(v.getZqsl()));
             stockVo.setPrice(new BigDecimal(v.getZxjg()));
             stockVo.setCostPrice(new BigDecimal(v.getCbjg()));
             stockVo.setProfit(new BigDecimal(v.getLjyk()));
-            stockVo.setRate(rate);
+            return stockVo;
+        }).collect(Collectors.toList());
+        return list;
+    }
+
+    @Override
+    public List<StockVo> getCrTradeStockList(List<CrQueryCollateralResponse> stockList) {
+        List<StockVo> list = stockList.stream().map(v -> {
+            StockVo stockVo = getStockVo(v.getZqdm(), null);
+            stockVo.setName(v.getZqmc());
+            stockVo.setAvailableVolume(Integer.parseInt(v.getGfky()));
+            stockVo.setTotalVolume(Integer.parseInt(v.getZqsl()));
+            stockVo.setPrice(new BigDecimal(v.getZxjg()));
+            stockVo.setCostPrice(new BigDecimal(v.getCbjg()));
+            stockVo.setProfit(new BigDecimal(v.getFdyk()));
             return stockVo;
         }).collect(Collectors.toList());
         return list;
@@ -132,40 +144,47 @@ public class TradeServiceImpl implements TradeService {
     public List<StockVo> getTradeStockListBySelected(List<StockSelected> selectList) {
         List<String> codeList = selectList.stream().map(v -> StockUtil.getFullCode(v.getCode())).collect(Collectors.toList());
         List<DailyIndex> dailyIndexList = stockCrawlerService.getDailyIndex(codeList);
-
         List<StockVo> list = selectList.stream().map(v -> {
-            StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(v.getCode()));
-            StockVo stockVo = new StockVo();
-            stockVo.setAbbreviation(stockInfo.getAbbreviation());
-            stockVo.setStockCode(stockInfo.getCode());
-            stockVo.setExchange(stockInfo.getExchange());
-            stockVo.setName(stockInfo.getName());
+            StockVo stockVo = getStockVo(v.getCode(), dailyIndexList);
             stockVo.setAvailableVolume(0);
             stockVo.setTotalVolume(0);
-
-            BigDecimal rate = BigDecimal.ZERO;
-            BigDecimal closingPrice = BigDecimal.ZERO;
-
-            DailyIndex dailyIndex = dailyIndexList.stream().filter(d -> d.getCode().contains(v.getCode())).findAny().orElse(null);
-            if (dailyIndex != null) {
-                closingPrice = dailyIndex.getClosingPrice();
-                if (DecimalUtil.bg(dailyIndex.getClosingPrice(), BigDecimal.ZERO)) {
-                    rate = StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
-                            dailyIndex.getPreClosingPrice());
-                }
-            }
-
             stockVo.setCostPrice(BigDecimal.ZERO);
             stockVo.setProfit(BigDecimal.ZERO);
-            stockVo.setRate(rate);
-            stockVo.setPrice(closingPrice);
             return stockVo;
         }).collect(Collectors.toList());
         return list;
     }
 
+    private StockVo getStockVo(String stockCode, List<DailyIndex> dailyIndexList) {
+        StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(stockCode));
+        BigDecimal rate = BigDecimal.ZERO;
+        BigDecimal closingPrice = BigDecimal.ZERO;
+        if (stockInfo.isValid()) {
+            DailyIndex dailyIndex = null;
+            if (dailyIndexList == null) {
+                dailyIndex = stockCrawlerService.getDailyIndex(stockInfo.getCode());
+            } else {
+                dailyIndex = dailyIndexList.stream().filter(d -> d.getCode().contains(stockInfo.getCode())).findAny().orElse(null);
+            }
+            if (dailyIndex != null && DecimalUtil.bg(dailyIndex.getClosingPrice(), BigDecimal.ZERO)) {
+                rate = StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
+                            dailyIndex.getPreClosingPrice());
+                closingPrice = dailyIndex.getClosingPrice();
+            }
+        }
+
+        StockVo stockVo = new StockVo();
+        stockVo.setName(stockInfo.getName());
+        stockVo.setAbbreviation(stockInfo.getAbbreviation());
+        stockVo.setStockCode(stockInfo.getCode());
+        stockVo.setExchange(stockInfo.getExchange());
+        stockVo.setRate(rate);
+        stockVo.setPrice(closingPrice);
+        return stockVo;
+    }
+
     @Override
-    public List<OrderVo> getTradeOrderList(List<GetOrdersDataResponse> orderList) {
+    public <T extends GetOrdersDataResponse> List<OrderVo> getTradeOrderList(List<T> orderList) {
         List<OrderVo> list = orderList.stream().map(v -> {
             StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(v.getZqdm()));
             OrderVo orderVo = new OrderVo();
@@ -178,13 +197,18 @@ public class TradeServiceImpl implements TradeService {
             orderVo.setStockName(v.getZqmc());
             orderVo.setTradeType(v.getMmlb());
             orderVo.setVolume(Integer.parseInt(v.getWtsl()));
+            if (v instanceof CrGetOrdersDataResponse) {
+                CrGetOrdersDataResponse crV = (CrGetOrdersDataResponse) v;
+                orderVo.setCrTradeType(crV.getXyjylbbz());
+                orderVo.setTradeType(crV.getMmsm());
+            }
             return orderVo;
         }).collect(Collectors.toList());
         return list;
     }
 
     @Override
-    public List<DealVo> getTradeHisDealList(List<GetHisDealDataResponse> data) {
+    public <T extends GetHisDealDataResponse> List<DealVo> getTradeHisDealList(List<T> data) {
         if (data.isEmpty()) {
             return Collections.emptyList();
         }
@@ -205,6 +229,11 @@ public class TradeServiceImpl implements TradeService {
             StockInfo stockInfo = stockService.getStockByFullCode(StockUtil.getFullCode(v.getZqdm()));
             dealVo.setStockName(v.getZqmc());
             dealVo.setAbbreviation(stockInfo.getAbbreviation());
+            if (v instanceof CrGetHisDealDataResponse) {
+                CrGetHisDealDataResponse crV = (CrGetHisDealDataResponse) v;
+                dealVo.setCrTradeType(crV.getXyjylx());
+                dealVo.setTradeType(crV.getMmsm());
+            }
             return dealVo;
         }).collect(Collectors.toList());
     }

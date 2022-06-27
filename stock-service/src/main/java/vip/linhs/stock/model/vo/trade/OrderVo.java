@@ -8,6 +8,7 @@ public class OrderVo {
     private String stockName;
     private String abbreviation;
     private String tradeType;
+    private String crTradeType;
     private String entrustCode;
     private String ensuerTime;
     private BigDecimal price;
@@ -44,6 +45,14 @@ public class OrderVo {
 
     public void setTradeType(String tradeType) {
         this.tradeType = tradeType;
+    }
+
+    public String getCrTradeType() {
+        return crTradeType;
+    }
+
+    public void setCrTradeType(String crTradeType) {
+        this.crTradeType = crTradeType;
     }
 
     public String getEntrustCode() {

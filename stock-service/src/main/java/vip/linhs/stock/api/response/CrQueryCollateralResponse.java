@@ -5,7 +5,7 @@ public class CrQueryCollateralResponse extends BaseTradeResponse {
     /**
      * 成本价格
      */
-    private String Cbjg; // 成本价格
+    private String Cbjg;
     /**
      * 仓位比例
      */

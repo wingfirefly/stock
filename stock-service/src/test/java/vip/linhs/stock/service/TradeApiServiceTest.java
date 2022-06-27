@@ -271,7 +271,7 @@ public class TradeApiServiceTest {
     @Test
     public void testCrGetDealData() {
         CrGetDealDataRequest request = new CrGetDealDataRequest(TradeApiServiceTest.UserId);
-        TradeResultVo<CrGetDealDataResponse> tradeResultVo = tradeApiService.crCrGetDealData(request);
+        TradeResultVo<CrGetDealDataResponse> tradeResultVo = tradeApiService.crGetDealData(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
         Assertions.assertTrue(tradeResultVo.success());
     }

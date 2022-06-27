@@ -134,7 +134,7 @@ public abstract class AbstractTradeApiService implements TradeApiService {
 
 
     @Override
-    public TradeResultVo<CrGetDealDataResponse> crCrGetDealData(CrGetDealDataRequest request) {
+    public TradeResultVo<CrGetDealDataResponse> crGetDealData(CrGetDealDataRequest request) {
         return send(request, new TypeReference<CrGetDealDataResponse>() {});
     }
 

@@ -37,6 +37,9 @@ public class DealVo {
      */
     private String tradeType;
 
+    private String crTradeType;
+    private String Xyjylx;
+
     public String getEntrustCode() {
         return entrustCode;
     }
@@ -115,6 +118,22 @@ public class DealVo {
 
     public void setTradeType(String tradeType) {
         this.tradeType = tradeType;
+    }
+
+    public String getCrTradeType() {
+        return crTradeType;
+    }
+
+    public void setCrTradeType(String crTradeType) {
+        this.crTradeType = crTradeType;
+    }
+
+    public String getXyjylx() {
+        return Xyjylx;
+    }
+
+    public void setXyjylx(String xyjylx) {
+        Xyjylx = xyjylx;
     }
 
 }

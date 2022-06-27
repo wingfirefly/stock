@@ -138,7 +138,7 @@ public interface TradeApiService {
     /**
      * 信用当日成交
      */
-    TradeResultVo<CrGetDealDataResponse> crCrGetDealData(CrGetDealDataRequest request);
+    TradeResultVo<CrGetDealDataResponse> crGetDealData(CrGetDealDataRequest request);
 
     /**
      * 信用历史成交

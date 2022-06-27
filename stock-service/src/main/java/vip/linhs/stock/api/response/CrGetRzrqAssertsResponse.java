@@ -84,6 +84,9 @@ public class CrGetRzrqAssertsResponse extends BaseTradeResponse {
      * 总负债
      */
     private String Zfz;
+    /**
+     * 资金可用数
+     */
     private String Zjkys;
     /**
      * 资金余额

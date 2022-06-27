@@ -4,6 +4,7 @@ public class CrGetOrdersDataResponse extends GetOrdersDataResponse {
 
     private String Xyjylbbz;
     private String Xyjylx;
+    private String Mmsm;
 
     public String getXyjylbbz() {
         return Xyjylbbz;
@@ -19,6 +20,14 @@ public class CrGetOrdersDataResponse extends GetOrdersDataResponse {
 
     public void setXyjylx(String xyjylx) {
         Xyjylx = xyjylx;
+    }
+
+    public String getMmsm() {
+        return Mmsm;
+    }
+
+    public void setMmsm(String mmsm) {
+        Mmsm = mmsm;
     }
 
 }
