@@ -7,6 +7,17 @@ public class CrSubmitBatTradeV2Request extends SubmitBatTradeV2Request {
     }
 
     public static class CrSubmitData extends SubmitData {
+
+        private String Xyjylx = "6";
+
+        public String getXyjylx() {
+            return Xyjylx;
+        }
+
+        public void setXyjylx(String xyjylx) {
+            Xyjylx = xyjylx;
+        }
+
     }
 
     @Override

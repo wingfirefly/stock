@@ -63,7 +63,7 @@ public class SystemController extends BaseController {
 
     @PostMapping("executeTask")
     public CommonResponse executeTask(int id) {
-        List<ExecuteInfo> list = taskService.getPendingTaskListById(id);
+        List<ExecuteInfo> list = taskService.getTaskListById(id);
         for (ExecuteInfo executeInfo : list) {
             taskService.executeTask(executeInfo);
         }

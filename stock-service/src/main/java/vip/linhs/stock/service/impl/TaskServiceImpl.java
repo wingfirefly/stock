@@ -70,6 +70,11 @@ public class TaskServiceImpl implements TaskService {
     private static final boolean CrawIndexFromSina = false;
 
     @Override
+    public List<ExecuteInfo> getTaskListById(int... id) {
+        return executeInfoDao.getByTaskIdAndState(id, null);
+    }
+
+    @Override
     public List<ExecuteInfo> getPendingTaskListById(int... id) {
         return executeInfoDao.getByTaskIdAndState(id, StockConsts.TaskState.Pending.value());
     }
@@ -390,7 +395,8 @@ public class TaskServiceImpl implements TaskService {
 
                 newStockList.addAll(convertibleBondList);
             } else {
-                messageServicve.send("apply new stock: " + getConvertibleBondResultVo.getMessage());
+                logger.warn("get convertible stock: {}", getConvertibleBondResultVo);
+                messageServicve.send("get convertible stock: " + getConvertibleBondResultVo.getMessage());
             }
         }
 
@@ -408,6 +414,7 @@ public class TaskServiceImpl implements TaskService {
         request.setList(newStockList);
 
         TradeResultVo<SubmitBatTradeV2Response> tradeResultVo = tradeApiService.submitBatTradeV2(request);
+        logger.info("apply new stock: {}" + tradeResultVo);
         messageServicve.send("apply new stock: " + tradeResultVo.getMessage());
     }
 

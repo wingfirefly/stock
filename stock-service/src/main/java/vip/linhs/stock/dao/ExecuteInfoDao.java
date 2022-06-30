@@ -9,7 +9,7 @@ import vip.linhs.stock.model.vo.TaskVo;
 
 public interface ExecuteInfoDao {
 
-    List<ExecuteInfo> getByTaskIdAndState(int[] id, int value);
+    List<ExecuteInfo> getByTaskIdAndState(int[] id, Integer value);
 
     void update(ExecuteInfo executeInfo);
 

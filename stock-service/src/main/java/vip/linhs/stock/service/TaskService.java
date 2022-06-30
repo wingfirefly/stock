@@ -9,6 +9,8 @@ import vip.linhs.stock.model.vo.TaskVo;
 
 public interface TaskService {
 
+    List<ExecuteInfo> getTaskListById(int... id);
+
     List<ExecuteInfo> getPendingTaskListById(int... id);
 
     void executeTask(ExecuteInfo executeInfo);

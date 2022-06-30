@@ -19,15 +19,19 @@ import vip.linhs.stock.util.SqlCondition;
 public class ExecuteInfoDaoImpl extends BaseDao implements ExecuteInfoDao {
 
     @Override
-    public List<ExecuteInfo> getByTaskIdAndState(int[] id, int state) {
+    public List<ExecuteInfo> getByTaskIdAndState(int[] id, Integer state) {
         ArrayList<Integer> paramsList = new ArrayList<>(id.length);
         for (int i : id) {
             paramsList.add(i);
         }
         String whereCause = String.join(",", paramsList.stream().map(str -> "?").collect(Collectors.toList()));
-        paramsList.add(state);
         String sql = "select e.id, task_id as taskId, params_str as paramsStr from execute_info e, task t"
-                + " where e.task_id = t.id and t.id in (" + whereCause + ") and e.state = ? order by t.id";
+                + " where e.task_id = t.id and t.id in (" + whereCause + ")";
+        if (state != null) {
+            paramsList.add(state);
+            sql += " and e.state = ?";
+        }
+        sql +=  " order by t.id";
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(ExecuteInfo.class), paramsList.toArray());
     }
 
