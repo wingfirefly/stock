@@ -24,6 +24,8 @@ public interface TradeService {
 
     TradeMethod getTradeMethodByName(String name);
 
+    List<TradeUser> getTradeUserList();
+
     TradeUser getTradeUserById(int id);
 
     void updateTradeUser(TradeUser tradeUser);

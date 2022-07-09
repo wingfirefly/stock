@@ -319,44 +319,46 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void runDealNotice() {
-        TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(new GetDealDataRequest(1));
-        if (!dealData.success()) {
-            logger.error("runDealNotice error {}", dealData.getMessage());
-        }
-        List<GetDealDataResponse> list = TradeUtil.mergeDealList(dealData.getData());
-        List<TradeDeal> tradeDealList = tradeService.getTradeDealListByDate(new Date());
-
-        List<String> dealCodeList = tradeDealList.stream().map(TradeDeal::getDealCode).collect(Collectors.toList());
-
+        List<TradeUser> userList = tradeService.getTradeUserList();
         StringBuilder sb = new StringBuilder();
 
-        List<TradeDeal> needNotifyList = list.stream().filter(v -> !dealCodeList.contains(v.getCjbh())).map(v -> {
-            TradeDeal tradeDeal = new TradeDeal();
-            tradeDeal.setDealCode(v.getCjbh());
-            tradeDeal.setPrice(new BigDecimal(v.getCjjg()));
-            tradeDeal.setStockCode(v.getZqdm());
+        for (TradeUser tradeUser : userList) {
+            TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(new GetDealDataRequest(tradeUser.getId()));
+            if (!dealData.success()) {
+                logger.error("runDealNotice error {}", dealData.getMessage());
+            }
+            List<GetDealDataResponse> list = TradeUtil.mergeDealList(dealData.getData());
+            List<TradeDeal> tradeDealList = tradeService.getTradeDealListByDate(new Date());
 
-            Date tradeTime = new Date();
-            tradeTime = DateUtils.setHours(tradeTime, Integer.valueOf(v.getCjsj().substring(0, 2)));
-            tradeTime = DateUtils.setMinutes(tradeTime, Integer.valueOf(v.getCjsj().substring(2, 4)));
-            tradeTime = DateUtils.setSeconds(tradeTime, Integer.valueOf(v.getCjsj().substring(4, 6)));
+            List<String> dealCodeList = tradeDealList.stream().map(TradeDeal::getDealCode).collect(Collectors.toList());
 
-            tradeDeal.setTradeTime(tradeTime);
-            tradeDeal.setTradeType(v.getMmlb());
-            tradeDeal.setVolume(Integer.valueOf(v.getCjsl()));
+            List<TradeDeal> needNotifyList = list.stream().filter(v -> !dealCodeList.contains(v.getCjbh())).map(v -> {
+                TradeDeal tradeDeal = new TradeDeal();
+                tradeDeal.setDealCode(v.getCjbh());
+                tradeDeal.setPrice(new BigDecimal(v.getCjjg()));
+                tradeDeal.setStockCode(v.getZqdm());
 
-            sb.append(String.format("deal %s %s %s %s %s\n",
-                    v.getFormatDealTime(), v.getZqmc(), v.getMmlb(), v.getCjjg(), v.getCjsl()));
+                Date tradeTime = new Date();
+                tradeTime = DateUtils.setHours(tradeTime, Integer.valueOf(v.getCjsj().substring(0, 2)));
+                tradeTime = DateUtils.setMinutes(tradeTime, Integer.valueOf(v.getCjsj().substring(2, 4)));
+                tradeTime = DateUtils.setSeconds(tradeTime, Integer.valueOf(v.getCjsj().substring(4, 6)));
 
-            return tradeDeal;
-        }).collect(Collectors.toList());
+                tradeDeal.setTradeTime(tradeTime);
+                tradeDeal.setTradeType(v.getMmlb());
+                tradeDeal.setVolume(Integer.valueOf(v.getCjsl()));
+
+                sb.append(String.format("deal %s %s %s %s %s\n",
+                        v.getFormatDealTime(), v.getZqmc(), v.getMmlb(), v.getCjjg(), v.getCjsl()));
+
+                return tradeDeal;
+            }).collect(Collectors.toList());
+            tradeService.saveTradeDealList(needNotifyList);
+        }
 
         if (sb.length() > 0) {
             sb.setLength(sb.length() - 1);
             messageServicve.send(sb.toString());
         }
-
-        tradeService.saveTradeDealList(needNotifyList);
     }
 
     private void applyNewStock() {

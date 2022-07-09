@@ -51,7 +51,7 @@ public class CrTradeController extends BaseController {
 
     @RequestMapping("dealList")
     public PageVo<DealVo> getDealList(PageParam pageParam) {
-        CrGetDealDataRequest request = new CrGetDealDataRequest(getUserId());
+        CrGetDealDataRequest request = new CrGetDealDataRequest(getTradeUserId(pageParam.getTradeUserId()));
         TradeResultVo<CrGetDealDataResponse> dealData = tradeApiService.crGetDealData(request);
         if (dealData.success()) {
             List<DealVo> list = tradeService.getTradeDealList(dealData.getData());
@@ -62,7 +62,7 @@ public class CrTradeController extends BaseController {
 
     @RequestMapping("hisDealList")
     public PageVo<DealVo> getHisDealList(PageParam pageParam) {
-        CrGetHisDealDataRequest request = new CrGetHisDealDataRequest(getUserId());
+        CrGetHisDealDataRequest request = new CrGetHisDealDataRequest(getTradeUserId(pageParam.getTradeUserId()));
         request.setEt(DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
         Date et = new Date();
         et.setTime(et.getTime() - 15 * 24 * 3600 * 1000);
@@ -77,8 +77,8 @@ public class CrTradeController extends BaseController {
     }
 
     @RequestMapping("buy")
-    public CommonResponse buy(int amount, double price, String stockCode, String stockName) {
-        SubmitRequest request = new SubmitRequest(getUserId());
+    public CommonResponse buy(int amount, double price, String stockCode, String stockName, Integer tradeUserId) {
+        SubmitRequest request = new SubmitRequest(getTradeUserId(tradeUserId));
         request.setAmount(amount);
         request.setPrice(price);
         request.setStockCode(stockCode);
@@ -95,8 +95,8 @@ public class CrTradeController extends BaseController {
     }
 
     @RequestMapping("sale")
-    public CommonResponse sale(int amount, double price, String stockCode, String stockName) {
-        SubmitRequest request = new SubmitRequest(getUserId());
+    public CommonResponse sale(int amount, double price, String stockCode, String stockName, Integer tradeUserId) {
+        SubmitRequest request = new SubmitRequest(getTradeUserId(tradeUserId));
         request.setAmount(amount);
         request.setPrice(price);
         request.setStockCode(stockCode);
@@ -113,7 +113,7 @@ public class CrTradeController extends BaseController {
 
     @RequestMapping("stockList")
     public PageVo<StockVo> getStockList(PageParam pageParam) {
-        CrQueryCollateralRequest request = new CrQueryCollateralRequest(getUserId());
+        CrQueryCollateralRequest request = new CrQueryCollateralRequest(getTradeUserId(pageParam.getTradeUserId()));
         TradeResultVo<CrQueryCollateralResponse> response = tradeApiService.crQueryCollateral(request);
         ArrayList<StockVo> list = new ArrayList<>();
         if (response.success()) {
@@ -125,7 +125,7 @@ public class CrTradeController extends BaseController {
 
     @RequestMapping("orderList")
     public PageVo<OrderVo> getOrderList(PageParam pageParam) {
-        CrGetOrdersDataRequest request = new CrGetOrdersDataRequest(getUserId());
+        CrGetOrdersDataRequest request = new CrGetOrdersDataRequest(getTradeUserId(pageParam.getTradeUserId()));
         TradeResultVo<CrGetOrdersDataResponse> response = tradeApiService.crGetOrdersData(request);
         if (response.success()) {
             List<OrderVo> list = tradeService.getTradeOrderList(response.getData());
@@ -136,8 +136,8 @@ public class CrTradeController extends BaseController {
     }
 
     @RequestMapping("revoke")
-    public CommonResponse revoke(String entrustCode) {
-        CrRevokeRequest request = new CrRevokeRequest(getUserId());
+    public CommonResponse revoke(String entrustCode, Integer tradeUserId) {
+        CrRevokeRequest request = new CrRevokeRequest(getTradeUserId(tradeUserId));
         String revokes = String.format("%s_%s", DateFormatUtils.format(new Date(), "yyyyMMdd"), entrustCode);
         request.setRevokes(revokes);
         TradeResultVo<CrRevokeResponse> response = tradeApiService.crRevoke(request);
@@ -145,8 +145,8 @@ public class CrTradeController extends BaseController {
     }
 
     @RequestMapping("queryAccount")
-    public AccountVo queryAccount() {
-        CrGetRzrqAssertsRequest request = new CrGetRzrqAssertsRequest(getUserId());
+    public AccountVo queryAccount(Integer tradeUserId) {
+        CrGetRzrqAssertsRequest request = new CrGetRzrqAssertsRequest(getTradeUserId(tradeUserId));
         TradeResultVo<CrGetRzrqAssertsResponse> tradeResultVo = tradeApiService.crGetRzrqAsserts(request);
         AccountVo accountVo = new AccountVo();
         accountVo.setAvailableAmount(BigDecimal.ZERO);

@@ -130,7 +130,7 @@ public class TradeController extends BaseController {
 
     @RequestMapping("dealList")
     public PageVo<DealVo> getDealList(PageParam pageParam) {
-        GetDealDataRequest request = new GetDealDataRequest(getUserId());
+        GetDealDataRequest request = new GetDealDataRequest(getTradeUserId(pageParam.getTradeUserId()));
         TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(request);
         if (dealData.success()) {
             List<DealVo> list = tradeService.getTradeDealList(dealData.getData());
@@ -141,7 +141,7 @@ public class TradeController extends BaseController {
 
     @RequestMapping("hisDealList")
     public PageVo<DealVo> getHisDealList(PageParam pageParam) {
-        GetHisDealDataRequest request = new GetHisDealDataRequest(getUserId());
+        GetHisDealDataRequest request = new GetHisDealDataRequest(getTradeUserId(pageParam.getTradeUserId()));
         request.setEt(DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
         Date et = new Date();
         et.setTime(et.getTime() - 15 * 24 * 3600 * 1000);
@@ -156,8 +156,8 @@ public class TradeController extends BaseController {
     }
 
     @RequestMapping("buy")
-    public CommonResponse buy(int amount, double price, String stockCode, String stockName) {
-        SubmitRequest request = new SubmitRequest(getUserId());
+    public CommonResponse buy(int amount, double price, String stockCode, String stockName, Integer tradeUserId) {
+        SubmitRequest request = new SubmitRequest(getTradeUserId(tradeUserId));
         request.setAmount(amount);
         request.setPrice(price);
         request.setStockCode(stockCode);
@@ -174,8 +174,8 @@ public class TradeController extends BaseController {
     }
 
     @RequestMapping("sale")
-    public CommonResponse sale(int amount, double price, String stockCode, String stockName) {
-        SubmitRequest request = new SubmitRequest(getUserId());
+    public CommonResponse sale(int amount, double price, String stockCode, String stockName, Integer tradeUserId) {
+        SubmitRequest request = new SubmitRequest(getTradeUserId(tradeUserId));
         request.setAmount(amount);
         request.setPrice(price);
         request.setStockCode(stockCode);
@@ -192,7 +192,7 @@ public class TradeController extends BaseController {
 
     @RequestMapping("stockList")
     public PageVo<StockVo> getStockList(PageParam pageParam) {
-        GetStockListRequest request = new GetStockListRequest(getUserId());
+        GetStockListRequest request = new GetStockListRequest(getTradeUserId(pageParam.getTradeUserId()));
         TradeResultVo<GetStockListResponse> response = tradeApiService.getStockList(request);
         ArrayList<StockVo> list = new ArrayList<>();
         if (response.success()) {
@@ -209,7 +209,7 @@ public class TradeController extends BaseController {
 
     @RequestMapping("orderList")
     public PageVo<OrderVo> getOrderList(PageParam pageParam) {
-        GetOrdersDataRequest request = new GetOrdersDataRequest(getUserId());
+        GetOrdersDataRequest request = new GetOrdersDataRequest(getTradeUserId(pageParam.getTradeUserId()));
         TradeResultVo<GetOrdersDataResponse> response = tradeApiService.getOrdersData(request);
         if (response.success()) {
             List<OrderVo> list = tradeService.getTradeOrderList(response.getData());
@@ -220,8 +220,8 @@ public class TradeController extends BaseController {
     }
 
     @RequestMapping("revoke")
-    public CommonResponse revoke(String entrustCode) {
-        RevokeRequest request = new RevokeRequest(getUserId());
+    public CommonResponse revoke(String entrustCode, Integer tradeUserId) {
+        RevokeRequest request = new RevokeRequest(getTradeUserId(tradeUserId));
         String revokes = String.format("%s_%s", DateFormatUtils.format(new Date(), "yyyyMMdd"), entrustCode);
         request.setRevokes(revokes);
         TradeResultVo<RevokeResponse> response = tradeApiService.revoke(request);
@@ -229,8 +229,8 @@ public class TradeController extends BaseController {
     }
 
     @RequestMapping("queryAccount")
-    public AccountVo queryAccount() {
-        GetAssetsRequest request = new GetAssetsRequest(getUserId());
+    public AccountVo queryAccount(Integer tradeUserId) {
+        GetAssetsRequest request = new GetAssetsRequest(getTradeUserId(tradeUserId));
         TradeResultVo<GetAssetsResponse> tradeResultVo = tradeApiService.getAsserts(request);
         AccountVo accountVo = new AccountVo();
         if (tradeResultVo.success()) {

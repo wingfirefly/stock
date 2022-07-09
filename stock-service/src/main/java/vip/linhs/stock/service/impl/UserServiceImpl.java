@@ -23,10 +23,12 @@ public class UserServiceImpl implements UserService {
         return userDao.get(username, password);
     }
 
-    @Cacheable(value = StockConsts.CACHE_KEY_TOKEN, key = "#token", unless="#result == null")
+    @Cacheable(value = StockConsts.CACHE_KEY_TOKEN, key = "#token", unless="#result.id > 0")
     @Override
     public User getByToken(String token) {
-        return null;
+        User user = new User();
+        user.setId(-1);
+        return user;
     }
 
     @CachePut(value = StockConsts.CACHE_KEY_TOKEN, key = "#token", unless="#result == null")

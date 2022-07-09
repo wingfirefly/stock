@@ -18,6 +18,7 @@ public class StockConsts {
 
     private static final String CACHE_KEY_TRADE_PREFIX = CACHE_KEY_PREFIX + "trade:";
     public static final String CACHE_KEY_TRADE_USER = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeUser";
+    public static final String CACHE_KEY_TRADE_USER_LIST = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeUserList";
     public static final String CACHE_KEY_TRADE_METHOD = StockConsts.CACHE_KEY_TRADE_PREFIX + "tradeMethod";
 
     public static final String CACHE_KEY_TOKEN = CACHE_KEY_PREFIX + "auth:token";

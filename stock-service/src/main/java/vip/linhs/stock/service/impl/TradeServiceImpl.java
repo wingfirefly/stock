@@ -68,6 +68,12 @@ public class TradeServiceImpl implements TradeService {
         return tradeMethodDao.getByName(name);
     }
 
+    @Cacheable(value = StockConsts.CACHE_KEY_TRADE_USER_LIST, unless="#result.size() == 0")
+    @Override
+    public List<TradeUser> getTradeUserList() {
+        return tradeUserDao.getList();
+    }
+
     @Cacheable(value = StockConsts.CACHE_KEY_TRADE_USER, key = "#id", unless="#result == null")
     @Override
     public TradeUser getTradeUserById(int id) {

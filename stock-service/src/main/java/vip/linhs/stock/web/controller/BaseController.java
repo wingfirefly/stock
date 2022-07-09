@@ -24,6 +24,10 @@ public abstract class BaseController {
         return userId != null ? userId : -1;
     }
 
+    protected int getTradeUserId(Integer tradeUserId) {
+        return tradeUserId != null ? tradeUserId : 1;
+    }
+
     protected <T> List<T> subList(List<T> list, PageParam pageParam) {
         if (list.isEmpty()) {
             return list;

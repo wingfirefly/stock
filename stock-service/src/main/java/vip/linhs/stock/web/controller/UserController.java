@@ -71,4 +71,5 @@ public class UserController extends BaseController {
         userService.update(user);
         return CommonResponse.buildResponse("success");
     }
+
 }

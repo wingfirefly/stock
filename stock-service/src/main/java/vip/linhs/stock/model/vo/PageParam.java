@@ -7,6 +7,7 @@ public class PageParam {
 
     private int start;
     private int length;
+    private Integer tradeUserId;
     private Map<String, Object> condition = new HashMap<>();
 
     public int getStart() {
@@ -23,6 +24,14 @@ public class PageParam {
 
     public void setLength(int length) {
         this.length = length;
+    }
+
+    public Integer getTradeUserId() {
+        return tradeUserId;
+    }
+
+    public void setTradeUserId(Integer tradeUserId) {
+        this.tradeUserId = tradeUserId;
     }
 
     public Map<String, Object> getCondition() {
