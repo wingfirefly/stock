@@ -103,7 +103,8 @@ public class CrTradeController extends BaseController {
         request.setZqmc(stockName);
         request.setTradeType(SubmitRequest.S);
         TradeResultVo<SubmitResponse> response = tradeApiService.submit(request);
-        String message = response.getMessage();
+        request.setMarket(StockUtil.getStockMarket(request.getStockCode()));
+		String message = response.getMessage();
         if (response.success()) {
             message = response.getData().get(0).getWtbh();
         }

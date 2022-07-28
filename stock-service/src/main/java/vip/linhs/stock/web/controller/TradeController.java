@@ -181,6 +181,7 @@ public class TradeController extends BaseController {
         request.setStockCode(stockCode);
         request.setZqmc(stockName);
         request.setTradeType(SubmitRequest.S);
+		request.setMarket(StockUtil.getStockMarket(request.getStockCode()));
         TradeResultVo<SubmitResponse> response = tradeApiService.submit(request);
         String message = response.getMessage();
         if (response.success()) {
