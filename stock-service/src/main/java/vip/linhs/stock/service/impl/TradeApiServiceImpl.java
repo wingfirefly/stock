@@ -199,7 +199,6 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         TradeUser tradeUser = tradeService.getTradeUserById(request.getUserId());
 
         request.setPassword(encodePassword(request.getPassword()));
-        System.out.println(request.getPassword());
 
         Map<String, String> header = getHeader(request);
         Map<String, Object> params = getParams(request);
