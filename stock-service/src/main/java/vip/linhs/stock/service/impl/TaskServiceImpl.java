@@ -416,7 +416,7 @@ public class TaskServiceImpl implements TaskService {
         request.setList(newStockList);
 
         TradeResultVo<SubmitBatTradeV2Response> tradeResultVo = tradeApiService.submitBatTradeV2(request);
-        logger.info("apply new stock: {}" + tradeResultVo);
+        logger.info("apply new stock: {}", tradeResultVo);
         messageServicve.send("apply new stock: " + tradeResultVo.getMessage());
     }
 

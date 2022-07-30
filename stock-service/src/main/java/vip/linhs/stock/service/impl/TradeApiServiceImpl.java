@@ -28,6 +28,7 @@ import vip.linhs.stock.model.po.TradeMethod;
 import vip.linhs.stock.model.po.TradeUser;
 import vip.linhs.stock.service.AbstractTradeApiService;
 import vip.linhs.stock.service.TradeService;
+import vip.linhs.stock.util.RSAUtil;
 
 @Service
 public class TradeApiServiceImpl extends AbstractTradeApiService {
@@ -197,6 +198,9 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         TradeMethod tradeMethod = tradeService.getTradeMethodByName(request.getMethod());
         TradeUser tradeUser = tradeService.getTradeUserById(request.getUserId());
 
+        request.setPassword(encodePassword(request.getPassword()));
+        System.out.println(request.getPassword());
+
         Map<String, String> header = getHeader(request);
         Map<String, Object> params = getParams(request);
         params.put("userId", tradeUser.getAccountId());
@@ -221,6 +225,11 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         } finally {
             tradeClient.destoryCurrentSession();
         }
+    }
+
+    private String encodePassword(String password) {
+        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDHdsyxT66pDG4p73yope7jxA92\nc0AT4qIJ/xtbBcHkFPK77upnsfDTJiVEuQDH+MiMeb+XhCLNKZGp0yaUU6GlxZdp\n+nLW8b7Kmijr3iepaDhcbVTsYBWchaWUXauj9Lrhz58/6AE/NF0aMolxIGpsi+ST\n2hSHPu3GSXMdhPCkWQIDAQAB";
+        return RSAUtil.encodeWithPublicKey(password, publicKey);
     }
 
     private String getValidateKey(String content) {
