@@ -95,13 +95,13 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
                 tradeOrder.setTradeState(GetOrdersDataResponse.YICHENG);
 
                 Date tradeTime = tradeOrder.getTradeTime();
-                tradeTime = DateUtils.setHours(tradeTime, Integer.valueOf(dealData.getCjsj().substring(0, 2)));
-                tradeTime = DateUtils.setMinutes(tradeTime, Integer.valueOf(dealData.getCjsj().substring(2, 4)));
-                tradeTime = DateUtils.setSeconds(tradeTime, Integer.valueOf(dealData.getCjsj().substring(4, 6)));
+                tradeTime = DateUtils.setHours(tradeTime, Integer.parseInt(dealData.getCjsj().substring(0, 2)));
+                tradeTime = DateUtils.setMinutes(tradeTime, Integer.parseInt(dealData.getCjsj().substring(2, 4)));
+                tradeTime = DateUtils.setSeconds(tradeTime, Integer.parseInt(dealData.getCjsj().substring(4, 6)));
 
                 tradeOrder.setTradeTime(tradeTime);
                 tradeOrder.setTradeType(dealData.getMmlb());
-                tradeOrder.setVolume(Integer.valueOf(dealData.getCjsl()));
+                tradeOrder.setVolume(Integer.parseInt(dealData.getCjsl()));
             }
 
             if (!tradeOrder.isDealed()) {

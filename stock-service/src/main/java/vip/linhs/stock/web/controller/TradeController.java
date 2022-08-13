@@ -110,8 +110,7 @@ public class TradeController extends BaseController {
             throw e;
         }
         tradeService.changeTradeRuleState(state, id);
-        CommonResponse response = CommonResponse.buildResponse(CommonResponse.DEFAULT_MESSAGE_SUCCESS);
-        return response;
+        return CommonResponse.buildResponse(CommonResponse.DEFAULT_MESSAGE_SUCCESS);
     }
 
     @RequestMapping("resetRule")
@@ -200,9 +199,7 @@ public class TradeController extends BaseController {
             list.addAll(tradeService.getTradeStockList(response.getData()));
         }
         List<StockSelected> selectList = stockSelectedService.getList();
-        selectList = selectList.stream().filter(v -> {
-            return list.stream().noneMatch(vo -> vo.getStockCode().equals(v.getCode()));
-        }).collect(Collectors.toList());
+        selectList = selectList.stream().filter(v -> list.stream().noneMatch(vo -> vo.getStockCode().equals(v.getCode()))).collect(Collectors.toList());
         list.addAll(tradeService.getTradeStockListBySelected(selectList));
         list.sort((a, b) -> Integer.compare(b.getTotalVolume(), a.getTotalVolume()));
         return new PageVo<>(subList(list, pageParam), list.size());

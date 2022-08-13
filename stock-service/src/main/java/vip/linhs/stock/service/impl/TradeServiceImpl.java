@@ -118,7 +118,7 @@ public class TradeServiceImpl implements TradeService {
 
     @Override
     public List<StockVo> getTradeStockList(List<GetStockListResponse> stockList) {
-        List<StockVo> list = stockList.stream().map(v -> {
+        return stockList.stream().map(v -> {
             StockVo stockVo = getStockVo(v.getZqdm(), null);
             stockVo.setName(v.getZqmc());
             stockVo.setAvailableVolume(Integer.parseInt(v.getKysl()));
@@ -128,7 +128,6 @@ public class TradeServiceImpl implements TradeService {
             stockVo.setProfit(new BigDecimal(v.getLjyk()));
             return stockVo;
         }).collect(Collectors.toList());
-        return list;
     }
 
     @Override

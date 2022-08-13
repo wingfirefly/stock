@@ -57,8 +57,7 @@ public class SystemController extends BaseController {
             throw e;
         }
         taskService.changeTaskState(state, id);
-        CommonResponse response = CommonResponse.buildResponse("success");
-        return response;
+        return CommonResponse.buildResponse("success");
     }
 
     @PostMapping("executeTask")
@@ -85,8 +84,7 @@ public class SystemController extends BaseController {
             throw e;
         }
         redisClient.remove(key);
-        CommonResponse response = CommonResponse.buildResponse("success");
-        return response;
+        return CommonResponse.buildResponse("success");
     }
 
     @RequestMapping("configList")

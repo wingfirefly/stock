@@ -26,7 +26,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Autowired
     private UserService userService;
 
-    private Set<String> openUrlList = new HashSet<>();
+    private final Set<String> openUrlList = new HashSet<>();
 
     public AuthInterceptor() {
         openUrlList.add("/user/login");

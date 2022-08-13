@@ -206,8 +206,7 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         try {
             tradeClient.openSession();
             String content = tradeClient.sendNewInstance(tradeMethod.getUrl(), params, header);
-            ResponseParser responseParse = dataListReponseParser;
-            TradeResultVo<AuthenticationResponse> resultVo = responseParse.parse(content, new TypeReference<AuthenticationResponse>() {});
+            TradeResultVo<AuthenticationResponse> resultVo = dataListReponseParser.parse(content, new TypeReference<AuthenticationResponse>() {});
             if (resultVo.success()) {
                 TradeMethod authCheckTradeMethod = tradeService.getTradeMethodByName(BaseTradeRequest.TradeRequestMethod.AuthenticationCheck.value());
                 AuthenticationResponse response = new AuthenticationResponse();
@@ -218,7 +217,7 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
                 String validateKey = getValidateKey(content2);
 
                 response.setValidateKey(validateKey);
-                resultVo.setData(Arrays.asList(response));
+                resultVo.setData(Collections.singletonList(response));
             }
             return resultVo;
         } finally {
@@ -235,8 +234,7 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         String key = "input id=\"em_validatekey\" type=\"hidden\" value=\"";
         int inputBegin = content.indexOf(key) + key.length();
         int inputEnd = content.indexOf("\" />", inputBegin);
-        String validateKey = content.substring(inputBegin, inputEnd);
-        return validateKey;
+        return content.substring(inputBegin, inputEnd);
     }
 
     private ResponseParser getResponseParser(BaseTradeRequest request) {
@@ -255,7 +253,7 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
     private Map<String, Object> getParams(Object request) {
         Map<Object, Object> beanMap = new BeanMap(request);
         HashMap<String, Object> params = new HashMap<>();
-        beanMap.entrySet().stream().filter(entry -> !TradeApiServiceImpl.IgnoreList.contains(entry.getKey()))
+        beanMap.entrySet().stream().filter(entry -> !TradeApiServiceImpl.IgnoreList.contains(String.valueOf(entry.getKey())))
                 .forEach(entry -> params.put(String.valueOf(entry.getKey()), entry.getValue()));
         return params;
     }
@@ -278,7 +276,7 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
         return header;
     }
 
-    private static interface ResponseParser {
+    private interface ResponseParser {
         <T> TradeResultVo<T> parse(String content, TypeReference<T> responseType);
         int version();
     }

@@ -14,10 +14,6 @@ public class BaseStrategyInput {
         return tradeRuleVo;
     }
 
-    public void setTradeRuleVo(TradeRuleVo tradeRuleVo) {
-        this.tradeRuleVo = tradeRuleVo;
-    }
-
     public int getUserId() {
         return tradeRuleVo.getUserId();
     }

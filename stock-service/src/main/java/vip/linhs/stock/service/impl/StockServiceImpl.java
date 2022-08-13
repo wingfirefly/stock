@@ -85,7 +85,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @CacheEvict(value = StockConsts.CACHE_KEY_DATA_STOCK, allEntries = true)
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void update(List<StockInfo> needAddedList, List<StockInfo> needUpdatedList, List<StockLog> stockLogList) {
         if (needAddedList != null) {
@@ -148,15 +148,13 @@ public class StockServiceImpl implements StockService {
 
         CountDownLatch countDownLatch = new CountDownLatch(list.size());
 
-        list.forEach(stockInfo -> {
-            threadPoolTaskExecutor.execute(() -> {
-                try {
-                    handleStockDaily(root, stockInfo);
-                } finally {
-                    countDownLatch.countDown();
-                }
-            });
-        });
+        list.forEach(stockInfo -> threadPoolTaskExecutor.execute(() -> {
+            try {
+                handleStockDaily(root, stockInfo);
+            } finally {
+                countDownLatch.countDown();
+            }
+        }));
 
         try {
             countDownLatch.await();
@@ -182,7 +180,7 @@ public class StockServiceImpl implements StockService {
         }
     }
 
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveDailyIndex(List<DailyIndex> list) {
         dailyIndexDao.save(list);

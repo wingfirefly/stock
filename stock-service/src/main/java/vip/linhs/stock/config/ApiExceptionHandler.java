@@ -33,7 +33,7 @@ public class ApiExceptionHandler {
         for (FieldError error : fieldErrors) {
             String field = error.getField();
             String message = error.getDefaultMessage();
-            sb.append(field + ": " + message + ", ");
+            sb.append(field).append(": ").append(message).append(", ");
             logger.error("{}:{}", field, message);
         }
         if (sb.length() > 0) {
@@ -47,7 +47,7 @@ public class ApiExceptionHandler {
     @ResponseBody
     public CommonResponse handleResourceNotFoundException(ResourceNotFoundException e,
             HttpServletRequest request) {
-        logger.error("{}: resource not found", request.getRequestURI());
+        logger.error("{}: resource not found", request.getRequestURI(), e);
         return CommonResponse.buildResponse("resource not found");
     }
 

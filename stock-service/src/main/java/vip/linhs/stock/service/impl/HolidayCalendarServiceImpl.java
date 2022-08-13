@@ -11,6 +11,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import vip.linhs.stock.dao.HolidayCalendarDao;
@@ -30,11 +31,13 @@ public class HolidayCalendarServiceImpl implements HolidayCalendarService {
     @Autowired
     private SystemConfigService systemConfigService;
 
-    @Transactional(readOnly = false, rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateCurrentYear() {
         int year = Calendar.getInstance().get(Calendar.YEAR);
         Map<?, ?> data = restTemplate.getForObject("http://tool.bitefu.net/jiari/?d=" + year, Map.class);
+
+        Assert.notNull(data, "data is null");
 
         @SuppressWarnings("unchecked")
         Map<String, Integer> dateInfo = (Map<String, Integer>) data.get(String.valueOf(year));

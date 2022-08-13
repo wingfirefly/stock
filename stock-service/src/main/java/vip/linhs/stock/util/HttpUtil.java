@@ -110,7 +110,7 @@ public class HttpUtil {
     private static HttpGet getHttpGet(String url, Map<String, String> header) {
         HttpGet httpGet = new HttpGet(url);
         if (header != null) {
-            header.entrySet().stream().forEach(entry -> httpGet.addHeader(entry.getKey(), entry.getValue()));
+            header.forEach(httpGet::addHeader);
         }
         RequestConfig requestConfig = RequestConfig.custom().build();
         httpGet.setConfig(requestConfig);
@@ -120,7 +120,7 @@ public class HttpUtil {
     private static HttpPost getHttpPost(String url, Map<String, String> header) {
         HttpPost httpPost = new HttpPost(url);
         if (header != null) {
-            header.entrySet().stream().forEach(entry -> httpPost.addHeader(entry.getKey(), entry.getValue()));
+            header.forEach(httpPost::addHeader);
         }
         RequestConfig requestConfig = RequestConfig.custom().build();
         httpPost.setConfig(requestConfig);

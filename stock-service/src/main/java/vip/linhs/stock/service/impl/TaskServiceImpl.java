@@ -35,7 +35,7 @@ public class TaskServiceImpl implements TaskService {
 
     private final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
 
-    private Map<String, BigDecimal> lastPriceMap = new HashMap<>();
+    private final Map<String, BigDecimal> lastPriceMap = new HashMap<>();
 
     @Value("${ocr.service}")
     private String ocrServiceName;

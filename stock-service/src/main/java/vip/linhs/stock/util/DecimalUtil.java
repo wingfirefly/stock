@@ -1,6 +1,7 @@
 package vip.linhs.stock.util;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class DecimalUtil {
 
@@ -16,7 +17,7 @@ public class DecimalUtil {
     }
 
     public static BigDecimal div(BigDecimal a, BigDecimal b, int scale) {
-        return a.divide(b, scale, BigDecimal.ROUND_HALF_UP);
+        return a.divide(b, scale, RoundingMode.HALF_UP);
     }
 
     public static boolean bg(BigDecimal a, BigDecimal b) {

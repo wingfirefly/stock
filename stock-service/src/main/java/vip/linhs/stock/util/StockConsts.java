@@ -23,15 +23,13 @@ public class StockConsts {
 
     public static final String CACHE_KEY_TOKEN = CACHE_KEY_PREFIX + "auth:token";
 
-    public static final String CACHE_KEY_TRADE_STRATEGY = CACHE_KEY_PREFIX + "trade:tradeStrategy";
-
     public static final long DURATION_REDIS_DEFAULT = 3600 * 24 * 2;
 
     public enum Exchange {
         SH("sh"), SZ("sz"), BJ("bj");
-        private String name;
+        private final String name;
 
-        private Exchange(String name) {
+        Exchange(String name) {
             this.name = name;
         }
 
@@ -75,9 +73,9 @@ public class StockConsts {
          * 退市
          */
         Terminated(2);
-        private int value;
+        private final int value;
 
-        private StockState(int value) {
+        StockState(int value) {
             this.value = value;
         }
 
@@ -88,9 +86,9 @@ public class StockConsts {
 
     public enum StockType {
         A(0), Index(1), ETF(2), B(3);
-        private int value;
+        private final int value;
 
-        private StockType(int value) {
+        StockType(int value) {
             this.value = value;
         }
 
@@ -101,9 +99,9 @@ public class StockConsts {
 
     public enum StockLogType {
         New(0), Rename(1), Terminated(2);
-        private int value;
+        private final int value;
 
-        private StockLogType(int value) {
+        StockLogType(int value) {
             this.value = value;
         }
 
@@ -114,9 +112,9 @@ public class StockConsts {
 
     public enum TaskState {
         Completed(0), InProgress(1), Pending(2);
-        private int value;
+        private final int value;
 
-        private TaskState(int value) {
+        TaskState(int value) {
             this.value = value;
         }
 
@@ -127,9 +125,9 @@ public class StockConsts {
 
     public enum RobotType {
         DingDing(0), WetChat(1);
-        private int value;
+        private final int value;
 
-        private RobotType(int value) {
+        RobotType(int value) {
             this.value = value;
         }
 
@@ -140,9 +138,9 @@ public class StockConsts {
 
     public enum TradeState {
         Invalid(0), Valid(1);
-        private int value;
+        private final int value;
 
-        private TradeState(int value) {
+        TradeState(int value) {
             this.value = value;
         }
 
@@ -153,9 +151,9 @@ public class StockConsts {
 
     public enum MessageType {
         DingDing(0), Email(1);
-        private int value;
+        private final int value;
 
-        private MessageType(int value) {
+        MessageType(int value) {
             this.value = value;
         }
 

@@ -14,7 +14,6 @@ import vip.linhs.stock.service.StockCrawlerService;
 import vip.linhs.stock.util.HttpUtil;
 import vip.linhs.stock.util.StockUtil;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +51,7 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
 
     @Override
     public DailyIndex getDailyIndex(String code) {
-        List<DailyIndex> dailyIndexList = getDailyIndex(Arrays.asList(code));
+        List<DailyIndex> dailyIndexList = getDailyIndex(Collections.singletonList(code));
         return dailyIndexList.isEmpty() ? null : dailyIndexList.get(0);
     }
 

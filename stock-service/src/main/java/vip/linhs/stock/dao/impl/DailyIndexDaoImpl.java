@@ -57,7 +57,7 @@ public class DailyIndexDaoImpl extends BaseDao implements DailyIndexDao {
         SqlCondition dataSqlCondition = new SqlCondition(sql, pageParam.getCondition());
         dataSqlCondition.addString("date", "date");
 
-        int totalRecords = jdbcTemplate.queryForObject(dataSqlCondition.getCountSql(), Integer.class, dataSqlCondition.toArgs());
+        Integer totalRecords = jdbcTemplate.queryForObject(dataSqlCondition.getCountSql(), Integer.class, dataSqlCondition.toArgs());
 
         dataSqlCondition.addSort("tradingValue", false, true);
         dataSqlCondition.addSql(" limit ?, ?");

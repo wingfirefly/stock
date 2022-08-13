@@ -19,7 +19,7 @@ import vip.linhs.stock.util.HttpUtil;
 @Component
 public class TradeClient {
 
-    private ThreadLocal<ClientWrapper> threadLocal = new ThreadLocal<>();
+    private final ThreadLocal<ClientWrapper> threadLocal = new ThreadLocal<>();
 
     @Autowired
     private CloseableHttpClient httpClient;
