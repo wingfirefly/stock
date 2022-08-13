@@ -26,7 +26,7 @@ github: [https://github.com/bosspen1/stock](https://github.com/bosspen1/stock)
  3. 习惯用maven的朋友可以搜索gradle转maven, 进行项目转换
  4. 由于某种原因前端做的比较简陋
  5. 熟悉项目建议先wiki clone到本地, 看里面的deployment.docx. 代码可以从任务(ScheduledTasks)和前端页面调用的接口开始
- 6. 请在法律允许范围内使用, 祝大家早日找到适合自己的方法
+ 6. 本项目只供个人测试，请在法律允许范围内使用, 祝大家早日找到适合自己的方法
 
 ------------
 
