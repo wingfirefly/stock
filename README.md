@@ -6,13 +6,13 @@ github: [https://github.com/bosspen1/stock](https://github.com/bosspen1/stock)
 ## 升级日志
 ### 升级只针对以前已经部署的朋友, 新来的朋友直接按最新步骤来就行
 
--2022-05-31
--- 融资融券接口
+-2022-08-25
+-- 修改redis缓存为caffeine
 ------------
 
 
 ## 项目介绍
-本项目偏向交易, 分析和策略这块相对不足, 大部分都是拿了然后修改, 所以没制作docker镜像
+本项目偏向交易, 分析和策略这块相对不足, 大部分都是拿了然后修改, 所以没制作docker镜像, python版本还没达到开源的要求，需要的可以扫最后的二维码进群索取. 
 - 自动交易
  1. 股票交易接口(封装东方财富网交易, 支持a股, etf, 债券交易)
  2. 交易策略
@@ -37,10 +37,9 @@ github: [https://github.com/bosspen1/stock](https://github.com/bosspen1/stock)
 ------------
 
 ## 所需环境
-- java ide
+- java
 - mysql
 - nodejs
-- redis
 
 <font color="red" size=8>文档和数据库表见[wiki](https://github.com/bosspen1/stock/wiki)</font>
 

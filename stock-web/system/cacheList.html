@@ -56,7 +56,7 @@
             {
               title: '名称',
               render: function(row) {
-                return row.key;
+                return row.name + ':' + row.key;
               }
             },
             {
@@ -68,7 +68,8 @@
             {
               title: '操作',
               render: function(row) {
-                var html = ' <button class="btn btn-delete" data-key="' + row.key + '">删除</button>';
+                var options = { name: row.name, key: row.key }
+                var html = ' <button class="btn btn-delete" data-options=' + JSON.stringify(options) + '>删除</button>';
                 return html;
               }
             }
@@ -80,13 +81,12 @@
       });
 
       table.on('click', '.btn-delete', function() {
-        var key = $(this).data('key');
+        var cache = $(this).data('options');
+        console.log(cache)
         $.ajax({
           url: GlobalConfig.serverUrl + '/api/system/deleteCache',
           type: 'POST',
-          data: {
-            key: key
-          },
+          data: cache,
           headers: getRequestHeaders(),
           error: function(xhr, status, errorThrown) {
             ExceptionHandler.handleCommonError(xhr);
