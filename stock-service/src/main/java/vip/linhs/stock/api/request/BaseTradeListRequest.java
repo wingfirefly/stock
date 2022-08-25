@@ -4,7 +4,7 @@ import java.util.List;
 
 public abstract class BaseTradeListRequest extends BaseTradeRequest {
 
-    public BaseTradeListRequest(int userId) {
+    protected BaseTradeListRequest(int userId) {
         super(userId);
     }
 

@@ -202,7 +202,7 @@ public class DailyIndexParser {
             dailyIndex.setTradingVolume(Long.parseLong(values[i++]) * 100);
             dailyIndex.setTradingValue(new BigDecimal(values[i++]).movePointRight(4));
             i++;
-            dailyIndex.setRurnoverRate(new BigDecimal(values[i++]));
+            dailyIndex.setRurnoverRate(new BigDecimal(values[i]));
 
             list.add(dailyIndex);
         }

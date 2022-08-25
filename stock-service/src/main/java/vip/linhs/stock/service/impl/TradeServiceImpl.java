@@ -68,13 +68,13 @@ public class TradeServiceImpl implements TradeService {
         return tradeMethodDao.getByName(name);
     }
 
-    @Cacheable(value = StockConsts.CACHE_KEY_TRADE_USER_LIST, unless="#result.size() == 0")
+    @Cacheable(value = StockConsts.CACHE_KEY_TRADE_USER_LIST, key = "'all'", unless="#result.size() == 0")
     @Override
     public List<TradeUser> getTradeUserList() {
         return tradeUserDao.getList();
     }
 
-    @Cacheable(value = StockConsts.CACHE_KEY_TRADE_USER, key = "#id", unless="#result == null")
+    @Cacheable(value = StockConsts.CACHE_KEY_TRADE_USER, key = "#id.toString()", unless="#result == null")
     @Override
     public TradeUser getTradeUserById(int id) {
         TradeUser tradeUser = tradeUserDao.getById(id);
@@ -83,7 +83,7 @@ public class TradeServiceImpl implements TradeService {
         return tradeUser;
     }
 
-    @CacheEvict(value = StockConsts.CACHE_KEY_TRADE_USER, key = "#tradeUser.id")
+    @CacheEvict(value = StockConsts.CACHE_KEY_TRADE_USER, key = "#tradeUser.id.toString()")
     @Override
     public void updateTradeUser(TradeUser tradeUser) {
         tradeUserDao.update(tradeUser);

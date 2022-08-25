@@ -1,7 +1,6 @@
 package vip.linhs.stock.web.controller;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import vip.linhs.stock.exception.FieldInputException;
 import vip.linhs.stock.model.po.ExecuteInfo;
 import vip.linhs.stock.model.po.SystemConfig;
+import vip.linhs.stock.model.vo.CacheVo;
 import vip.linhs.stock.model.vo.CommonResponse;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.TaskVo;
-import vip.linhs.stock.service.RedisClient;
+import vip.linhs.stock.service.CacheClient;
 import vip.linhs.stock.service.SystemConfigService;
 import vip.linhs.stock.service.TaskService;
 import vip.linhs.stock.util.StockConsts;
@@ -30,7 +30,7 @@ public class SystemController extends BaseController {
     private TaskService taskService;
 
     @Autowired
-    private RedisClient redisClient;
+    private CacheClient redisClient;
 
     @Autowired
     private SystemConfigService systemConfigService;
@@ -70,20 +70,25 @@ public class SystemController extends BaseController {
     }
 
     @RequestMapping("cacheList")
-    public PageVo<Map<String, String>> getCacheList(PageParam pageParam) {
-        List<Map<String, String>> list = redisClient.getAll();
-        list = list.stream().filter(v -> !v.get("key").startsWith(StockConsts.CACHE_KEY_TOKEN)).collect(Collectors.toList());
+    public PageVo<CacheVo> getCacheList(PageParam pageParam) {
+        List<CacheVo> list = redisClient.getAll();
+        list = list.stream().filter(v -> !v.getName().equals(StockConsts.CACHE_KEY_TOKEN)).collect(Collectors.toList());
         return new PageVo<>(subList(list, pageParam), list.size());
     }
 
     @PostMapping("deleteCache")
-    public CommonResponse deleteCache(String key) {
+    public CommonResponse deleteCache(String name, String key) {
+        if (!StringUtils.hasLength(name)) {
+            FieldInputException e = new FieldInputException();
+            e.addError("name", "name invalid");
+            throw e;
+        }
         if (!StringUtils.hasLength(key)) {
             FieldInputException e = new FieldInputException();
             e.addError("key", "key invalid");
             throw e;
         }
-        redisClient.remove(key);
+        redisClient.remove(name, key);
         return CommonResponse.buildResponse("success");
     }
 

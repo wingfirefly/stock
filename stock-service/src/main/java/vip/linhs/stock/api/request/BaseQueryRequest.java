@@ -8,7 +8,7 @@ public abstract class BaseQueryRequest extends BaseTradeRequest {
     private String qqhs = "60";
     private String dwc;
 
-    public BaseQueryRequest(int userId) {
+    protected BaseQueryRequest(int userId) {
         super(userId);
     }
 

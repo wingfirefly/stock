@@ -7,14 +7,11 @@ spring:
     username: root
     password: IamWild!@#123
     driver-class-name: com.mysql.cj.jdbc.Driver
-  redis:
-    host: localhost
-    port: 6379
-    timeout: 1000
-    database: 0
+  cache:
+    type: caffeine
 
 ocr:
-  service: aliyunOcrService
+  service: chaojiyingOcrService
   third:
     aliyun:
       appcode:

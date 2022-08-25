@@ -14,7 +14,7 @@ public abstract class BaseTradeRequest {
 
     private int userId;
 
-    public BaseTradeRequest(int userId) {
+    protected BaseTradeRequest(int userId) {
         this.userId = userId;
     }
 

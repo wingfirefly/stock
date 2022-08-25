@@ -1,16 +1,16 @@
 package vip.linhs.stock.config;
 
-import java.time.Duration;
 import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.cache.RedisCacheConfiguration;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
@@ -21,9 +21,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
-import vip.linhs.stock.util.StockConsts;
 import vip.linhs.stock.web.interceptor.AuthInterceptor;
 
 @Configuration
@@ -90,13 +89,13 @@ public class AppConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public RedisCacheConfiguration redisCacheConfiguration() {
-        GenericFastJsonRedisSerializer serializer = new GenericFastJsonRedisSerializer();
-        RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig();
-        return defaultCacheConfig
-                .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(serializer))
-                .entryTtl(Duration.ofSeconds(StockConsts.DURATION_REDIS_DEFAULT));
+    public CacheManager cacheManager() {
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+        cacheManager.setCaffeine(Caffeine.newBuilder()
+                .expireAfterWrite(20, TimeUnit.HOURS)
+                .initialCapacity(50)
+                .maximumSize(500));
+        return cacheManager;
     }
 
 }

@@ -56,14 +56,14 @@ public class EastmoneyStockInfoParserImpl implements StockInfoParser {
             DailyIndex dailyIndex = new DailyIndex();
             dailyIndex.setDate(new Date());
             dailyIndex.setCode(stockInfo.getFullCode());
-            dailyIndex.setClosingPrice(new BigDecimal(v.getF2()).movePointLeft(2));
+            dailyIndex.setClosingPrice(BigDecimal.valueOf(v.getF2()).movePointLeft(2));
             dailyIndex.setTradingVolume(v.getF5() * 100);
-            dailyIndex.setTradingValue(new BigDecimal(v.getF6()));
-            dailyIndex.setRurnoverRate(new BigDecimal(v.getF8()).movePointLeft(2));
-            dailyIndex.setHighestPrice(new BigDecimal(v.getF15()).movePointLeft(2));
-            dailyIndex.setLowestPrice(new BigDecimal(v.getF16()).movePointLeft(2));
-            dailyIndex.setOpeningPrice(new BigDecimal(v.getF17()).movePointLeft(2));
-            dailyIndex.setPreClosingPrice(new BigDecimal(v.getF18()).movePointLeft(2));
+            dailyIndex.setTradingValue(BigDecimal.valueOf(v.getF6()));
+            dailyIndex.setRurnoverRate(BigDecimal.valueOf(v.getF8()).movePointLeft(2));
+            dailyIndex.setHighestPrice(BigDecimal.valueOf(v.getF15()).movePointLeft(2));
+            dailyIndex.setLowestPrice(BigDecimal.valueOf(v.getF16()).movePointLeft(2));
+            dailyIndex.setOpeningPrice(BigDecimal.valueOf(v.getF17()).movePointLeft(2));
+            dailyIndex.setPreClosingPrice(BigDecimal.valueOf(v.getF18()).movePointLeft(2));
 
             emStock.setStockInfo(stockInfo);
             emStock.setDailyIndex(dailyIndex);

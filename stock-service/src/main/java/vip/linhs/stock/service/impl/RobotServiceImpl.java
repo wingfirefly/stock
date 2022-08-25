@@ -17,13 +17,13 @@ public class RobotServiceImpl implements RobotService {
     @Autowired
     private RobotDao robotDao;
 
-    @Cacheable(value = StockConsts.CACHE_KEY_CONFIG_ROBOT, key = RobotServiceImpl.ID_SYSTEM)
+    @Cacheable(value = StockConsts.CACHE_KEY_CONFIG_ROBOT, key = "'" + RobotServiceImpl.ID_SYSTEM + "'")
     @Override
     public Robot getSystem() {
         return getById(Integer.parseInt(RobotServiceImpl.ID_SYSTEM));
     }
 
-    @Cacheable(value = StockConsts.CACHE_KEY_CONFIG_ROBOT, key = "#id")
+    @Cacheable(value = StockConsts.CACHE_KEY_CONFIG_ROBOT, key = "#id.toString()")
     @Override
     public Robot getById(int id) {
         return robotDao.getById(id);
