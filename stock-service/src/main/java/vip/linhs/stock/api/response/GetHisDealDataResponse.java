@@ -27,4 +27,9 @@ public class GetHisDealDataResponse extends GetDealDataResponse {
         Cjrq = cjrq;
     }
 
+    @Override
+    public String getFormatDealTime() {
+        return getFormatDealTime(Cjrq);
+    }
+
 }

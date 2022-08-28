@@ -10,6 +10,8 @@ public interface SystemConfigService {
 
     boolean isApplyNewConvertibleBond();
 
+    boolean isCr();
+
     List<SystemConfig> getAll();
 
 }

@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,8 @@ public class AuthInterceptor implements HandlerInterceptor {
     private boolean handleAuth(HttpServletRequest request, HttpServletResponse response, int userId)
             throws IOException {
         String url = request.getRequestURI();
-        logger.debug("request_api: {}", url);
+        String addr = request.getRemoteAddr();
+        logger.debug("request_api: {} {}", addr, url);
 
         boolean isLogin = userId > 0;
         boolean isOpen = openUrlList.contains(url);
@@ -58,9 +60,11 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     private int getUserId(HttpServletRequest request) {
         String authToken = request.getHeader(StockConsts.KEY_AUTH_TOKEN);
-        User user = userService.getByToken(authToken);
-        if (user != null) {
-            return user.getId();
+        if (StringUtils.isNotEmpty(authToken)) {
+            User user = userService.getByToken(authToken);
+            if (user != null) {
+                return user.getId();
+            }
         }
         return 0;
     }

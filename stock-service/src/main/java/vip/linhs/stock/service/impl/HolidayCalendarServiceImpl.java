@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -18,6 +20,7 @@ import vip.linhs.stock.dao.HolidayCalendarDao;
 import vip.linhs.stock.model.po.HolidayCalendar;
 import vip.linhs.stock.service.HolidayCalendarService;
 import vip.linhs.stock.service.SystemConfigService;
+import vip.linhs.stock.util.StockConsts;
 
 @Service
 public class HolidayCalendarServiceImpl implements HolidayCalendarService {
@@ -31,6 +34,7 @@ public class HolidayCalendarServiceImpl implements HolidayCalendarService {
     @Autowired
     private SystemConfigService systemConfigService;
 
+    @CacheEvict(value = StockConsts.CACHE_KEY_DATA_BUSINESS_DATE)
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateCurrentYear() {
@@ -57,6 +61,7 @@ public class HolidayCalendarServiceImpl implements HolidayCalendarService {
         holidayCalendarDao.save(list);
     }
 
+    @Cacheable(value = StockConsts.CACHE_KEY_DATA_BUSINESS_DATE, key = "#date.getDate().toString()")
     @Override
     public boolean isBusinessDate(Date date) {
         boolean isMock = systemConfigService.isMock();
@@ -86,11 +91,6 @@ public class HolidayCalendarServiceImpl implements HolidayCalendarService {
 
         if (date == null) {
             date = new Date();
-        }
-
-        boolean isBusinessDate = isBusinessDate(date);
-        if (!isBusinessDate) {
-            return false;
         }
 
         Calendar c = Calendar.getInstance();

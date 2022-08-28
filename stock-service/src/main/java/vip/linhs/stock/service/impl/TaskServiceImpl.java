@@ -1,5 +1,13 @@
 package vip.linhs.stock.service.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -7,28 +15,62 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import vip.linhs.stock.api.TradeResultVo;
-import vip.linhs.stock.api.request.*;
+import vip.linhs.stock.api.request.AuthenticationRequest;
+import vip.linhs.stock.api.request.BaseTradeRequest;
+import vip.linhs.stock.api.request.CrGetCanBuyNewStockListV3Request;
+import vip.linhs.stock.api.request.CrGetConvertibleBondListV2Request;
+import vip.linhs.stock.api.request.CrGetDealDataRequest;
+import vip.linhs.stock.api.request.CrGetOrdersDataRequest;
+import vip.linhs.stock.api.request.GetCanBuyNewStockListV3Request;
+import vip.linhs.stock.api.request.GetConvertibleBondListV2Request;
+import vip.linhs.stock.api.request.GetDealDataRequest;
+import vip.linhs.stock.api.request.GetOrdersDataRequest;
+import vip.linhs.stock.api.request.SubmitBatTradeV2Request;
 import vip.linhs.stock.api.request.SubmitBatTradeV2Request.SubmitData;
-import vip.linhs.stock.api.response.*;
+import vip.linhs.stock.api.request.SubmitRequest;
+import vip.linhs.stock.api.response.AuthenticationResponse;
+import vip.linhs.stock.api.response.CrGetCanBuyNewStockListV3Response;
+import vip.linhs.stock.api.response.CrGetConvertibleBondListV2Response;
+import vip.linhs.stock.api.response.CrGetDealDataResponse;
+import vip.linhs.stock.api.response.CrGetOrdersDataResponse;
+import vip.linhs.stock.api.response.GetCanBuyNewStockListV3Response;
 import vip.linhs.stock.api.response.GetCanBuyNewStockListV3Response.NewQuotaInfo;
+import vip.linhs.stock.api.response.GetConvertibleBondListV2Response;
+import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetOrdersDataResponse;
+import vip.linhs.stock.api.response.SubmitBatTradeV2Response;
 import vip.linhs.stock.config.SpringUtil;
 import vip.linhs.stock.dao.ExecuteInfoDao;
-import vip.linhs.stock.model.po.*;
+import vip.linhs.stock.model.po.DailyIndex;
+import vip.linhs.stock.model.po.ExecuteInfo;
+import vip.linhs.stock.model.po.StockInfo;
+import vip.linhs.stock.model.po.StockLog;
+import vip.linhs.stock.model.po.StockSelected;
+import vip.linhs.stock.model.po.Task;
+import vip.linhs.stock.model.po.TradeDeal;
+import vip.linhs.stock.model.po.TradeMethod;
+import vip.linhs.stock.model.po.TradeUser;
 import vip.linhs.stock.model.vo.PageParam;
 import vip.linhs.stock.model.vo.PageVo;
 import vip.linhs.stock.model.vo.TaskVo;
 import vip.linhs.stock.model.vo.trade.TradeRuleVo;
-import vip.linhs.stock.service.*;
+import vip.linhs.stock.service.HolidayCalendarService;
+import vip.linhs.stock.service.MessageService;
+import vip.linhs.stock.service.OcrService;
+import vip.linhs.stock.service.StockCrawlerService;
+import vip.linhs.stock.service.StockSelectedService;
+import vip.linhs.stock.service.StockService;
+import vip.linhs.stock.service.SystemConfigService;
+import vip.linhs.stock.service.TaskService;
+import vip.linhs.stock.service.TradeApiService;
+import vip.linhs.stock.service.TradeService;
 import vip.linhs.stock.trategy.handle.StrategyHandler;
 import vip.linhs.stock.util.DecimalUtil;
 import vip.linhs.stock.util.StockConsts;
 import vip.linhs.stock.util.StockUtil;
 import vip.linhs.stock.util.TradeUtil;
-
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -106,7 +148,7 @@ public class TaskServiceImpl implements TaskService {
                 runTradeTicker();
                 break;
             case ApplyNewStock:
-                applyNewStock();
+                runApplyNewStock();
                 break;
             case AutoLogin:
                 autoLogin();
@@ -295,11 +337,24 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void runTradeTicker() {
-        runStrategy();
-        runDealNotice();
+        List<TradeUser> userList = tradeService.getTradeUserList();
+        for (TradeUser tradeUser : userList) {
+            runStrategy(tradeUser.getId());
+            runDealNotice(tradeUser.getId());
+        }
     }
 
-    private void runStrategy() {
+    private void runApplyNewStock() {
+        List<TradeUser> userList = tradeService.getTradeUserList();
+        for (TradeUser tradeUser : userList) {
+            applyNewStock(tradeUser.getId());
+            if (systemConfigService.isCr()) {
+                applyNewStockCr(tradeUser.getId());
+            }
+        }
+    }
+
+    private void runStrategy(int userId) {
         PageParam pageParam = new PageParam();
         pageParam.setStart(0);
         pageParam.setLength(Integer.MAX_VALUE);
@@ -318,18 +373,29 @@ public class TaskServiceImpl implements TaskService {
         });
     }
 
-    private void runDealNotice() {
+    private void runDealNotice(int i) {
         List<TradeUser> userList = tradeService.getTradeUserList();
         StringBuilder sb = new StringBuilder();
 
         for (TradeUser tradeUser : userList) {
+            ArrayList<GetDealDataResponse> list = new ArrayList<>();
+
             TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(new GetDealDataRequest(tradeUser.getId()));
             if (!dealData.success()) {
                 logger.error("runDealNotice error {}", dealData.getMessage());
+                return;
             }
-            List<GetDealDataResponse> list = TradeUtil.mergeDealList(dealData.getData());
-            List<TradeDeal> tradeDealList = tradeService.getTradeDealListByDate(new Date());
 
+            TradeResultVo<CrGetDealDataResponse> crDealData = tradeApiService.crGetDealData(new CrGetDealDataRequest(tradeUser.getId()));
+            if (!dealData.success()) {
+                logger.error("runDealNotice error {}", dealData.getMessage());
+                return;
+            }
+
+            list.addAll(TradeUtil.mergeDealList(dealData.getData()));
+            list.addAll(TradeUtil.mergeDealList(crDealData.getData()));
+
+            List<TradeDeal> tradeDealList = tradeService.getTradeDealListByDate(new Date());
             List<String> dealCodeList = tradeDealList.stream().map(TradeDeal::getDealCode).collect(Collectors.toList());
 
             List<TradeDeal> needNotifyList = list.stream().filter(v -> !dealCodeList.contains(v.getCjbh())).map(v -> {
@@ -345,13 +411,21 @@ public class TaskServiceImpl implements TaskService {
 
                 tradeDeal.setTradeTime(tradeTime);
                 tradeDeal.setTradeType(v.getMmlb());
-                tradeDeal.setVolume(Integer.valueOf(v.getCjsl()));
+                tradeDeal.setVolume(Integer.parseInt(v.getCjsl()));
+
+                if (v instanceof CrGetDealDataResponse) {
+                    CrGetDealDataResponse deal = (CrGetDealDataResponse) v;
+                    tradeDeal.setCrTradeType(deal.getXyjylx());
+                } else {
+                    tradeDeal.setCrTradeType("");
+                }
 
                 sb.append(String.format("deal %s %s %s %s %s\n",
                         v.getFormatDealTime(), v.getZqmc(), v.getMmlb(), v.getCjjg(), v.getCjsl()));
 
                 return tradeDeal;
             }).collect(Collectors.toList());
+
             tradeService.saveTradeDealList(needNotifyList);
         }
 
@@ -361,10 +435,8 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-    private void applyNewStock() {
-        TradeResultVo<GetCanBuyNewStockListV3Response> getCanBuyResultVo = getCanBuyStockListV3ResultVo();
-
-        GetCanBuyNewStockListV3Response getCanBuyResponse = getCanBuyResultVo.getData().get(0);
+    private void applyNewStock(int userId) {
+        GetCanBuyNewStockListV3Response getCanBuyResponse = tradeApiService.getCanBuyNewStockListV3(new GetCanBuyNewStockListV3Request(userId)).getData().get(0);
 
         List<SubmitData> newStockList = getCanBuyResponse.getNewStockList().stream()
                 .filter(newStock -> getCanBuyResponse.getNewQuota().stream().anyMatch(v -> v.getMarket().equals(newStock.getMarket())))
@@ -382,7 +454,7 @@ public class TaskServiceImpl implements TaskService {
         }).collect(Collectors.toList());
 
         if (systemConfigService.isApplyNewConvertibleBond()) {
-            TradeResultVo<GetConvertibleBondListV2Response> getConvertibleBondResultVo = getGetConvertibleBondListV2ResultVo();
+            TradeResultVo<GetConvertibleBondListV2Response> getConvertibleBondResultVo = tradeApiService.getConvertibleBondListV2(new GetConvertibleBondListV2Request(userId));
             if (getConvertibleBondResultVo.success()) {
                 List<SubmitData> convertibleBondList = getConvertibleBondResultVo.getData().stream().filter(GetConvertibleBondListV2Response::getExIsToday).map(convertibleBond -> {
                     SubmitData submitData = new SubmitData();
@@ -402,7 +474,7 @@ public class TaskServiceImpl implements TaskService {
             }
         }
 
-        TradeResultVo<GetOrdersDataResponse> orderReponse = tradeApiService.getOrdersData(new GetOrdersDataRequest(1));
+        TradeResultVo<GetOrdersDataResponse> orderReponse = tradeApiService.getOrdersData(new GetOrdersDataRequest(userId));
         if (orderReponse.success()) {
             List<GetOrdersDataResponse> orderList = orderReponse.getData().stream().filter(v -> v.getWtzt().equals(GetOrdersDataResponse.YIBAO)).collect(Collectors.toList());
             newStockList = newStockList.stream().filter(v -> orderList.stream().noneMatch(order -> order.getZqdm().equals(v.getStockCode()))).collect(Collectors.toList());
@@ -412,7 +484,7 @@ public class TaskServiceImpl implements TaskService {
             return;
         }
 
-        SubmitBatTradeV2Request request = new SubmitBatTradeV2Request(1);
+        SubmitBatTradeV2Request request = new SubmitBatTradeV2Request(userId);
         request.setList(newStockList);
 
         TradeResultVo<SubmitBatTradeV2Response> tradeResultVo = tradeApiService.submitBatTradeV2(request);
@@ -420,14 +492,61 @@ public class TaskServiceImpl implements TaskService {
         messageServicve.send("apply new stock: " + tradeResultVo.getMessage());
     }
 
-    private TradeResultVo<GetCanBuyNewStockListV3Response> getCanBuyStockListV3ResultVo() {
-        GetCanBuyNewStockListV3Request request = new GetCanBuyNewStockListV3Request(1);
-        return tradeApiService.getCanBuyNewStockListV3(request);
-    }
+    private void applyNewStockCr(int userId) {
+        CrGetCanBuyNewStockListV3Response getCanBuyResponse = tradeApiService.crGetCanBuyNewStockListV3(new CrGetCanBuyNewStockListV3Request(userId)).getData().get(0);
 
-    private TradeResultVo<GetConvertibleBondListV2Response> getGetConvertibleBondListV2ResultVo() {
-        GetConvertibleBondListV2Request request = new GetConvertibleBondListV2Request(1);
-        return tradeApiService.getConvertibleBondListV2(request);
+        List<SubmitData> newStockList = getCanBuyResponse.getNewStockList().stream()
+                .filter(newStock -> getCanBuyResponse.getNewQuota().stream().anyMatch(v -> v.getMarket().equals(newStock.getMarket())))
+                .map(newStock -> {
+            CrGetCanBuyNewStockListV3Response.NewQuotaInfo newQuotaInfo = getCanBuyResponse.getNewQuota().stream().filter(v -> v.getMarket().equals(newStock.getMarket())).findAny().orElse(null);
+            SubmitData submitData = new SubmitData();
+
+            submitData.setAmount(Integer.min(Integer.parseInt(newStock.getKsgsx()), Integer.parseInt(newQuotaInfo.getKcCustQuota())));
+            submitData.setMarket(newStock.getMarket());
+            submitData.setPrice(newStock.getFxj());
+            submitData.setStockCode(newStock.getSgdm());
+            submitData.setStockName(newStock.getZqmc());
+            submitData.setTradeType(SubmitRequest.B);
+            return submitData;
+        }).collect(Collectors.toList());
+
+        if (systemConfigService.isApplyNewConvertibleBond()) {
+            TradeResultVo<CrGetConvertibleBondListV2Response> getConvertibleBondResultVo = tradeApiService.crGetConvertibleBondListV2(new CrGetConvertibleBondListV2Request(userId));
+            if (getConvertibleBondResultVo.success()) {
+                List<SubmitData> convertibleBondList = getConvertibleBondResultVo.getData().stream().filter(GetConvertibleBondListV2Response::getExIsToday).map(convertibleBond -> {
+                    SubmitData submitData = new SubmitData();
+                    submitData.setAmount(Integer.parseInt(convertibleBond.getLIMITBUYVOL()));
+                    submitData.setMarket(convertibleBond.getMarket());
+                    submitData.setPrice(convertibleBond.getPARVALUE());
+                    submitData.setStockCode(convertibleBond.getSUBCODE());
+                    submitData.setStockName(convertibleBond.getBONDNAME());
+                    submitData.setTradeType(SubmitRequest.B);
+                    return submitData;
+                }).collect(Collectors.toList());
+
+                newStockList.addAll(convertibleBondList);
+            } else {
+                logger.warn("get convertible stock: {}", getConvertibleBondResultVo);
+                messageServicve.send("get convertible stock: " + getConvertibleBondResultVo.getMessage());
+            }
+        }
+
+        TradeResultVo<CrGetOrdersDataResponse> orderReponse = tradeApiService.crGetOrdersData(new CrGetOrdersDataRequest(userId));
+        if (orderReponse.success()) {
+            List<GetOrdersDataResponse> orderList = orderReponse.getData().stream().filter(v -> v.getWtzt().equals(GetOrdersDataResponse.YIBAO)).collect(Collectors.toList());
+            newStockList = newStockList.stream().filter(v -> orderList.stream().noneMatch(order -> order.getZqdm().equals(v.getStockCode()))).collect(Collectors.toList());
+        }
+
+        if (newStockList.isEmpty()) {
+            return;
+        }
+
+        SubmitBatTradeV2Request request = new SubmitBatTradeV2Request(userId);
+        request.setList(newStockList);
+
+        TradeResultVo<SubmitBatTradeV2Response> tradeResultVo = tradeApiService.submitBatTradeV2(request);
+        logger.info("apply new stock: {}", tradeResultVo);
+        messageServicve.send("apply new stock: " + tradeResultVo.getMessage());
     }
 
     @Override

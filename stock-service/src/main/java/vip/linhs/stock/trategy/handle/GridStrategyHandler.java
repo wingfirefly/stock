@@ -49,7 +49,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
     private MessageService messageServicve;
 
     @Autowired
-    private TradeApiService tradeApiService;
+    protected TradeApiService tradeApiService;
 
     @Autowired
     private TradeService tradeService;
@@ -59,12 +59,12 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
 
     @Override
     public GridStrategyInput queryInput(TradeRuleVo tradeRuleVo) {
-        TradeResultVo<GetDealDataResponse> dealData = tradeApiService.getDealData(new GetDealDataRequest(tradeRuleVo.getUserId()));
+        TradeResultVo<GetDealDataResponse> dealData = getDealData(tradeRuleVo.getUserId());
         if (!dealData.success()) {
             throw new ServiceException("execute GridStrategyHandler get deal error: " + dealData.getMessage());
         }
 
-        TradeResultVo<GetOrdersDataResponse> orderData = tradeApiService.getOrdersData(new GetOrdersDataRequest(tradeRuleVo.getUserId()));
+        TradeResultVo<GetOrdersDataResponse> orderData = getOrderData(tradeRuleVo.getUserId());
         if (!orderData.success()) {
             throw new ServiceException("execute GridStrategyHandler get order error: " + dealData.getMessage());
         }
@@ -73,7 +73,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
                 .stream().filter(v -> v.getZqdm().equals(tradeRuleVo.getStockCode())).collect(Collectors.toList()));
 
         // 30 day, yibao yicheng
-        List<TradeOrder> tradeOrderList = tradeService.getLastTradeOrderListByRuleId(tradeRuleVo.getId());
+        List<TradeOrder> tradeOrderList = tradeService.getLastTradeOrderListByRuleId(tradeRuleVo.getId(), tradeRuleVo.getUserId());
 
         updateTradeState(tradeOrderList, dealDataList, orderData.getData());
 
@@ -125,14 +125,14 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
 
     @Override
     public GridStrategyResult handle(GridStrategyInput input) {
+        TradeRuleVo tradeRuleVo = input.getTradeRuleVo();
         List<TradeOrder> tradeOrderList = input.getTradeOrderList();
-        tradeOrderList = tradeOrderList.stream().filter(TradeOrder::isValid).collect(Collectors.toList());
+        tradeOrderList = tradeOrderList.stream().filter(v -> v.isValid()).collect(Collectors.toList());
 
         ArrayList<String> revokeList = new ArrayList<>();
         ArrayList<StrategySubmitResult> submitList = new ArrayList<>();
 
         boolean isHandle = false;
-        TradeRuleVo tradeRuleVo = input.getTradeRuleVo();
 
         for (TradeOrder tradeOrder : tradeOrderList) {
             if (tradeOrder.isDealed()) {
@@ -205,10 +205,8 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
 
         revokeList.forEach(entrustCode -> {
             String revokes = String.format("%s_%s", DateFormatUtils.format(new Date(), "yyyyMMdd"), entrustCode);
-            RevokeRequest request = new RevokeRequest(input.getUserId());
-            request.setRevokes(revokes);
-            logger.info("revoke request: {}", request);
-            TradeResultVo<RevokeResponse> resultVo = tradeApiService.revoke(request);
+            logger.info("revoke request: {}", revokes);
+            TradeResultVo<RevokeResponse> resultVo = revoke(input.getUserId(), revokes);
             logger.info("revoke response: {}", resultVo);
             if (resultVo.success()) {
                 input.getTradeOrderList().forEach(v -> {
@@ -218,7 +216,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
                 });
             } else {
                 logger.error(resultVo.getMessage());
-                messageServicve.send(String.format("revoke error. request: %s, response: %s", request, resultVo.getMessage()));
+                messageServicve.send(String.format("revoke error. request: %s, response: %s", revokes, resultVo.getMessage()));
             }
         });
 
@@ -262,19 +260,42 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
 
     private TradeResultVo<SubmitResponse> trade(SubmitRequest request) {
         logger.info("submit request: {}", request);
-        TradeResultVo<SubmitResponse> tradeResultVo = tradeApiService.submit(request);
+        TradeResultVo<SubmitResponse> tradeResultVo = submit(request);
         logger.info("submit response: {}", tradeResultVo);
         String name = stockService.getStockByFullCode(StockUtil.getFullCode(request.getStockCode())).getName();
         if (!tradeResultVo.success()) {
             logger.error(tradeResultVo.getMessage());
         }
-        String body = String.format("submit %s %s %d %.02f %s", request.getTradeType(), name, request.getAmount(), request.getPrice(), tradeResultVo.getMessage() == null ? "" : tradeResultVo.getMessage());
+        String body = String.format("%s submit %s %s %d %.02f %s", getFlag(), request.getTradeType(), name, request.getAmount(), request.getPrice(), tradeResultVo.getMessage() == null ? "" : tradeResultVo.getMessage());
         try {
             messageServicve.send(body);
         } catch (Exception e) {
             logger.error("send message error", e);
         }
         return tradeResultVo;
+    }
+
+    protected TradeResultVo<GetOrdersDataResponse> getOrderData(int userId) {
+        return tradeApiService.getOrdersData(new GetOrdersDataRequest(userId));
+    }
+
+    protected TradeResultVo<GetDealDataResponse> getDealData(int userId) {
+        return tradeApiService.getDealData(new GetDealDataRequest(userId));
+    }
+
+    protected TradeResultVo<SubmitResponse> submit(SubmitRequest request) {
+        return tradeApiService.submit(request);
+    }
+
+    protected TradeResultVo<RevokeResponse> revoke(int userId, String revokes) {
+        RevokeRequest request = new RevokeRequest(userId);
+        request.setRevokes(revokes);
+        TradeResultVo<RevokeResponse> resultVo = tradeApiService.revoke(request);
+        return resultVo;
+    }
+
+    protected String getFlag() {
+        return "normal";
     }
 
     private <T> T getByCondition(List<T> list, Predicate<T> predicate) {

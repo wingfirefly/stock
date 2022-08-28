@@ -5,7 +5,6 @@ import java.util.List;
 
 import vip.linhs.stock.api.response.CrQueryCollateralResponse;
 import vip.linhs.stock.api.response.GetDealDataResponse;
-import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.model.po.StockSelected;
@@ -30,23 +29,21 @@ public interface TradeService {
 
     void updateTradeUser(TradeUser tradeUser);
 
-    <T extends GetDealDataResponse> List<DealVo> getTradeDealList(List<T> data);
+    List<DealVo> getTradeDealList(List<? extends GetDealDataResponse> data);
 
     List<StockVo> getTradeStockList(List<GetStockListResponse> stockList);
 
     List<StockVo> getCrTradeStockList(List<CrQueryCollateralResponse> stockList);
 
+    List<OrderVo> getTradeOrderList(List<? extends GetOrdersDataResponse> orderList);
+
     List<StockVo> getTradeStockListBySelected(List<StockSelected> selectList);
-
-    <T extends GetOrdersDataResponse> List<OrderVo> getTradeOrderList(List<T> orderList);
-
-    <T extends GetHisDealDataResponse> List<DealVo> getTradeHisDealList(List<T> data);
 
     PageVo<TradeRuleVo> getTradeRuleList(PageParam pageParam);
 
     void changeTradeRuleState(int state, int id);
 
-    List<TradeOrder> getLastTradeOrderListByRuleId(int ruleId);
+    List<TradeOrder> getLastTradeOrderListByRuleId(int ruleId, int userId);
 
     void saveTradeOrderList(List<TradeOrder> tradeOrderList);
 

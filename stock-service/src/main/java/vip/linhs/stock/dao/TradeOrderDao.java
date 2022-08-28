@@ -10,7 +10,7 @@ public interface TradeOrderDao {
 
     void update(TradeOrder tradeOrder);
 
-    List<TradeOrder> getLastListByRuleId(int ruleId);
+    List<TradeOrder> getLastListByRuleId(int ruleId, int userId);
 
     void setInvalidByRuleId(int ruleId);
 

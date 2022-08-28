@@ -148,7 +148,7 @@ public class TradeController extends BaseController {
 
         TradeResultVo<GetHisDealDataResponse> dealData = tradeApiService.getHisDealData(request);
         if (dealData.success()) {
-            List<DealVo> list = tradeService.getTradeHisDealList(dealData.getData());
+            List<DealVo> list = tradeService.getTradeDealList(dealData.getData());
             return new PageVo<>(subList(list, pageParam), list.size());
         }
         return new PageVo<>(Collections.emptyList(), 0);

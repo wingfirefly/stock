@@ -21,14 +21,17 @@ public class StockUtil {
     private static final List<String> CODES_SH_A = Arrays.asList("600", "601", "603", "605", "688", "689");
     private static final List<String> CODES_SH_INDEX = Collections.singletonList("000001");
     private static final List<String> CODES_SH_ETF = Arrays.asList("51", "56", "58");
+    private static final List<String> CODES_SH_CB = Arrays.asList("100", "110");
 
     private static final List<String> CODES_SZ_A = Arrays.asList("000", "001", "002", "003", "004", "300", "301");
     private static final List<String> CODES_SZ_INDEX = Arrays.asList("399001", "399006");
     private static final List<String> CODES_SZ_ETF = Collections.singletonList("15");
+    private static final List<String> CODES_SZ_CB = Arrays.asList("12");
 
     private static final List<String> CODES_BJ_A = Arrays.asList("83", "87", "43");
     private static final List<String> CODES_BJ_INDEX = Collections.emptyList();
     private static final List<String> CODES_BJ_ETF = Collections.emptyList();
+    private static final List<String> CODES_BJ_CB = Collections.emptyList();
 
     private StockUtil() {
     }
@@ -37,13 +40,13 @@ public class StockUtil {
         if (!StringUtils.hasLength(code)) {
             return null;
         }
-        if (isCodeStart(code, CODES_SH_A, CODES_SH_ETF)) {
+        if (isCodeStart(code, CODES_SH_A, CODES_SH_ETF, CODES_SH_CB)) {
             return Exchange.SH.getName();
         }
-        if (isCodeStart(code, CODES_SZ_A, CODES_SZ_ETF)) {
+        if (isCodeStart(code, CODES_SZ_A, CODES_SZ_ETF, CODES_SZ_CB)) {
             return Exchange.SZ.getName();
         }
-        if (isCodeStart(code, CODES_BJ_A, CODES_BJ_ETF)) {
+        if (isCodeStart(code, CODES_BJ_A, CODES_BJ_ETF, CODES_BJ_CB)) {
             return Exchange.BJ.getName();
         }
         return null;
@@ -84,6 +87,9 @@ public class StockUtil {
         if (isCodeStart(code, CODES_SH_ETF, CODES_SZ_ETF, CODES_BJ_ETF)) {
             return StockType.ETF.value();
         }
+        if (isCodeStart(code, CODES_SH_CB, CODES_SZ_CB, CODES_BJ_CB)) {
+            return StockType.CB.value();
+        }
         throw new NoSuchElementException("no stock type exchange " + exchange + ", code " + code);
     }
 
@@ -92,15 +98,7 @@ public class StockUtil {
         if (exchange == null) {
             return null;
         }
-
-        if (StockConsts.Exchange.valueOfName(exchange).isSh()) {
-            return "HA";
-        } else if (StockConsts.Exchange.valueOfName(exchange).isSz()) {
-            return "SA";
-        } else if (StockConsts.Exchange.valueOfName(exchange).isBj()) {
-            return "BA";
-        }
-        return null;
+        return StockConsts.Exchange.valueOfName(exchange).getMarket();
     }
 
     public static String getPinyin(String name) {
@@ -148,12 +146,8 @@ public class StockUtil {
         return list.stream().anyMatch(code::startsWith);
     }
 
-    private static boolean isCodeStart(String code, List<String> list01, List<String> list02) {
-        return isCodeStart(code, list01) || isCodeStart(code, list02);
-    }
-
     private static boolean isCodeStart(String code, List<String> list01, List<String> list02, List<String> list03) {
-        return isCodeStart(code, list01, list02) || isCodeStart(code, list03);
+        return isCodeStart(code, list01) || isCodeStart(code, list02) || isCodeStart(code, list03);
     }
 
 }

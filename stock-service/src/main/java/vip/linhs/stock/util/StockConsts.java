@@ -12,6 +12,7 @@ public class StockConsts {
 
     private static final String CACHE_KEY_DATA_PREFIX = CACHE_KEY_PREFIX + "data:";
     public static final String CACHE_KEY_DATA_STOCK = StockConsts.CACHE_KEY_DATA_PREFIX + "stock";
+    public static final String CACHE_KEY_DATA_BUSINESS_DATE = StockConsts.CACHE_KEY_DATA_PREFIX + "businessDate";
 
     private static final String CACHE_KEY_CONFIG_PREFIX = CACHE_KEY_PREFIX + "config:";
     public static final String CACHE_KEY_CONFIG_ROBOT = StockConsts.CACHE_KEY_CONFIG_PREFIX + "robot";
@@ -26,15 +27,21 @@ public class StockConsts {
     public static final long DURATION_REDIS_DEFAULT = 3600 * 24 * 2;
 
     public enum Exchange {
-        SH("sh"), SZ("sz"), BJ("bj");
+        SH("sh", "HA"), SZ("sz", "SA"), BJ("bj", "BA");
         private final String name;
+        private final String market;
 
-        Exchange(String name) {
+        Exchange(String name, String market) {
             this.name = name;
+            this.market = market;
         }
 
         public String getName() {
             return name;
+        }
+
+        public String getMarket() {
+            return market;
         }
 
         public boolean isSh() {
@@ -85,7 +92,8 @@ public class StockConsts {
     }
 
     public enum StockType {
-        A(0), Index(1), ETF(2), B(3);
+        // CB 可转债
+        A(0), Index(1), ETF(2), B(3), CB(4);
         private final int value;
 
         StockType(int value) {
@@ -150,7 +158,7 @@ public class StockConsts {
     }
 
     public enum MessageType {
-        DingDing(0), Email(1);
+        Message(0), Email(1);
         private final int value;
 
         MessageType(int value) {

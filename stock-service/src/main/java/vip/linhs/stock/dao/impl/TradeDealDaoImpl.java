@@ -13,13 +13,13 @@ import vip.linhs.stock.model.po.TradeDeal;
 @Repository
 public class TradeDealDaoImpl extends BaseDao implements TradeDealDao {
 
-    private static final String SELECT_SQL = "select id, stock_code as stockCode, deal_code as dealCode, price, volume, trade_type as tradeType, trade_time as tradeTime, create_time as createTime, update_time as updateTime from trade_deal where 1 = 1";
+    private static final String SELECT_SQL = "select id, stock_code as stockCode, deal_code as dealCode, price, volume, trade_type as tradeType, cr_trade_type as crTradeType, trade_time as tradeTime, create_time as createTime, update_time as updateTime from trade_deal where 1 = 1";
 
     @Override
     public void add(TradeDeal tradeDeal) {
         jdbcTemplate.update(
-                "insert into trade_deal(stock_code, deal_code, price, volume, trade_type, trade_time, user_id) values(?, ?, ?, ?, ?, ?, ?)",
-                tradeDeal.getStockCode(), tradeDeal.getDealCode(), tradeDeal.getPrice(), tradeDeal.getVolume(), tradeDeal.getTradeType(), tradeDeal.getTradeTime(), 1);
+                "insert into trade_deal(stock_code, deal_code, price, volume, trade_type, cr_trade_type, trade_time, user_id) values(?, ?, ?, ?, ?, ?, ?, ?)",
+                tradeDeal.getStockCode(), tradeDeal.getDealCode(), tradeDeal.getPrice(), tradeDeal.getVolume(), tradeDeal.getTradeType(), tradeDeal.getCrTradeType(), tradeDeal.getTradeTime(), 1);
     }
 
     @Override

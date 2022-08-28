@@ -52,7 +52,7 @@ public class MessageServiceImpl implements MessageService {
 
     private void sendDingding(String title, String body, String target, DingDingMessageType type) {
         try {
-            Message message = new Message(StockConsts.MessageType.DingDing.value(), target, body, new Date());
+            Message message = new Message(StockConsts.MessageType.Message.value(), target, body, new Date());
             Map<String, Object> params = type == DingDingMessageType.Text
                     ? buildTextMessageParams(message.getBody())
                     : buildMarkdownMessageParams(title, message.getBody());

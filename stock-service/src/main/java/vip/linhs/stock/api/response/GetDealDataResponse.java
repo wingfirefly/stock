@@ -132,7 +132,14 @@ public class GetDealDataResponse extends BaseTradeResponse {
     }
 
     public String getFormatDealTime() {
-        return new StringBuilder(Cjsj).insert(4, ':').insert(2, ':').toString();
+        return getFormatDealTime(Cjsj);
+    }
+
+    public static String getFormatDealTime(String str) {
+        if (str.length() == 6) {
+            return new StringBuilder(str).insert(4, ':').insert(2, ':').toString();
+        }
+        return "00:00:00";
     }
 
 }

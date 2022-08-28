@@ -12,6 +12,7 @@ public class TradeDeal extends BaseModel {
     private BigDecimal price;
     private int volume;
     private String tradeType;
+    private String crTradeType;
     private Date tradeTime;
 
     public String getStockCode() {
@@ -52,6 +53,14 @@ public class TradeDeal extends BaseModel {
 
     public void setTradeType(String tradeType) {
         this.tradeType = tradeType;
+    }
+
+    public String getCrTradeType() {
+        return crTradeType;
+    }
+
+    public void setCrTradeType(String crTradeType) {
+        this.crTradeType = crTradeType;
     }
 
     public Date getTradeTime() {

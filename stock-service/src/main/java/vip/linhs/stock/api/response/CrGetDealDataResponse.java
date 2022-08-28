@@ -39,4 +39,17 @@ public class CrGetDealDataResponse extends GetDealDataResponse {
         Wtxh = wtxh;
     }
 
+    @Override
+    public String getMmlb() {
+        if (Mmsm.contains("买")) {
+            return GetDealDataResponse.B;
+        }
+
+        if (Mmsm.contains("卖")) {
+            return GetDealDataResponse.S;
+        }
+
+        return super.getMmlb();
+    }
+
 }

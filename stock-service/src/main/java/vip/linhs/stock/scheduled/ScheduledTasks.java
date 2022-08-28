@@ -1,8 +1,10 @@
 package vip.linhs.stock.scheduled;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +53,10 @@ public class ScheduledTasks {
      */
     @Scheduled(cron = "0 0 6 ? * MON-FRI")
     public void runBeginOfDay() {
-        boolean isBusinessTime = holidayCalendarService.isBusinessDate(new Date());
-        if (!isBusinessTime) {
+        if (isNotBusinessDate()) {
             return;
         }
+
         try {
             List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.BeginOfDay.getId());
             executeTask(list);
@@ -68,10 +70,10 @@ public class ScheduledTasks {
      */
     @Scheduled(cron = "0 0 9 ? * MON-FRI")
     public void runUpdateOfStock() {
-        boolean isBusinessTime = holidayCalendarService.isBusinessDate(new Date());
-        if (!isBusinessTime) {
+        if (isNotBusinessDate()) {
             return;
         }
+
         try {
             List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.UpdateOfStock.getId());
             executeTask(list);
@@ -85,10 +87,10 @@ public class ScheduledTasks {
      */
     @Scheduled(cron = "0 0 17,18,19 ? * MON-FRI")
     public void runUpdateOfDailyIndex() {
-        boolean isBusinessTime = holidayCalendarService.isBusinessDate(new Date());
-        if (!isBusinessTime) {
+        if (isNotBusinessDate()) {
             return;
         }
+
         try {
             List<ExecuteInfo> list = taskService.getPendingTaskListById(Task.UpdateOfDailyIndex.getId());
             executeTask(list);
@@ -102,9 +104,8 @@ public class ScheduledTasks {
      */
     @Scheduled(cron = "0,15,30,45 * 9,10,11,13,14 ? * MON-FRI")
     public void runTicker() {
-        boolean isBusinessTime = holidayCalendarService.isBusinessTime(new Date());
-        if (!isBusinessTime) {
-            return;
+        if (isNotBusinessTime()) {
+             return;
         }
 
         try {
@@ -120,9 +121,8 @@ public class ScheduledTasks {
      */
     @Scheduled(cron = "0 1 10,14 ? * MON-FRI")
     public void applyNewStock() {
-        boolean isBusinessTime = holidayCalendarService.isBusinessTime(new Date());
-        if (!isBusinessTime) {
-             return;
+        if (isNotBusinessTime()) {
+            return;
         }
 
         try {
@@ -133,18 +133,12 @@ public class ScheduledTasks {
         }
     }
 
-    private void executeTask(List<ExecuteInfo> list) {
-        for (ExecuteInfo executeInfo : list) {
-            taskService.executeTask(executeInfo);
-        }
-    }
-
-    @Scheduled(cron = "0 0,20,40 * ? * MON-FRI")
+    @Scheduled(cron = "0 10,30,50 8-20 ? * MON-FRI")
     public void heartbeat() {
-        boolean isBusinessDate = holidayCalendarService.isBusinessDate(new Date());
-        if (!isBusinessDate) {
+        if (isNotBusinessDate()) {
             return;
         }
+
         TradeResultVo<GetAssetsResponse> tradeResultVo = null;
         try {
             tradeResultVo = tradeApiService.getAsserts(new GetAssetsRequest(1));
@@ -166,6 +160,20 @@ public class ScheduledTasks {
                 }
             }
 
+        }
+    }
+
+    private boolean isNotBusinessTime() {
+        return isNotBusinessDate() || !holidayCalendarService.isBusinessTime(new Date());
+    }
+
+    private boolean isNotBusinessDate() {
+        return !holidayCalendarService.isBusinessDate(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH));
+    }
+
+    private void executeTask(List<ExecuteInfo> list) {
+        for (ExecuteInfo executeInfo : list) {
+            taskService.executeTask(executeInfo);
         }
     }
 

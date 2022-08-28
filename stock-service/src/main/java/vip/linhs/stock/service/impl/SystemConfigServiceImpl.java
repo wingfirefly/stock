@@ -26,10 +26,18 @@ public class SystemConfigServiceImpl implements SystemConfigService {
         return systemConfigDao.getAll();
     }
 
+
+    @Override
+    public boolean isCr() {
+        List<SystemConfig> list = systemConfigDao.getByName("trade_cr");
+        return !list.isEmpty() && list.get(0).getValue1().equals("1");
+    }
+
     @Override
     public boolean isApplyNewConvertibleBond() {
         List<SystemConfig> list = systemConfigDao.getByName("apply_new_convertible_bond");
         return !list.isEmpty() && list.get(0).getValue1().equals("1");
     }
+
 
 }
