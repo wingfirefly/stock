@@ -23,6 +23,8 @@ import vip.linhs.stock.api.request.CrGetCanBuyNewStockListV3Request;
 import vip.linhs.stock.api.request.CrGetConvertibleBondListV2Request;
 import vip.linhs.stock.api.request.CrGetDealDataRequest;
 import vip.linhs.stock.api.request.CrGetOrdersDataRequest;
+import vip.linhs.stock.api.request.CrSubmitBatTradeV2Request;
+import vip.linhs.stock.api.request.CrSubmitBatTradeV2Request.CrSubmitData;
 import vip.linhs.stock.api.request.GetCanBuyNewStockListV3Request;
 import vip.linhs.stock.api.request.GetConvertibleBondListV2Request;
 import vip.linhs.stock.api.request.GetDealDataRequest;
@@ -35,6 +37,7 @@ import vip.linhs.stock.api.response.CrGetCanBuyNewStockListV3Response;
 import vip.linhs.stock.api.response.CrGetConvertibleBondListV2Response;
 import vip.linhs.stock.api.response.CrGetDealDataResponse;
 import vip.linhs.stock.api.response.CrGetOrdersDataResponse;
+import vip.linhs.stock.api.response.CrSubmitBatTradeV2Response;
 import vip.linhs.stock.api.response.GetCanBuyNewStockListV3Response;
 import vip.linhs.stock.api.response.GetCanBuyNewStockListV3Response.NewQuotaInfo;
 import vip.linhs.stock.api.response.GetConvertibleBondListV2Response;
@@ -456,7 +459,7 @@ public class TaskServiceImpl implements TaskService {
         if (systemConfigService.isApplyNewConvertibleBond()) {
             TradeResultVo<GetConvertibleBondListV2Response> getConvertibleBondResultVo = tradeApiService.getConvertibleBondListV2(new GetConvertibleBondListV2Request(userId));
             if (getConvertibleBondResultVo.success()) {
-                List<SubmitData> convertibleBondList = getConvertibleBondResultVo.getData().stream().filter(GetConvertibleBondListV2Response::getExIsToday).map(convertibleBond -> {
+                List<SubmitData> convertibleBondList = getConvertibleBondResultVo.getData().stream().filter(GetConvertibleBondListV2Response::isExIsToday).map(convertibleBond -> {
                     SubmitData submitData = new SubmitData();
                     submitData.setAmount(Integer.parseInt(convertibleBond.getLIMITBUYVOL()));
                     submitData.setMarket(convertibleBond.getMarket());
@@ -499,9 +502,9 @@ public class TaskServiceImpl implements TaskService {
                 .filter(newStock -> getCanBuyResponse.getNewQuota().stream().anyMatch(v -> v.getMarket().equals(newStock.getMarket())))
                 .map(newStock -> {
             CrGetCanBuyNewStockListV3Response.NewQuotaInfo newQuotaInfo = getCanBuyResponse.getNewQuota().stream().filter(v -> v.getMarket().equals(newStock.getMarket())).findAny().orElse(null);
-            SubmitData submitData = new SubmitData();
+            CrSubmitData submitData = new CrSubmitData();
 
-            submitData.setAmount(Integer.min(Integer.parseInt(newStock.getKsgsx()), Integer.parseInt(newQuotaInfo.getKcCustQuota())));
+            submitData.setAmount(Integer.min(Integer.parseInt(newStock.getKsgsx()), Integer.parseInt(newQuotaInfo.getCustQuota())));
             submitData.setMarket(newStock.getMarket());
             submitData.setPrice(newStock.getFxj());
             submitData.setStockCode(newStock.getSgdm());
@@ -513,8 +516,8 @@ public class TaskServiceImpl implements TaskService {
         if (systemConfigService.isApplyNewConvertibleBond()) {
             TradeResultVo<CrGetConvertibleBondListV2Response> getConvertibleBondResultVo = tradeApiService.crGetConvertibleBondListV2(new CrGetConvertibleBondListV2Request(userId));
             if (getConvertibleBondResultVo.success()) {
-                List<SubmitData> convertibleBondList = getConvertibleBondResultVo.getData().stream().filter(GetConvertibleBondListV2Response::getExIsToday).map(convertibleBond -> {
-                    SubmitData submitData = new SubmitData();
+                List<SubmitData> convertibleBondList = getConvertibleBondResultVo.getData().stream().filter(GetConvertibleBondListV2Response::isExIsToday).map(convertibleBond -> {
+                    CrSubmitData submitData = new CrSubmitData();
                     submitData.setAmount(Integer.parseInt(convertibleBond.getLIMITBUYVOL()));
                     submitData.setMarket(convertibleBond.getMarket());
                     submitData.setPrice(convertibleBond.getPARVALUE());
@@ -541,12 +544,12 @@ public class TaskServiceImpl implements TaskService {
             return;
         }
 
-        SubmitBatTradeV2Request request = new SubmitBatTradeV2Request(userId);
+        CrSubmitBatTradeV2Request request = new CrSubmitBatTradeV2Request(userId);
         request.setList(newStockList);
 
-        TradeResultVo<SubmitBatTradeV2Response> tradeResultVo = tradeApiService.submitBatTradeV2(request);
+        TradeResultVo<CrSubmitBatTradeV2Response> tradeResultVo = tradeApiService.crSubmitBatTradeV2(request);
         logger.info("apply new stock: {}", tradeResultVo);
-        messageServicve.send("apply new stock: " + tradeResultVo.getMessage());
+        messageServicve.send("cr apply new stock: " + tradeResultVo.getMessage());
     }
 
     @Override

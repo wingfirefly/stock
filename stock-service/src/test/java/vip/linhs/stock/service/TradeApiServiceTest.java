@@ -22,6 +22,7 @@ import vip.linhs.stock.api.request.CrGetOrdersDataRequest;
 import vip.linhs.stock.api.request.CrGetRzrqAssertsRequest;
 import vip.linhs.stock.api.request.CrQueryCollateralRequest;
 import vip.linhs.stock.api.request.CrRevokeRequest;
+import vip.linhs.stock.api.request.CrSubmitBatTradeV2Request;
 import vip.linhs.stock.api.request.CrSubmitBatTradeV2Request.CrSubmitData;
 import vip.linhs.stock.api.request.CrSubmitRequest;
 import vip.linhs.stock.api.request.GetAssetsRequest;
@@ -45,6 +46,7 @@ import vip.linhs.stock.api.response.CrGetOrdersDataResponse;
 import vip.linhs.stock.api.response.CrGetRzrqAssertsResponse;
 import vip.linhs.stock.api.response.CrQueryCollateralResponse;
 import vip.linhs.stock.api.response.CrRevokeResponse;
+import vip.linhs.stock.api.response.CrSubmitBatTradeV2Response;
 import vip.linhs.stock.api.response.CrSubmitResponse;
 import vip.linhs.stock.api.response.GetAssetsResponse;
 import vip.linhs.stock.api.response.GetCanBuyNewStockListV3Response;
@@ -174,7 +176,7 @@ public class TradeApiServiceTest {
         List<SubmitData> newStockList = getCanBuyResponse.getNewStockList().stream().map(newStock -> {
             NewQuotaInfo newQuotaInfo = getCanBuyResponse.getNewQuota().stream().filter(v -> v.getMarket().equals(newStock.getMarket())).findAny().orElse(null);
             SubmitData submitData = new SubmitData();
-            submitData.setAmount(Integer.max(Integer.parseInt(newStock.getKsgsx()), Integer.parseInt(newQuotaInfo.getKsgsz())));
+            submitData.setAmount(Integer.min(Integer.parseInt(newStock.getKsgsx()), Integer.parseInt(newQuotaInfo.getKsgsz())));
             submitData.setMarket(newStock.getMarket());
             submitData.setPrice(newStock.getFxj());
             submitData.setStockCode(newStock.getSgdm());
@@ -326,7 +328,7 @@ public class TradeApiServiceTest {
         List<SubmitData> newStockList = getCanBuyResponse.getNewStockList().stream().map(newStock -> {
             CrGetCanBuyNewStockListV3Response.NewQuotaInfo newQuotaInfo = getCanBuyResponse.getNewQuota().stream().filter(v -> v.getMarket().equals(newStock.getMarket())).findAny().orElse(null);
             CrSubmitData submitData = new CrSubmitData();
-            submitData.setAmount(Integer.max(Integer.parseInt(newStock.getKsgsx()), Integer.parseInt(newQuotaInfo.getCustQuota())));
+            submitData.setAmount(Integer.min(Integer.parseInt(newStock.getKsgsx()), Integer.parseInt(newQuotaInfo.getCustQuota())));
             submitData.setMarket(newStock.getMarket());
             submitData.setPrice(newStock.getFxj());
             submitData.setStockCode(newStock.getSgdm());
@@ -353,10 +355,10 @@ public class TradeApiServiceTest {
 
         newStockList.addAll(convertibleBondList);
 
-        SubmitBatTradeV2Request request = new SubmitBatTradeV2Request(TradeApiServiceTest.UserId);
+        CrSubmitBatTradeV2Request request = new CrSubmitBatTradeV2Request(TradeApiServiceTest.UserId);
         request.setList(newStockList);
 
-        TradeResultVo<SubmitBatTradeV2Response> tradeResultVo = tradeApiService.submitBatTradeV2(request);
+        TradeResultVo<CrSubmitBatTradeV2Response> tradeResultVo = tradeApiService.crSubmitBatTradeV2(request);
         System.out.println(JSON.toJSONString(tradeResultVo));
         Assertions.assertTrue(tradeResultVo.success());
     }

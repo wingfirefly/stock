@@ -40,7 +40,7 @@ public class GetConvertibleBondListV2Response extends BaseTradeResponse {
         ExStatus = exStatus;
     }
 
-    public boolean getExIsToday() {
+    public boolean isExIsToday() {
         return ExIsToday;
     }
 
