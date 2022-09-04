@@ -19,6 +19,7 @@ import vip.linhs.stock.api.request.CrGetOrdersDataRequest;
 import vip.linhs.stock.api.request.CrGetRzrqAssertsRequest;
 import vip.linhs.stock.api.request.CrQueryCollateralRequest;
 import vip.linhs.stock.api.request.CrRevokeRequest;
+import vip.linhs.stock.api.request.CrSubmitRequest;
 import vip.linhs.stock.api.request.SubmitRequest;
 import vip.linhs.stock.api.response.CrGetDealDataResponse;
 import vip.linhs.stock.api.response.CrGetHisDealDataResponse;
@@ -26,8 +27,8 @@ import vip.linhs.stock.api.response.CrGetOrdersDataResponse;
 import vip.linhs.stock.api.response.CrGetRzrqAssertsResponse;
 import vip.linhs.stock.api.response.CrQueryCollateralResponse;
 import vip.linhs.stock.api.response.CrRevokeResponse;
+import vip.linhs.stock.api.response.CrSubmitResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
-import vip.linhs.stock.api.response.SubmitResponse;
 import vip.linhs.stock.model.vo.AccountVo;
 import vip.linhs.stock.model.vo.CommonResponse;
 import vip.linhs.stock.model.vo.PageParam;
@@ -78,14 +79,15 @@ public class CrTradeController extends BaseController {
 
     @RequestMapping("buy")
     public CommonResponse buy(int amount, double price, String stockCode, String stockName, Integer tradeUserId) {
-        SubmitRequest request = new SubmitRequest(getTradeUserId(tradeUserId));
+        CrSubmitRequest request = new CrSubmitRequest(getTradeUserId(tradeUserId));
         request.setAmount(amount);
         request.setPrice(price);
         request.setStockCode(stockCode);
         request.setZqmc(stockName);
         request.setTradeType(SubmitRequest.B);
         request.setMarket(StockUtil.getStockMarket(request.getStockCode()));
-        TradeResultVo<SubmitResponse> response = tradeApiService.submit(request);
+        request.setTradeInfo(CrSubmitRequest.xyjylx_rz_b);
+        TradeResultVo<CrSubmitResponse> response = tradeApiService.crSubmit(request);
         String message = response.getMessage();
         if (response.success()) {
             message = response.getData().get(0).getWtbh();
@@ -96,13 +98,15 @@ public class CrTradeController extends BaseController {
 
     @RequestMapping("sale")
     public CommonResponse sale(int amount, double price, String stockCode, String stockName, Integer tradeUserId) {
-        SubmitRequest request = new SubmitRequest(getTradeUserId(tradeUserId));
+        CrSubmitRequest request = new CrSubmitRequest(getTradeUserId(tradeUserId));
         request.setAmount(amount);
         request.setPrice(price);
         request.setStockCode(stockCode);
         request.setZqmc(stockName);
         request.setTradeType(SubmitRequest.S);
-        TradeResultVo<SubmitResponse> response = tradeApiService.submit(request);
+        request.setMarket(StockUtil.getStockMarket(request.getStockCode()));
+        request.setTradeInfo(CrSubmitRequest.xyjylx_hk_s);
+        TradeResultVo<CrSubmitResponse> response = tradeApiService.crSubmit(request);
         request.setMarket(StockUtil.getStockMarket(request.getStockCode()));
 		String message = response.getMessage();
         if (response.success()) {

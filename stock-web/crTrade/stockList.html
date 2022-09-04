@@ -156,9 +156,9 @@
         var stockCode = $('#submit-modal input[name="stockCode"]').val();
         var tradeType = $('#submit-modal input[name="tradeType"]').val();
 
-        var url = GlobalConfig.serverUrl + '/api/trade/buy';
+        var url = GlobalConfig.serverUrl + '/api/crTrade/buy';
         if (tradeType === 'S') {
-          url = GlobalConfig.serverUrl + '/api/trade/sale';
+          url = GlobalConfig.serverUrl + '/api/crTrade/sale';
         }
 
         $.ajax({
