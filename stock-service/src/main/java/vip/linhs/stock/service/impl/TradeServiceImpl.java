@@ -7,9 +7,11 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import vip.linhs.stock.api.response.CrGetDealDataResponse;
+import vip.linhs.stock.api.response.CrGetHisDealDataResponse;
 import vip.linhs.stock.api.response.CrGetOrdersDataResponse;
 import vip.linhs.stock.api.response.CrQueryCollateralResponse;
 import vip.linhs.stock.api.response.GetDealDataResponse;
+import vip.linhs.stock.api.response.GetHisDealDataResponse;
 import vip.linhs.stock.api.response.GetOrdersDataResponse;
 import vip.linhs.stock.api.response.GetStockListResponse;
 import vip.linhs.stock.dao.*;
@@ -98,7 +100,6 @@ public class TradeServiceImpl implements TradeService {
             dealVo.setTradeCode(v.getCjbh());
             dealVo.setPrice(v.getCjjg());
             dealVo.setTradeTime(v.getFormatDealTime());
-            dealVo.setTradeDate(v.getFormatDealTime());
             dealVo.setTradeType(v.getMmlb());
             dealVo.setVolume(v.getCjsl());
             dealVo.setEntrustCode(v.getWtbh());
@@ -114,6 +115,17 @@ public class TradeServiceImpl implements TradeService {
                 dealVo.setTradeType(crV.getMmsm());
                 dealVo.setEntrustCode(crV.getWtxh());
             }
+
+            if (v instanceof GetHisDealDataResponse) {
+                GetHisDealDataResponse crV = (GetHisDealDataResponse) v;
+                dealVo.setTradeDate(crV.getFormatDealDate());
+            }
+            
+            if (v instanceof CrGetHisDealDataResponse) {
+                CrGetHisDealDataResponse crV = (CrGetHisDealDataResponse) v;
+                dealVo.setTradeDate(crV.getFormatDealDate());
+            }
+
             return dealVo;
         }).collect(Collectors.toList());
     }

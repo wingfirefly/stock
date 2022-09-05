@@ -142,4 +142,11 @@ public class GetDealDataResponse extends BaseTradeResponse {
         return "00:00:00";
     }
 
+    public static String getFormatDealDate(String str) {
+        if (str.length() == 8) {
+            return new StringBuilder(str).insert(6, '-').insert(4, '-').toString();
+        }
+        return "";
+    }
+
 }

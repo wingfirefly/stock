@@ -26,10 +26,9 @@ public class GetHisDealDataResponse extends GetDealDataResponse {
     public void setCjrq(String cjrq) {
         Cjrq = cjrq;
     }
-
-    @Override
-    public String getFormatDealTime() {
-        return getFormatDealTime(Cjrq);
+    
+    public String getFormatDealDate() {
+        return getFormatDealDate(Cjrq);
     }
-
+    
 }
