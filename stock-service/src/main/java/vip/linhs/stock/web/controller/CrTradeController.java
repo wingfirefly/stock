@@ -107,7 +107,6 @@ public class CrTradeController extends BaseController {
         request.setMarket(StockUtil.getStockMarket(request.getStockCode()));
         request.setTradeInfo(CrSubmitRequest.xyjylx_hk_s);
         TradeResultVo<CrSubmitResponse> response = tradeApiService.crSubmit(request);
-        request.setMarket(StockUtil.getStockMarket(request.getStockCode()));
 		String message = response.getMessage();
         if (response.success()) {
             message = response.getData().get(0).getWtbh();

@@ -319,7 +319,7 @@ public class TaskServiceImpl implements TaskService {
                 if (Double.compare(rate, stockSelected.getRate().doubleValue()) >= 0) {
                     lastPriceMap.put(code, dailyIndex.getClosingPrice());
                     String name = stockService.getStockByFullCode(StockUtil.getFullCode(code)).getName();
-                    String body = String.format("%s:当前价格:%.02f, 涨幅%.02f%%", name,
+                    String body = String.format("%s:当前价格:%.03f, 涨幅%.02f%%", name,
                         dailyIndex.getClosingPrice().doubleValue(),
                         StockUtil.calcIncreaseRate(dailyIndex.getClosingPrice(),
                                 dailyIndex.getPreClosingPrice()).movePointRight(2).doubleValue());
@@ -328,7 +328,7 @@ public class TaskServiceImpl implements TaskService {
             } else {
                 lastPriceMap.put(code, dailyIndex.getPreClosingPrice());
                 String name = stockService.getStockByFullCode(StockUtil.getFullCode(code)).getName();
-                String body = String.format("%s:当前价格:%.02f", name, dailyIndex.getClosingPrice().doubleValue());
+                String body = String.format("%s:当前价格:%.03f", name, dailyIndex.getClosingPrice().doubleValue());
                 sb.append(body + "\n");
             }
         }
@@ -423,8 +423,8 @@ public class TaskServiceImpl implements TaskService {
                     tradeDeal.setCrTradeType("");
                 }
 
-                sb.append(String.format("deal %s %s %s %s %s\n",
-                        v.getFormatDealTime(), v.getZqmc(), v.getMmlb(), v.getCjjg(), v.getCjsl()));
+                sb.append(String.format("%s deal %s %s %s %s %s\n",
+                        tradeDeal.getCrTradeType().length() > 0 ? "cr" : "normal", v.getFormatDealTime(), v.getZqmc(), v.getMmlb(), v.getCjjg(), v.getCjsl()));
 
                 return tradeDeal;
             }).collect(Collectors.toList());

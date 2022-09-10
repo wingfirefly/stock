@@ -101,7 +101,7 @@ public class HolidayCalendarServiceImpl implements HolidayCalendarService {
         }
 
         int minute = c.get(Calendar.MINUTE);
-        return !(hour == 9 && minute < 30 || hour == 11 && minute > 30);
+        return !(hour == 9 && minute < 30 || hour == 11 && minute >= 30);
     }
 
 }

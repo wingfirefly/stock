@@ -266,7 +266,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
         if (!tradeResultVo.success()) {
             logger.error(tradeResultVo.getMessage());
         }
-        String body = String.format("%s submit %s %s %d %.02f %s", getFlag(), request.getTradeType(), name, request.getAmount(), request.getPrice(), tradeResultVo.getMessage() == null ? "" : tradeResultVo.getMessage());
+        String body = String.format("%s submit %s %s %d %.03f %s", getFlag(), request.getTradeType(), name, request.getAmount(), request.getPrice(), tradeResultVo.getMessage() == null ? "" : tradeResultVo.getMessage());
         try {
             messageServicve.send(body);
         } catch (Exception e) {

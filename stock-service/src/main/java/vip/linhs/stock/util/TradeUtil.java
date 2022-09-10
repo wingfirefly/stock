@@ -21,6 +21,9 @@ public class TradeUtil {
         LinkedHashMap<String, GetDealDataResponse> map = new LinkedHashMap<>();
         for (GetDealDataResponse dealResponse : list) {
             String wtbh = dealResponse.getWtbh();
+            if (dealResponse instanceof CrGetDealDataResponse) {
+                wtbh = ((CrGetDealDataResponse) dealResponse).getWtxh();
+            }
             GetDealDataResponse summaryResponse = map.get(wtbh);
             if (summaryResponse == null) {
                 summaryResponse = mergeDeal(null, dealResponse);
@@ -35,8 +38,7 @@ public class TradeUtil {
     private static GetDealDataResponse mergeDeal(GetDealDataResponse response, GetDealDataResponse dealResponse) {
         if (response == null) {
             if (dealResponse instanceof CrGetDealDataResponse) {
-                CrGetDealDataResponse response2 = new CrGetDealDataResponse();
-                response = response2;
+                response = new CrGetDealDataResponse();
             } else {
                 response = new GetDealDataResponse();
             }
