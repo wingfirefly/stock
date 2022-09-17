@@ -226,6 +226,9 @@ public class TradeApiServiceImpl extends AbstractTradeApiService {
     }
 
     private String encodePassword(String password) {
+        if (password.length() != 6) {
+            return password;
+        }
         String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDHdsyxT66pDG4p73yope7jxA92\nc0AT4qIJ/xtbBcHkFPK77upnsfDTJiVEuQDH+MiMeb+XhCLNKZGp0yaUU6GlxZdp\n+nLW8b7Kmijr3iepaDhcbVTsYBWchaWUXauj9Lrhz58/6AE/NF0aMolxIGpsi+ST\n2hSHPu3GSXMdhPCkWQIDAQAB";
         return RSAUtil.encodeWithPublicKey(password, publicKey);
     }

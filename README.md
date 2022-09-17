@@ -12,9 +12,9 @@ github: [https://github.com/bosspen1/stock](https://github.com/bosspen1/stock)
 
 
 ## 项目介绍
-本项目偏向交易, 分析和策略这块相对不足, 大部分都是拿了然后修改, 所以没制作docker镜像, python版本还没达到开源的要求，需要的可以扫最后的二维码进群索取. 
+本项目偏向交易, 分析和策略这块相对不足. python版本还没达到开源的要求，需要的可以扫最后的二维码进群索取. 
 - 自动交易
- 1. 股票交易接口(封装东方财富网交易, 支持a股, etf, 债券交易)
+ 1. 股票交易接口(封装东方财富网交易, 支持a股, etf, 可转债交易)
  2. 交易策略
 - 股票数据抓取
  1. 股票名字及新增自动更新
@@ -26,7 +26,7 @@ github: [https://github.com/bosspen1/stock](https://github.com/bosspen1/stock)
  3. 习惯用maven的朋友可以搜索gradle转maven, 进行项目转换
  4. 由于某种原因前端做的比较简陋
  5. 熟悉项目建议先wiki clone到本地, 看里面的deployment.docx. 代码可以从任务(ScheduledTasks)和前端页面调用的接口开始
- 6. 本项目只供个人测试，请在法律允许范围内使用, 祝大家早日找到适合自己的方法
+ 6. 本项目只供个人测试，请在法律允许范围内的使用, 造成损失和违法概不负责, 祝大家早日找到适合自己的方法
 
 ------------
 
@@ -56,7 +56,7 @@ github: [https://github.com/bosspen1/stock](https://github.com/bosspen1/stock)
 
 ## 使用说明
 
-按照wiki里面的deployment文档准备好环境和配置文件后, 可以常规运行或者容器运行
+按照wiki里面的deployment文档准备好环境和配置文件后, 可以常规运行或者容器运行, stock-service第一次构建可能需要几分钟
 
 ### 常规运行
 
@@ -73,11 +73,24 @@ java -jar stock-service.jar
 npm install
 npm start
 ```
-也可以直接部署到 nginx tomcat 之类的服务器启动
 
-### docker容器启动
+想制作启动脚本可以参考bin下的脚本, 也可以直接部署到 nginx tomcat 之类的服务器启动
+
+### docker方式部署
+
+准备数据库后, 修改 stock-service\src\main\resources\application.yml 配置数据库
+
 ```shell
-docker-compose up -d --build
+docker build --no-cache -t stock:1.0.0 .
+docker run -p 8088:8088 -p 3000:3000 --privileged=true -itd --name stock-test stock:1.0.0
+```
+
+启动后进入容器执行脚本
+
+```shell
+cd /data/deploy/bin
+./stock-service.sh
+./stock-web.sh
 ```
 
 ------------

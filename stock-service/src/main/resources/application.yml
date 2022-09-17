@@ -22,7 +22,7 @@ ocr:
 
 logging:
   file:
-    name: /logs/stock-service.log
+    name: ./logs/stock-service.log
   logback:
     rollingpolicy:
       max-history: 30
