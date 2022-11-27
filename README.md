@@ -6,8 +6,7 @@ github: [https://github.com/bosspen1/stock](https://github.com/bosspen1/stock)
 ## 升级日志
 ### 升级只针对以前已经部署的朋友, 新来的朋友直接按最新步骤来就行
 
--2022-08-25
--- 修改redis缓存为caffeine
+
 ------------
 
 

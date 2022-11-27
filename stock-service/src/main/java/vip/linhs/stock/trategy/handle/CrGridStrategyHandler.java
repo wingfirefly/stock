@@ -64,7 +64,7 @@ public class CrGridStrategyHandler extends GridStrategyHandler {
         return "cr";
     }
 
-    private <T> TradeResultVo<T> buildResult(TradeResultVo<? extends T> tradeResultVo) {
+    protected <T> TradeResultVo<T> buildResult(TradeResultVo<? extends T> tradeResultVo) {
         TradeResultVo<T> resultVo =  new TradeResultVo<>();
          resultVo.setStatus(tradeResultVo.getStatus());
          resultVo.setMessage(tradeResultVo.getMessage());
