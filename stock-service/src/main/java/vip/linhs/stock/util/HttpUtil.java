@@ -98,7 +98,9 @@ public class HttpUtil {
     }
 
     private static String sendRequest(CloseableHttpClient httpClient, HttpUriRequest request, String charset) {
-        request.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36");
+        if (!request.containsHeader("User-Agent")) {
+            request.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36");
+        }
         try (CloseableHttpResponse response = httpClient.execute(request)) {
             return EntityUtils.toString(response.getEntity(), charset);
         } catch (IOException ex) {
