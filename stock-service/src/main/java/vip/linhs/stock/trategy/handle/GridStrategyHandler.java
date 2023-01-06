@@ -74,6 +74,7 @@ public class GridStrategyHandler extends BaseStrategyHandler<GridStrategyInput, 
 
         // 30 day, yibao yicheng
         List<TradeOrder> tradeOrderList = tradeService.getLastTradeOrderListByRuleId(tradeRuleVo.getId(), tradeRuleVo.getUserId());
+        tradeOrderList = tradeOrderList.stream().filter(v -> v.getStockCode().equals(tradeRuleVo.getStockCode())).collect(Collectors.toList());
 
         updateTradeState(tradeOrderList, dealDataList, orderData.getData());
 
