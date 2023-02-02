@@ -54,6 +54,14 @@ public class CrGetDealDataResponse extends GetDealDataResponse {
             return GetDealDataResponse.S;
         }
 
+        if (Mmsm.contains("担保品划入")) {
+            return GetDealDataResponse.B;
+        }
+
+        if (Mmsm.contains("担保品划出")) {
+            return GetDealDataResponse.S;
+        }
+
         return super.getMmlb();
     }
 
